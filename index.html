@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>שיטות הגנה בפני חשמול – חוק החשמל</title><link rel="stylesheet" href="css/style.css"></head>
+<body data-root=""><header id="top"></header>
+<main class="container">
+<h1>⚡ שיטות ההגנה בפני חשמול</h1>
+<p class="lead">תוכנה לימודית אינטראקטיבית – שבע שיטות ההגנה לפי חוק החשמל ותקנותיו בישראל. בכל מודול: הסבר, סימולציה חיה, חידון וסיכום.</p>
+
+<section class="card">
+<h2>למה צריך הגנה? – מה הזרם עושה לגוף</h2>
+<p>לא המתח הורג אלא <b>הזרם</b> שעובר בגוף: I = U / R. גררו את הסליידר וראו מהו הטווח המסוכן:</p>
+<div class="controls">
+ <label>מתח מגע: <output id="o_v">230</output> V<input type="range" id="v" min="1" max="400" value="230"></label>
+ <label>התנגדות הגוף: <output id="o_r">1000</output> Ω<input type="range" id="r" min="300" max="5000" step="100" value="1000"></label>
+</div>
+<div id="meter"></div>
+<div class="readouts"><div class="ro"><span>זרם בגוף</span><b id="r_i">–</b></div></div>
+<div id="zone" class="zone-label"></div>
+<div class="callout bad"><b>זכרו:</b> גם זרם של 30mA בלבד, אם נמשך, יכול להיות קטלני. מכאן הצורך בניתוק מהיר ובהגנה.</div>
+</section>
+
+<section class="card">
+<h2>סוגי מגע</h2>
+<div class="grid">
+<div><h3>מגע ישיר</h3><p>נגיעה בחלק חי רגיל (כבל חשוף, פאזה בשקע). ההגנה: בידוד, מעטפת, מכשולים, מפסק פחת 30mA כהגנה משלימה.</p></div>
+<div><h3>מגע עקיף</h3><p>נגיעה בגוף מתכת שנעשה "חי" עקב תקלה בבידוד. ההגנה: ההגנות שלמדו כאן – הארקה, איפוס, פחת וכו׳.</p></div>
+</div>
+</section>
+
+<h2>שבעת המודולים</h2>
+<div class="grid" id="cards"></div>
+
+<section class="card">
+<h2>איך ללמוד?</h2>
+<ol><li>עברו על המודולים לפי הסדר.</li><li>בכל מודול שחקו עם הסימולציה והפעילו תקלות.</li><li>פתרו את החידון (לפחות 75% נכון) כדי לסמן את המודול כהושלם ✓.</li></ol>
+<button class="sec" id="resetProg">איפוס התקדמות</button>
+</section>
+</main>
+<footer>תוכנה לימודית בלבד. הערכים והתקנות המוצגים הם להמחשה – יש לעבוד תמיד לפי נוסח חוק החשמל, התקנות והתקנים התקפים, ובאמצעות חשמלאי מוסמך.</footer>
+<script src="js/common.js"></script>
+<script>
+(function(){
+ const {$,val,on,fmt}=Edu; $('meter').innerHTML=Edu.meterHTML();
+ on(['v','r'],()=>{ const I=Edu.bodyCurrent(val('v'),val('r')), z=Edu.zone(I); $('r_i').textContent=fmt(I,2)+' mA'; Edu.setMeter($('meter'),I); $('zone').innerHTML=`<span class="${z.cls}">${z.t}</span>`; });
+ function cards(){ const s=Edu.store.get();
+  $('cards').innerHTML=Edu.MODULES.map((m,i)=>`<a class="mcard ${s[m.id]?'done':''}" href="modules/${m.file}"><span class="num">${i+1}</span><div class="ic">${m.icon}</div><h3>${m.title}</h3><p>${m.short}</p><span class="badge">${s[m.id]?'הושלם ✓ ('+s[m.id]+'/4)':'טרם הושלם'}</span></a>`).join(''); }
+ cards(); $('resetProg').onclick=()=>{Edu.store.set({});cards();Edu.renderNav();};
+ Edu.init(null);
+})();
+</script></body></html>

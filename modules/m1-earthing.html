@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>הארקת הגנה – הגנה בפני חשמול</title><link rel="stylesheet" href="../css/style.css"></head>
+<body data-root="../"><header id="top"></header>
+<main class="container">
+<p class="lead">שיטה 1 מתוך 7</p>
+<h1>⏚ הארקת הגנה</h1>
+
+<section class="card">
+<h2>1. מה הבעיה שאנחנו פותרים?</h2>
+<p>במכשיר חשמלי עם גוף מתכת (מכונת כביסה, תנור, מקרר) יש מוליכי פאזה בתוך הגוף. אם הבידוד נפגם, הפאזה נוגעת בגוף – והגוף, שאנחנו נוגעים בו, מקבל מתח. זהו <b>מגע עקיף</b> (בניגוד ל"מגע ישיר" – נגיעה ישירה בחלק חי).</p>
+<div class="callout bad">בלי הגנה: גוף המכונה "חי" ב-230V. מי שעומד על הרצפה ונוגע בו – הזרם עובר דרכו לאדמה.</div>
+</section>
+
+<section class="card">
+<h2>2. העיקרון</h2>
+<p>מחברים את כל החלקים המוליכים הנגישים (הגוף) <b>באמצעות מוליך הארקה</b> אל <b>אלקטרודת הארקה</b> (יתד, פס או הארקת יסוד) הנטמנת באדמה. כשיש תקלה, זרם התקלה זורם דרך מוליך ההארקה והאדמה חזרה אל נקודת האפס של המקור (שגם היא מוארקת, ברשת – בתחנת השנאי).</p>
+<div class="formula">I<sub>תקלה</sub> = U / (R<sub>a</sub> + R<sub>b</sub>) &nbsp;&nbsp;|&nbsp;&nbsp; U<sub>מגע</sub> = I<sub>תקלה</sub> × R<sub>a</sub></div>
+<ul>
+<li><b>R<sub>a</sub></b> – התנגדות אלקטרודת ההארקה של המתקן (אוהם).</li>
+<li><b>R<sub>b</sub></b> – התנגדות הארקת נקודת האפס של המקור.</li>
+<li>הארקה <b>מורידה</b> את מתח הגוף – אבל לא מבטלת אותו! ככל ש-R<sub>a</sub> קטנה יותר, מתח המגע קטן יותר.</li>
+</ul>
+<div class="callout warn"><b>למה לא מספיק?</b> זרם התקלה בהארקת הגנה מוגבל ע"י התנגדות האדמה, ולכן הוא עשוי להיות קטן מדי כדי להפיל מפסק זרם-יתר רגיל. לכן בישראל משלבים הארקת הגנה עם <b>מפסק מגן (פחת)</b>, שרגיש לזרמים קטנים מאוד. ערך ההתנגדות הנדרש נקבע לפי: R<sub>a</sub> × I<sub>Δn</sub> ≤ 50V.</div>
+</section>
+
+<section class="card sim">
+<h2>🧪 סימולציה: תקלת בידוד במכונת כביסה</h2>
+<p>הפאזה נגעה בגוף המכונה. שנו את התנאים וראו מה קורה לאדם שנוגע בגוף.</p>
+<div class="controls">
+ <label>התנגדות ההארקה R<sub>a</sub>: <output id="o_ra">10</output> Ω<input type="range" id="ra" min="1" max="200" value="10"></label>
+ <label>מצב העור של האדם:
+  <select id="skin"><option value="2000">יבש (≈2000Ω)</option><option value="1000" selected>לח (≈1000Ω)</option><option value="500">רטוב מאוד (≈500Ω)</option></select></label>
+ <label class="chk"><input type="checkbox" id="earthed" checked> המכונה מחוברת להארקה</label>
+ <label class="chk"><input type="checkbox" id="rcd"> מותקן מפסק פחת 30mA</label>
+ <label class="chk"><input type="checkbox" id="fault"> 💥 תקלה: הפאזה נוגעת בגוף</label>
+</div>
+<svg id="scene" class="scene" viewBox="0 0 760 330"></svg>
+<div class="readouts">
+ <div class="ro"><span>זרם תקלה</span><b id="r_if">–</b></div>
+ <div class="ro"><span>מתח מגע על הגוף</span><b id="r_ut">–</b></div>
+ <div class="ro"><span>זרם דרך גוף האדם</span><b id="r_ib">–</b></div>
+ <div class="ro"><span>זמן ניתוק</span><b id="r_t">–</b></div>
+</div>
+<div id="meter"></div>
+<div id="zone" class="zone-label"></div>
+<div id="verdict" class="verdict"></div>
+<div class="callout">💡 נסו: (1) הפעילו תקלה כשהמכונה לא מוארקת. (2) חברו הארקה והגדילו R<sub>a</sub> ל-20Ω – שימו לב שמפסק הזרם (16A) לא מנתק והגוף נשאר מסוכן. (3) הוסיפו פחת.</div>
+</section>
+
+<section class="card">
+<h2>3. נקודות חשובות בפועל</h2>
+<ul>
+<li>תקע עם פין הארקה (ירוק-צהוב) חייב להיות מחובר למוליך הארקה אמיתי בלוח.</li>
+<li>מותר להשתמש בצנרת מים מתכתית כאלקטרודה? <b>לא</b> – צנרת (במיוחד פלסטיק בחלקה) אינה אלקטרודה אמינה; משתמשים בהארקת יסוד או ביתד/סרט הארקה.</li>
+<li>יש לבדוק את ההתנגדות מעת לעת (בבדיקות תקופתיות של בודק חשמל).</li>
+<li>הארקת הגנה <b>לא מגינה</b> מנגיעה ישירה בפאזה – לשם כך יש מפסק פחת ובידוד.</li>
+</ul>
+</section>
+
+<section class="card" id="quiz"></section>
+<section class="card"><h2>סיכום</h2><ul class="tk">
+<li>הארקת הגנה = חיבור הגוף לאדמה כדי להוריד את מתח המגע.</li>
+<li>U<sub>מגע</sub> = I<sub>תקלה</sub> × R<sub>a</sub> – מתח מעל 50V נחשב מסוכן.</li>
+<li>לבדה, אינה מבטיחה ניתוק – משלבים עם מפסק פחת.</li></ul></section>
+<div id="pager"></div>
+</main>
+<footer>תוכנה לימודית בלבד. הערכים והתקנות המוצגים הם להמחשה – יש לעבוד תמיד לפי נוסח חוק החשמל, התקנות והתקנים התקפים, ובאמצעות חשמלאי מוסמך.</footer>
+<script src="../js/common.js"></script>
+<script src="../js/sim-m1.js"></script>
+</body></html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>מפסק מגן (פחת) – הגנה בפני חשמול</title><link rel="stylesheet" href="../css/style.css"></head>
+<body data-root="../"><header id="top"></header>
+<main class="container">
+<p class="lead">שיטה 3 מתוך 7</p>
+<h1>🛡️ מפסק מגן (מפסק פחת / RCD)</h1>
+
+<section class="card">
+<h2>1. העיקרון</h2>
+<p>המפסק מודד את <b>סכום הזרמים</b> בפאזה ובאפס דרך טבעת מגנטית (שנאי זרם דיפרנציאלי). בתפקוד תקין: הזרם שיוצא בפאזה = הזרם שחוזר באפס, והסכום 0. אם חלק מהזרם "בורח" לאדמה (דרך גוף מכשיר פגום, או דרך אדם!), נוצר <b>הפרש</b>:</p>
+<div class="formula">I<sub>Δ</sub> = I<sub>פאזה</sub> − I<sub>אפס</sub> &nbsp;≥&nbsp; I<sub>Δn</sub> &nbsp;⟹&nbsp; ניתוק</div>
+<ul>
+<li>במתקני מגורים בישראל מקובל פחת <b>30mA</b> (רגישות גבוהה) – מגן גם מפני נגיעה ישירה כהגנה משלימה.</li>
+<li>זמן ניתוק: עד 300ms בזרם I<sub>Δn</sub>, ועד כ-40ms בזרם פי 5 ממנו.</li>
+<li>פחת 300mA משמש בעיקר להגנה מפני שריפה (לא להגנת חיים).</li>
+</ul>
+<div class="callout">חובה לבדוק את הפחת בלחיצה על כפתור <b>T</b> (בדיקה) באופן תקופתי.</div>
+</section>
+
+<section class="card sim">
+<h2>🧪 סימולציה: מה מזהה הפחת?</h2>
+<div class="controls">
+ <label>תרחיש:
+  <select id="scn"><option value="leak">דליפה במכשיר (סליידר)</option><option value="pg" selected>אדם נוגע בפאזה, עומד על הרצפה</option><option value="pn">אדם נוגע בפאזה ובאפס יחד</option></select></label>
+ <label>זרם דליפה (לתרחיש הראשון): <output id="o_leak">20</output> mA<input type="range" id="leak" min="0" max="300" value="20"></label>
+ <label>רגישות הפחת I<sub>Δn</sub>:
+  <select id="sens"><option value="10">10 mA</option><option value="30" selected>30 mA</option><option value="300">300 mA</option></select></label>
+ <label>מצב העור:
+  <select id="skin"><option value="2000">יבש (2000Ω)</option><option value="1000" selected>לח (1000Ω)</option><option value="500">רטוב (500Ω)</option></select></label>
+ <div><button id="reset" class="sec">🔁 איפוס מפסק</button> <button id="test">T – בדיקה</button></div>
+</div>
+<svg id="scene" class="scene" viewBox="0 0 760 300"></svg>
+<div class="readouts">
+ <div class="ro"><span>זרם בפאזה</span><b id="r_l">–</b></div>
+ <div class="ro"><span>זרם באפס</span><b id="r_n">–</b></div>
+ <div class="ro"><span>הפרש I<sub>Δ</sub></span><b id="r_d">–</b></div>
+ <div class="ro"><span>זמן ניתוק</span><b id="r_t">–</b></div>
+</div>
+<div id="meter"></div><div id="zone" class="zone-label"></div>
+<div id="verdict" class="verdict"></div>
+<h3>עקומת זמן-ניתוק (הנקודה הכחולה = המצב הנוכחי)</h3>
+<svg id="curve" class="scene" viewBox="0 0 600 230"></svg>
+</section>
+
+<section class="card">
+<h2>2. מגבלות הפחת – חשוב מאוד!</h2>
+<ul>
+<li><b>הפחת אינו מגן</b> כשאדם נוגע בפאזה ובאפס יחד (הזרם עובר דרכו, אך חוזר באפס – אין הפרש). נסו בסימולציה!</li>
+<li>הוא אינו מגן מקצר או עומס יתר – לשם כך יש מפסק זרם-יתר.</li>
+<li>הוא "מזהה" אדם רק אם יש דרך זרם לאדמה; הזרם דרך הגוף עדיין זורם עד הניתוק – לכן בעל הרגישות הגבוהה (30mA) מיועד להגנת חיים.</li>
+</ul>
+</section>
+
+<section class="card" id="quiz"></section>
+<section class="card"><h2>סיכום</h2><ul class="tk">
+<li>פחת מנתק כשיש הפרש בין זרם הפאזה לזרם האפס.</li>
+<li>30mA ו-≤300ms = הגנת חיים; חובה בדירות מגורים.</li>
+<li>אינו מגן מנגיעה בין פאזה לאפס.</li></ul></section>
+<div id="pager"></div>
+</main>
+<footer>תוכנה לימודית בלבד. הערכים והתקנות המוצגים הם להמחשה – יש לעבוד תמיד לפי נוסח חוק החשמל, התקנות והתקנים התקפים, ובאמצעות חשמלאי מוסמך.</footer>
+<script src="../js/common.js"></script>
+<script src="../js/sim-m3.js"></script>
+</body></html>
