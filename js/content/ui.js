@@ -87,6 +87,7 @@ PE.ui = {
   recordTitle: { he: "רישום סיום – הגנה בפני חשמול", en: "Completion record – Protection Against Electric Shock" },
   recordBody: { he: "השלים/ה את הבדיקה המסכמת ברמה {band}: {s} מתוך {n}.", en: "completed the final check at the {band} level: {s} of {n}." },
   recordNote: { he: "רישום לימודי בלבד. אינו רישיון, הסמכה או אישור מקצועי.", en: "Educational record only. Not a licence, certification or professional qualification." },
+  completed: { he: "הושלם", en: "completed" },
   search: { he: "חיפוש", en: "Search" },
   abbr: { he: "קיצור", en: "Abbr." },
   definition: { he: "הגדרה", en: "Definition" },

@@ -8,9 +8,9 @@
       { key: "if", type: "range", min: 100, max: 800, step: 50, def: 300, unit: "A", label: { he: "זרם תקלה בדוד", en: "Fault current in the heater" } }],
     build(T, scene, ctx) {
       const H = PE.s3, css = ctx.css;
-      scene.add(H.box(T, 6, 0.05, 5, H.mat(T, "#dfe6ec"), 0, -0.025, 0));
-      scene.add(H.box(T, 6, 3, 0.1, H.mat(T, "#f2f5f8"), 0, 1.5, -2.5));
-      scene.add(H.box(T, 0.1, 3, 5, H.mat(T, "#eef2f5"), -3, 1.5, 0));
+      scene.add(H.box(T, 6, 0.05, 5, H.mat(T, ctx.dark ? "#3a4652" : "#dfe6ec"), 0, -0.025, 0));
+      scene.add(H.box(T, 6, 3, 0.1, H.mat(T, ctx.dark ? "#2c3742" : "#f2f5f8"), 0, 1.5, -2.5));
+      scene.add(H.box(T, 0.1, 3, 5, H.mat(T, ctx.dark ? "#26313b" : "#eef2f5"), -3, 1.5, 0));
       const bath = new T.Group(); scene.add(bath);
       bath.add(H.box(T, 1.9, 0.6, 0.9, H.mat(T, "#e8edf2", { metalness: 0.6, roughness: 0.3 }), -1.9, 0.3, -1.95));
       bath.add(H.box(T, 1.7, 0.1, 0.7, H.mat(T, "#9fc7e6"), -1.9, 0.56, -1.95));

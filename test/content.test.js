@@ -58,8 +58,8 @@ module.exports["final-check pool: size, tags, answers, lesson links"] = () => {
   const pool = PE.content.kpool, codes = new Set(PE.course.flatMap(m => m.lessons.map(l => l.code)));
   assert.ok(pool.length >= 40, "pool " + pool.length);
   pool.forEach((it, i) => { assert.ok([1, 2, 3].includes(it.goal) && ["basic", "advanced"].includes(it.level), "tags " + i); assert.ok(codes.has(it.lesson), "lesson " + it.lesson); assert.ok(it.a >= 0 && it.a < it.o.length, "answer " + i); });
-  const basic = pool.filter(it => it.level === "basic" || it.goal !== 1);
-  assert.ok(basic.length >= 12, "basic band has " + basic.length);
+  const basic = pool.filter(it => it.level === "basic"), adv = pool.filter(it => it.level === "advanced");
+  assert.ok(basic.length >= 12, "basic band has " + basic.length); assert.ok(adv.length >= 6, "advanced items " + adv.length);
   ["A", "B", "C", "D", "E", "F", "G", "H"].forEach(m => assert.ok(pool.some(it => it.method === m), "no item for " + m));
 };
 module.exports["glossary entries complete and linked"] = () => {

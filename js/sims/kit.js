@@ -110,7 +110,8 @@
       c.revealed = true; root.classList.remove("locked");
       buildPredict(); buildControls(); update();
     }
-    K.revealCurrent = () => { if (!c.revealed) reveal(); };
+    const myReveal = () => { if (!c.revealed) reveal(); };
+    K.revealCurrent = myReveal;
 
     function update() {
       svg.selectAll("*").remove();
@@ -134,7 +135,7 @@
     if (!c.revealed) root.classList.add("locked");
     buildPredict(); buildControls(); update();
     if (fromUrl) syncUrl();
-    return { destroy() { clearTimeout(liveTimer); } };
+    return { destroy() { clearTimeout(liveTimer); if (K.revealCurrent === myReveal) K.revealCurrent = null; } };
   };
 
   // Keyboard: Space reveals in presenter mode

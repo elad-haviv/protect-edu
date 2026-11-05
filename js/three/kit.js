@@ -5,8 +5,14 @@
   const txt = o => rich(PE.L(o));
   let loading = null;
 
+  let glOk = null;
   function webglOk() {
-    try { const c = document.createElement("canvas"); return !!(window.WebGLRenderingContext && (c.getContext("webgl") || c.getContext("experimental-webgl"))); } catch (e) { return false; }
+    if (glOk !== null) return glOk;
+    try {
+      const c = document.createElement("canvas"), gl = window.WebGLRenderingContext && (c.getContext("webgl") || c.getContext("experimental-webgl"));
+      glOk = !!gl; if (gl) { const ext = gl.getExtension("WEBGL_lose_context"); if (ext) ext.loseContext(); }
+    } catch (e) { glOk = false; }
+    return glOk;
   }
   function loadScript(src) {
     return new Promise((res, rej) => { const s = document.createElement("script"); s.src = src; s.onload = res; s.onerror = () => rej(new Error("load " + src)); document.head.appendChild(s); });
@@ -44,7 +50,7 @@
       <div class="sim-side">
         <div class="panel ctls"><h4>${esc(PE.t("simControls"))}</h4><div class="ctl-list"></div></div>
         <div class="panel parts3d"><h4>${esc(PE.t("parts"))}</h4><div class="part-btns"></div><p class="part-desc" aria-live="polite"></p></div>
-        <div class="verdict" data-verdict="safe"><span class="v-ic" aria-hidden="true">i</span><div class="s3-status"></div></div>
+        <div class="verdict" data-verdict="safe"><span class="v-ic" aria-hidden="true">i</span><div class="s3-status"></div></div><p class="sr" role="status" aria-live="polite"></p>
       </div></div>`;
     const root = host.querySelector(".scene3d"), stage = root.querySelector(".s3-stage"), labelsEl = root.querySelector(".s3-labels");
     let alive = true, renderer, scene, camera, controls, built, raf = null, ro = null, selected = null;
@@ -64,7 +70,8 @@
       const ctx = { L: PE.L, model: PE.model, css, dark: PE.isDark(), T };
       built = def.build(T, scene, ctx);
       controls = new T.OrbitControls(camera, renderer.domElement);
-      controls.enableDamping = false; controls.enabled = !coarse;
+      controls.enableDamping = false; controls.enabled = !coarse; controls.maxDistance = 30; controls.minDistance = 1.5;
+      renderer.domElement.style.touchAction = coarse ? "pan-y" : "none";
       controls.addEventListener("change", render);
       reset();
       buildControls(); buildParts();
@@ -75,6 +82,8 @@
     function reset() {
       camera.position.set(...def.camera.pos); controls.target.set(...def.camera.target); controls.update();
       if (selected) { highlight(selected, false); selected = null; }
+      root.querySelectorAll(".part-btns button").forEach(x => x.setAttribute("aria-pressed", "false"));
+      const pd = root.querySelector(".part-desc"); if (pd) pd.textContent = "";
       render();
     }
     function resize() {
@@ -93,12 +102,14 @@
         return `<span class="lbl3d ${l.tone || ""}" style="left:${((v.x + 1) / 2 * w).toFixed(1)}px;top:${((1 - v.y) / 2 * h).toFixed(1)}px"><bdi>${rich(PE.L(l.text))}</bdi></span>`;
       }).join("");
     }
+    let liveT = null;
     function update() {
       const out = built.update(s, { L: PE.L, model: PE.model, T: THREE }) || {};
       labels = out.labels || [];
       root.querySelector(".s3-status").innerHTML = out.status ? txt(out.status) : "";
       root.querySelector(".verdict").dataset.verdict = out.tone || "safe";
       root.querySelector(".v-ic").textContent = { safe: "✓", warn: "!", danger: "⚡" }[out.tone || "safe"];
+      clearTimeout(liveT); liveT = setTimeout(() => { const lv = root.querySelector('[aria-live]'); if (lv) lv.textContent = root.querySelector(".s3-status").textContent; }, 500);
       if (out.animate) animate(out.animate); else render();
     }
     function animate(stepFn) {
@@ -119,8 +130,10 @@
         const p = def.params.find(x => x.key === b.dataset.k); s[p.key] = p.values.find(v => String(v.v) === b.dataset.v).v; buildControls(); update();
       }));
     }
+    const emOrig = new Map();
     function highlight(part, on) {
-      part.object.traverse(o => { if (o.material && o.material.emissive) { if (on) { o.userData.em = o.material.emissive.getHex(); o.material.emissive.setHex(0x553300); } else if (o.userData.em != null) o.material.emissive.setHex(o.userData.em); } });
+      const mats = new Set(); part.object.traverse(o => { if (o.material && o.material.emissive) mats.add(o.material); });
+      mats.forEach(m => { if (!emOrig.has(m)) emOrig.set(m, m.emissive.getHex()); m.emissive.setHex(on ? 0x553300 : emOrig.get(m)); });
     }
     function buildParts() {
       const box = root.querySelector(".part-btns");
@@ -142,17 +155,18 @@
       const k = e.key;
       if (k === "ArrowLeft") sph.theta -= 0.12; else if (k === "ArrowRight") sph.theta += 0.12;
       else if (k === "ArrowUp") sph.phi = Math.max(0.15, sph.phi - 0.1); else if (k === "ArrowDown") sph.phi = Math.min(Math.PI / 2 - 0.02, sph.phi + 0.1);
-      else if (k === "+" || k === "=") sph.radius = Math.max(controls.minDistance || 1, sph.radius * 0.88); else if (k === "-") sph.radius *= 1.12;
+      else if (k === "+" || k === "=") sph.radius = Math.max(controls.minDistance || 1, sph.radius * 0.88); else if (k === "-") sph.radius = Math.min(controls.maxDistance || 30, sph.radius * 1.12);
       else if (k === "r" || k === "R") { reset(); e.preventDefault(); return; } else return;
       e.preventDefault(); off.setFromSpherical(sph); camera.position.copy(controls.target).add(off); camera.lookAt(controls.target); render();
     });
     root.querySelector(".reset").addEventListener("click", () => reset());
     const ib = root.querySelector(".interact");
-    if (ib) ib.addEventListener("click", () => { const on = ib.getAttribute("aria-pressed") !== "true"; ib.setAttribute("aria-pressed", on); controls.enabled = on; stage.classList.toggle("touch-on", on); });
+    if (ib) ib.addEventListener("click", () => { const on = ib.getAttribute("aria-pressed") !== "true"; ib.setAttribute("aria-pressed", on); controls.enabled = on; stage.classList.toggle("touch-on", on); if (renderer) renderer.domElement.style.touchAction = on ? "none" : "pan-y"; });
 
     return { destroy() {
       alive = false; cancelAnimationFrame(raf); if (ro) ro.disconnect();
-      if (renderer) { renderer.dispose(); scene.traverse(o => { if (o.geometry) o.geometry.dispose(); if (o.material) [].concat(o.material).forEach(m => m.dispose()); }); }
+      clearTimeout(liveT);
+      if (renderer) { renderer.dispose(); renderer.forceContextLoss(); renderer.domElement.remove(); scene.traverse(o => { if (o.geometry) o.geometry.dispose(); if (o.material) [].concat(o.material).forEach(m => m.dispose()); }); }
       if (controls) controls.dispose();
     } };
   };

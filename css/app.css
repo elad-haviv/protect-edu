@@ -257,6 +257,8 @@ footer#foot { max-width: 1400px; margin: auto; padding: 8px 16px 40px; color: va
 .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
 .chip { min-height: 38px; padding: 4px 12px; border-radius: 999px; border: 1px solid var(--rule); background: var(--surface); color: var(--ink); font: inherit; font-size: .9rem; cursor: pointer; }
 .chip[aria-pressed="true"] { background: var(--sign-black); color: var(--sign-yellow); }
+:root[data-theme="dark"] .chip[aria-pressed="true"] { background: var(--sign-yellow); color: #000; }
+@media (prefers-color-scheme: dark) { :root[data-theme="auto"] .chip[aria-pressed="true"], :root[data-theme="auto"] .seg button[aria-checked="true"] { background: var(--sign-yellow); color: #000; } }
 .chip.right { outline: 3px solid var(--ok); } .chip.wrong { outline: 3px solid var(--bad); text-decoration: line-through; } .chip.missed { outline: 3px dashed var(--ok); }
 
 /* ---------- responsive ---------- */

@@ -63,6 +63,7 @@
 
   // ---------- rail ----------
   function moduleDone(m) {
+    if (m.code === "K") return !!PE.store.get("final");
     const chk = m.lessons.find(l => l.kind === "check");
     if (!chk) return m.lessons.every(l => PE.store.visited(l.id));
     const r = PE.store.quizResult(chk.id); return !!(r && r.score / r.of >= 0.7);
@@ -153,13 +154,15 @@
       const h = a.getAttribute("href"); if (h === "#main") return;
       e.preventDefault();
       try { history.pushState(null, "", h); } catch (err) { /* sandbox */ }
-      route(h, true);
+      lastRouted = location.hash; route(h, true);
       if (e.detail === 0) document.getElementById("main").focus({ preventScroll: true });
     });
-    window.addEventListener("popstate", () => route(location.hash, true));
-    window.addEventListener("hashchange", () => route(location.hash, true));
+    let lastRouted = null;
+    const onNav = () => { if (location.hash === lastRouted) return; lastRouted = location.hash; route(location.hash, true); };
+    window.addEventListener("popstate", onNav);
+    window.addEventListener("hashchange", onNav);
     document.addEventListener("keydown", e => {
-      if (e.key === "Escape" && document.body.classList.contains("present")) setPresent(false);
+      if (e.key === "Escape" && document.body.classList.contains("present") && !e.target.closest("input, textarea, select")) setPresent(false);
       if (e.target.closest("input, select, textarea, [contenteditable]") || e.altKey || e.ctrlKey || e.metaKey) return;
       if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
       if (e.target.closest(".sim, .scene3d")) return;      // simulators and 3D use arrows themselves
@@ -168,6 +171,6 @@
       const to = flat[k + (forward ? 1 : -1)];
       if (to) { e.preventDefault(); try { history.pushState(null, "", "#" + to.code); } catch (err) { /**/ } route("#" + to.code, true); }
     });
-    route(location.hash, false);
+    lastRouted = location.hash; route(location.hash, false);
   };
 })();
