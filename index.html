@@ -1,51 +1,55 @@
 <!DOCTYPE html>
-<html lang="he" dir="rtl">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>שיטות הגנה בפני חשמול – חוק החשמל</title><link rel="stylesheet" href="css/style.css"></head>
-<body data-root=""><header id="top"></header>
-<main class="container">
-<h1>⚡ שיטות ההגנה בפני חשמול</h1>
-<p class="lead">תוכנה לימודית אינטראקטיבית – שבע שיטות ההגנה לפי חוק החשמל ותקנותיו בישראל. בכל מודול: הסבר, סימולציה חיה, חידון וסיכום.</p>
-
-<section class="card">
-<h2>למה צריך הגנה? – מה הזרם עושה לגוף</h2>
-<p>לא המתח הורג אלא <b>הזרם</b> שעובר בגוף: I = U / R. גררו את הסליידר וראו מהו הטווח המסוכן:</p>
-<div class="controls">
- <label>מתח מגע: <output id="o_v">230</output> V<input type="range" id="v" min="1" max="400" value="230"></label>
- <label>התנגדות הגוף: <output id="o_r">1000</output> Ω<input type="range" id="r" min="300" max="5000" step="100" value="1000"></label>
+<html lang="he" dir="rtl" data-theme="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>הגנה בפני חשמול – Protection Against Electric Shock</title>
+<meta name="description" content="קורס אינטראקטיבי: שבע שיטות ההגנה בפני חשמול לפי חוק החשמל – סימולציות, תלת-ממד ותרגול. Interactive course on the seven methods of protection against electric shock.">
+<meta name="theme-color" content="#14171a">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 5 95 92H5Z' fill='%23ffcc00' stroke='%23000' stroke-width='6'/%3E%3Cpath d='M55 30 38 62h14l-6 22 19-34H51z'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/app.css?v=2.0.0">
+</head>
+<body>
+<a class="skip" href="#main">דלג לתוכן</a>
+<header id="top"></header>
+<div class="layout">
+  <nav id="rail" aria-label="Course"></nav>
+  <main id="main" tabindex="-1"></main>
 </div>
-<div id="meter"></div>
-<div class="readouts"><div class="ro"><span>זרם בגוף</span><b id="r_i">–</b></div></div>
-<div id="zone" class="zone-label"></div>
-<div class="callout bad"><b>זכרו:</b> גם זרם של 30mA בלבד, אם נמשך, יכול להיות קטלני. מכאן הצורך בניתוק מהיר ובהגנה.</div>
-</section>
-
-<section class="card">
-<h2>סוגי מגע</h2>
-<div class="grid">
-<div><h3>מגע ישיר</h3><p>נגיעה בחלק חי רגיל (כבל חשוף, פאזה בשקע). ההגנה: בידוד, מעטפת, מכשולים, מפסק פחת 30mA כהגנה משלימה.</p></div>
-<div><h3>מגע עקיף</h3><p>נגיעה בגוף מתכת שנעשה "חי" עקב תקלה בבידוד. ההגנה: ההגנות שלמדו כאן – הארקה, איפוס, פחת וכו׳.</p></div>
-</div>
-</section>
-
-<h2>שבעת המודולים</h2>
-<div class="grid" id="cards"></div>
-
-<section class="card">
-<h2>איך ללמוד?</h2>
-<ol><li>עברו על המודולים לפי הסדר.</li><li>בכל מודול שחקו עם הסימולציה והפעילו תקלות.</li><li>פתרו את החידון (לפחות 75% נכון) כדי לסמן את המודול כהושלם ✓.</li></ol>
-<button class="sec" id="resetProg">איפוס התקדמות</button>
-</section>
-</main>
-<footer>תוכנה לימודית בלבד. הערכים והתקנות המוצגים הם להמחשה – יש לעבוד תמיד לפי נוסח חוק החשמל, התקנות והתקנים התקפים, ובאמצעות חשמלאי מוסמך.</footer>
-<script src="js/common.js"></script>
-<script>
-(function(){
- const {$,val,on,fmt}=Edu; $('meter').innerHTML=Edu.meterHTML();
- on(['v','r'],()=>{ const I=Edu.bodyCurrent(val('v'),val('r')), z=Edu.zone(I); $('r_i').textContent=fmt(I,2)+' mA'; Edu.setMeter($('meter'),I); $('zone').innerHTML=`<span class="${z.cls}">${z.t}</span>`; });
- function cards(){ const s=Edu.store.get();
-  $('cards').innerHTML=Edu.MODULES.map((m,i)=>`<a class="mcard ${s[m.id]?'done':''}" href="modules/${m.file}"><span class="num">${i+1}</span><div class="ic">${m.icon}</div><h3>${m.title}</h3><p>${m.short}</p><span class="badge">${s[m.id]?'הושלם ✓ ('+s[m.id]+'/4)':'טרם הושלם'}</span></a>`).join(''); }
- cards(); $('resetProg').onclick=()=>{Edu.store.set({});cards();Edu.renderNav();};
- Edu.init(null);
-})();
-</script></body></html>
+<footer id="foot"></footer>
+<noscript><p style="padding:16px">הקורס דורש JavaScript. This course needs JavaScript.</p></noscript>
+<script src="vendor/d3@7.9.0/d3.min.js"></script>
+<script src="js/core/ns.js?v=2.0.0"></script>
+<script src="js/core/store.js?v=2.0.0"></script>
+<script src="js/core/i18n.js?v=2.0.0"></script>
+<script src="js/core/router.js?v=2.0.0"></script>
+<script src="js/core/render.js?v=2.0.0"></script>
+<script src="js/core/quiz.js?v=2.0.0"></script>
+<script src="js/model.js?v=2.0.0"></script>
+<script src="js/sims/symbols.js?v=2.0.0"></script>
+<script src="js/sims/kit.js?v=2.0.0"></script>
+<script src="js/sims/common.js?v=2.0.0"></script>
+<script src="js/sims/figures.js?v=2.0.0"></script>
+<script src="js/sims/a-sims.js?v=2.0.0"></script>
+<script src="js/sims/b-tt.js?v=2.0.0"></script>
+<script src="js/sims/c-tn.js?v=2.0.0"></script>
+<script src="js/sims/d-rcd.js?v=2.0.0"></script>
+<script src="js/sims/e-sep.js?v=2.0.0"></script>
+<script src="js/sims/f-class.js?v=2.0.0"></script>
+<script src="js/sims/g-elv.js?v=2.0.0"></script>
+<script src="js/sims/h-bond.js?v=2.0.0"></script>
+<script src="js/content/ui.js?v=2.0.0"></script>
+<script src="js/content/a.js?v=2.0.0"></script>
+<script src="js/content/b.js?v=2.0.0"></script>
+<script src="js/content/c.js?v=2.0.0"></script>
+<script src="js/content/d.js?v=2.0.0"></script>
+<script src="js/content/e.js?v=2.0.0"></script>
+<script src="js/content/f.js?v=2.0.0"></script>
+<script src="js/content/g.js?v=2.0.0"></script>
+<script src="js/content/h.js?v=2.0.0"></script>
+<script src="js/content/locations.js?v=2.0.0"></script>
+<script src="js/content/course.js?v=2.0.0"></script>
+<script src="js/core/app.js?v=2.0.0"></script>
+<script>PE.boot();</script>
+</body>
+</html>

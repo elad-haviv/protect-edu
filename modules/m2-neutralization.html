@@ -1,60 +1,7 @@
 <!DOCTYPE html>
-<html lang="he" dir="rtl">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>איפוס – הגנה בפני חשמול</title><link rel="stylesheet" href="../css/style.css"></head>
-<body data-root="../"><header id="top"></header>
-<main class="container">
-<p class="lead">שיטה 2 מתוך 7</p>
-<h1>🔗 איפוס</h1>
-
-<section class="card">
-<h2>1. העיקרון</h2>
-<p>באיפוס מחברים את גוף המכשיר <b>למוליך האפס</b> של הרשת (או למוליך הגנה PE המחובר לנקודת האפס של המקור). כך, כשהפאזה נוגעת בגוף נוצר <b>קצר מבוקר</b> בין הפאזה לאפס – זרם גדול מאוד שמפיל מיד את מפסק הזרם (המא"זח / הנתיך) ומנתק את המכשיר.</p>
-<div class="formula">I<sub>תקלה</sub> = U / Z<sub>s</sub> &nbsp;&nbsp; ; &nbsp;&nbsp; Z<sub>s</sub> = Z<sub>מקור</sub> + ρ·L·(1/A<sub>פאזה</sub> + 1/A<sub>PE</sub>)</div>
-<p>זרם התקלה באיפוס גדול פי עשרות ומאות מזה של הארקת הגנה, כי המסלול הוא מוליך נחושת קצר ולא אדמה. לכן מספיק מפסק זרם-יתר רגיל.</p>
-<div class="callout">התנאי: הזרם חייב להיות <b>גדול מזרם ההפעלה המיידי</b> של המפסק (למשל מפסק B: פי 5 מהזרם הנקוב, C: פי 10, D: פי 20) כדי שהניתוק יהיה מהיר (עד כ-0.4 שנייה).</div>
-</section>
-
-<section class="card sim">
-<h2>🧪 סימולציה: קצר מבוקר דרך מוליך האפס</h2>
-<div class="controls">
- <label>אורך הכבל: <output id="o_len">30</output> מ׳<input type="range" id="len" min="2" max="300" value="30"></label>
- <label>חתך מוליך (פאזה = PE):
-  <select id="area"><option>1.5</option><option>2.5</option><option selected>4</option><option>6</option><option>10</option><option>16</option></select> ממ״ר</label>
- <label>מפסק זרם-יתר:
-  <select id="brk"><option value="5">B – מיידי ×5</option><option value="10" selected>C – מיידי ×10</option><option value="20">D – מיידי ×20</option></select></label>
- <label>זרם נקוב: <select id="in"><option>10</option><option selected>16</option><option>20</option><option>32</option></select> A</label>
- <label class="chk"><input type="checkbox" id="fault" checked> 💥 תקלה: פאזה נוגעת בגוף</label>
- <label class="chk"><input type="checkbox" id="broken"> ✂️ ניתוק מוליך האפס/PE</label>
-</div>
-<svg id="scene" class="scene" viewBox="0 0 760 300"></svg>
-<div class="readouts">
- <div class="ro"><span>התנגדות לולאה Z<sub>s</sub></span><b id="r_z">–</b></div>
- <div class="ro"><span>זרם תקלה</span><b id="r_if">–</b></div>
- <div class="ro"><span>סף ניתוק מיידי</span><b id="r_thr">–</b></div>
- <div class="ro"><span>מתח מגע על הגוף</span><b id="r_ut">–</b></div>
-</div>
-<div id="verdict" class="verdict"></div>
-<div class="callout warn">⚠️ <b>הסכנה הגדולה של איפוס:</b> אם מוליך האפס נקטע — אין מסלול לתקלה, והגוף נשאר בפוטנציאל הפאזה. לכן אסור להתקין מפסק או נתיך במוליך האפס/PE, ויש לוודא חיבורים איכותיים. נסו את תיבת "ניתוק מוליך האפס".</div>
-</section>
-
-<section class="card">
-<h2>2. נקודות חשובות</h2>
-<ul>
-<li>מוליך האפס והמוליך המגן (PE) מחוברים יחד בנקודה אחת בלוח הראשי (בחלק מהמערכות) ומשם נפרדים (TN-S/TN-C-S).</li>
-<li>חתך קטן ואורך גדול מגדילים התנגדות ← זרם התקלה קטן ← הניתוק איטי או לא מתרחש. לכן מוגבל אורך הכבל המרבי למעגל.</li>
-<li>איפוס מגן מפני <b>מגע עקיף</b> בלבד; הוא מתווסף למפסק פחת בבתי מגורים.</li>
-</ul>
-</section>
-
-<section class="card" id="quiz"></section>
-<section class="card"><h2>סיכום</h2><ul class="tk">
-<li>איפוס = גוף ← מוליך אפס, תקלה הופכת לקצר שמנתק.</li>
-<li>הזרם חייב לעבור את סף ההפעלה המיידי של המפסק.</li>
-<li>ניתוק מוליך האפס מבטל את ההגנה – סכנת חיים.</li></ul></section>
-<div id="pager"></div>
-</main>
-<footer>תוכנה לימודית בלבד. הערכים והתקנות המוצגים הם להמחשה – יש לעבוד תמיד לפי נוסח חוק החשמל, התקנות והתקנים התקפים, ובאמצעות חשמלאי מוסמך.</footer>
-<script src="../js/common.js"></script>
-<script src="../js/sim-m2.js"></script>
-</body></html>
+<html lang="he" dir="rtl"><head><meta charset="utf-8">
+<title>הועבר – Moved</title>
+<link rel="canonical" href="../#C1">
+<meta http-equiv="refresh" content="0; url=../#C1">
+<script>location.replace("../#C1" + (location.search.indexOf("lang=en") >= 0 ? "?lang=en" : ""));</script>
+</head><body><p>הדף הועבר. <a href="../#C1">המשך לשיעור C1</a> · This page moved: <a href="../#C1">continue to C1</a></p></body></html>

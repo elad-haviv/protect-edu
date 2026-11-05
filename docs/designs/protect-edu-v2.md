@@ -472,7 +472,7 @@ Common kit:
 - Toggle the bond on/off. The potentials of the parts are shown as coloured tags.
   Tapping two parts shows the voltage between them.
 
-### Lesson plan (codes are derived by position)
+### Lesson plan (codes are fixed; see Amendment R-2)
 
 **A. Start here**
 
@@ -744,8 +744,8 @@ Files:
   - RCD with an L–N body current: no trip.
   - Broken PEN: every class I case is ≈ U0.
   - Separation, single touch: current < 1 mA. With a first fault: dangerous.
-  - Bonding with R_sb = 0.05 Ω reduces Ut by more than 90%.
-  - 12 V wet gives AC-1 or AC-2, not dangerous.
+  - Bonding with R_sb = 0.02 Ω reduces Ut by more than 90%.
+  - 12 V dry gives AC-1 or AC-2, not dangerous (see R-4).
 - `content.test.js`:
   - Every bilingual field is non-empty in both languages.
   - Each pair has the same digit sequences.
@@ -786,7 +786,7 @@ Index of the design documents.
      presenter mode.
    - The 3D lessons render a canvas. With WebGL disabled, the fallback SVG
      appears.
-   - The v1 stubs redirect to the right codes; v1 localStorage is migrated.
+   - The v1 stubs redirect to the right codes; the v1 localStorage key is deleted (R-6).
    - The final check: the pass flow shows the printable record.
    - Screenshots at 360 × 780 and 1366 × 900, light and dark.
 3. **`file://` smoke test.** Open `index.html` via `file://` in Chromium; A1, B2
@@ -856,7 +856,8 @@ Common return field:
   - dry: 25 V → 3250 Ω, 230 V → about 1225 Ω;
   - wet: a separate table;
   - `submerged`: 1000 Ω.
-- Below 25 V the value is held at the 10 V entry (dry 4500, wet 3000).
+- Between 10 V and 25 V the value is interpolated (log-linear) from a 10 V entry
+  (dry 4500, wet 3000). Below 10 V it is held at the 10 V entry.
 - Path factors: hh 1.0, hf 0.75, hhf 0.5.
 - All of this is labelled illustrative.
 
@@ -900,7 +901,7 @@ Common return field:
 - `Rpe = rho · L / A_pe` and `Zs = Zsrc + rho · L · (1/A_ph + 1/A_pe)`.
 - `If = U0 / Zs` and `Vcase = If · Rpe`.
 - Condition: `Zs · Ia ≤ U0`.
-- Broken PEN: every one of the `n` cases sits at `U0 · Ra / (Zload + Ra)`.
+- Broken PEN: every one of the `n` cases sits at `U0 · Ra / (Zload + Ra + Rb)`.
   Without a local earth (`Ra = null`) this is `U0` (worst case).
 - `required_ms` is 400 for a final circuit and 5000 for a distribution circuit.
 
@@ -1023,3 +1024,23 @@ three.js (R2). The fallback is `PE.figures[id](svg, ctx)`.
 - Theme: `<html data-theme="auto | light | dark">`.
 - Exit path from r147: an ES-module build plus a local server or service worker
   (Future Improvements).
+
+### R-7. Stage 8 (zoom-out) follow-ups
+
+- When there is no RCD, the TT condition is `Ra · Ia ≤ UL` (Ia = the MCB
+  instantaneous current). The `tt({Ra: 10})` test asserts `ok === false`.
+- A thermal (slow) MCB trip counts as "not in time". Tests assert
+  `trip.mode !== 'instant'` for the long-cable TN case.
+- `it()` defaults to 0.1 µF of system capacitance (a small installation), which
+  gives a first-fault body current of about 6 mA (AC-2).
+- The submerged impedance stays at 1000 Ω (illustrative). The lesson shows 12 V
+  as the zone 0 *limit* (a perceptible current), and 50 V submerged as AC-4. It
+  does not claim that 12 V is unsafe.
+- R-1 to R-7 override earlier sections. Names in older sections (`zone60479`,
+  `bodyImpedance`) refer to `zone` and `bodyZ`.
+
+### R-8. Implementation notes (R1)
+
+- The simulator contract is `render(svg, state, ctx) → {meters, verdict, note}`. It redraws the whole scene on each change and replaces the separate `draw`/`update` pair. Sims may also set `fmt` on a range param to format its display value.
+- The four module A simulators share `js/sims/a-sims.js`; shared drawing helpers are in `js/sims/common.js`. Sim ids stay as listed in R-2/R-5.
+- While a prediction is open, `PE.sym.locked` makes symbols draw in their neutral state: closed breakers, no live cases, a grey person. This stops the diagram from giving the answer away.
