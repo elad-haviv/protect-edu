@@ -45,5 +45,10 @@ module.exports = {
     assert.strictEqual(M.elv({ U: 50, location: "pool0" }).body.zone, "AC-4");
   },
   "class protection"() { assert.ok(M.classProtection({ cls: 2, basic: true }).live === false); assert.ok(M.classProtection({ cls: 2, basic: true, supp: true }).live); assert.ok(M.classProtection({ cls: 1, basic: true, pe: false }).live); assert.ok(M.classProtection({ cls: 1, basic: true }).disconnect); },
+  "electrode potential falls as 1/r; touch > step"() {
+    const e = M.electrodeTT({ rho: 100 }); near(e.Ve, M.potentialAt(0.3, e.If, 100), 1e-9); assert.ok(e.Ve < 230 && e.Ve > 200);
+    near(M.potentialAt(2, e.If, 100) / M.potentialAt(1, e.If, 100), 0.5, 1e-9);
+    const touch = e.Ve - M.potentialAt(1, e.If, 100), step = M.potentialAt(2, e.If, 100) - M.potentialAt(2.8, e.If, 100); assert.ok(touch > step);
+  },
   "non-conducting location and IT"() { assert.ok(M.nonConducting({}).ok); assert.ok(!M.nonConducting({ Rfloor_k: 10 }).ok); assert.strictEqual(M.it({}).body.zone, "AC-2"); }
 };

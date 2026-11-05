@@ -26,6 +26,8 @@
     quiz: () => `<div class="quiz-host"></div>`,
     location: () => `<div class="loc-host"></div>`,
     card: () => `<div class="card-host"></div>`,
+    final: () => `<div class="final-host"></div>`,
+    glossary: () => `<div class="gloss-host"></div>`,
     html: b => txt(b)
   };
 
@@ -43,7 +45,9 @@
     practice: (node, b, key) => PE.practice(node, b, key),
     quiz: (node, b, key, params, lesson) => PE.quiz(node, b, key, lesson),
     location: (node, b, key) => PE.location(node, b, key),
-    card: (node, b, key) => PE.card && PE.card(node, b, key)
+    card: (node, b, key) => PE.card(node, b, key),
+    final: (node, b, key) => PE.finalCheck(node, b, key),
+    glossary: (node, b, key) => PE.glossary(node, b, key)
   };
 
   PE.figCtx = () => ({ L: PE.L, t: PE.t, lang: PE.lang, sym: PE.sym, fmt: PE.fmt });

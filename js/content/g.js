@@ -22,6 +22,7 @@ PE.content.G = {
     ] },
     { code: "G3", id: "g-practice", kind: "practice", title: { he: "בפועל ותרגול", en: "In practice, and practice" }, blocks: [
       { type: "list", items: [
+        { label: "regulation", source: "IL-1991 · מקור משני", he: "לפי התקנות, במיתקן המוגן במתח נמוך מאוד לא תותקן הארקת שיטה או הארקת הגנה – כלומר ההגנה מקבילה ל-SELV. מעגלי PELV מוארקים הם מקרה נפרד.", en: "Under the regulations, an installation protected by extra-low voltage has no system or protective earthing – the protection matches SELV. Earthed PELV circuits are a separate case." },
         { label: "practice", he: "שנאי בטיחות מסומן בסימן IEC 60417-5222 (שני מעגלים מופרדים) ועומד ב-IEC 61558-2-6.", en: "A safety transformer carries the IEC 60417-5222 mark and complies with IEC 61558-2-6." },
         { label: "practice", he: "מוליכי מעגל ה-SELV נפרדים פיזית ממוליכי מתח אחרים, או מבודדים לפי המתח הגבוה ביותר בתעלה.", en: "SELV conductors are kept physically separate from other circuits, or insulated for the highest voltage present." },
         { label: "principle", he: "מתח נמוך מאוד הוא <b>גם</b> הגנה בסיסית וגם הגנה בעת תקלה – לכן הוא נחשב שיטה שלמה בפני עצמה.", en: "Extra-low voltage provides <b>both</b> basic and fault protection – so it counts as a complete method by itself." }] },

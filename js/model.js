@@ -228,7 +228,15 @@
     return { body: { I_mA: I, t_ms: 5000, zone: zone(I, 5000), Z }, Xc };
   }
 
-  const Model = { U0: U0_DEFAULT, bodyZ, zone, ZONE_LEVEL, zoneCurves, curveB, curveC1, MCB_BAND, parseMcb, mcbInstant, mcbTrip, rcdTrip, tt, tn, rcdScenario, separation, classProtection, ELV_LIMITS, elv, bonding, nonConducting, it, body };
+  // ---------- earth electrode (hemispherical equivalent, illustrative) ----------
+  function electrodeTT(o = {}) {
+    const p = Object.assign({ U0: U0_DEFAULT, rho: 100, a: 0.3, Rb: 2 }, o);
+    const Re = p.rho / (2 * Math.PI * p.a), If = p.U0 / (Re + p.Rb);
+    return { Re, If, Ve: If * Re, a: p.a, rho: p.rho };
+  }
+  function potentialAt(r, If, rho, a = 0.3) { return If * rho / (2 * Math.PI * Math.max(Math.abs(r), a)); }
+
+  const Model = { U0: U0_DEFAULT, bodyZ, zone, ZONE_LEVEL, zoneCurves, curveB, curveC1, MCB_BAND, parseMcb, mcbInstant, mcbTrip, rcdTrip, tt, tn, rcdScenario, separation, classProtection, ELV_LIMITS, elv, bonding, nonConducting, it, body, electrodeTT, potentialAt };
   if (typeof module !== "undefined" && module.exports) module.exports = Model;
   else { root.PE = root.PE || {}; root.PE.model = Model; }
 })(typeof window !== "undefined" ? window : this);

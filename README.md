@@ -16,6 +16,16 @@ Live: https://protect-edu.haviv.pro
 | F | בידוד כפול – Class II | Insulation layers for class 0, I and II |
 | G | מתח נמוך מאוד – SELV/PELV | Voltage, location and source; the risk of a non-isolated adapter |
 | H | השוואת פוטנציאלים / מקום מבודד | Supplementary bonding in a bathroom; non-conducting location |
+| J | Compare and choose | A comparison card of all seven methods, the third location exercise, layered protection |
+| K | Final check | Basic and advanced bands drawn at random from a pool of 41 items; pass mark 80%; printable completion record (not a licence) |
+| L | Glossary | Searchable terms in Hebrew and English, with abbreviations, linked to lessons |
+| M | References | The law, the regulations (with links) and the IEC standards |
+
+Three modules include rotatable **3D scenes** built with three.js: the potential funnel (B3), inside an RCD (D3) and a bathroom (H3). Each scene has an HTML parts list, keyboard controls and a 2D fallback.
+
+**Presenter mode** is turned on with the ▣ button or `?present=1`. It shows the content full width with the light theme. The prediction stays locked until the teacher presses Space or "Reveal", and Esc leaves the mode.
+
+The course is part of [Haviv Academy](https://academy.haviv.pro), alongside [AGL](https://agl-edu.haviv.pro) and [GENSET](https://genset-edu.haviv.pro).
 
 Every simulator asks the learner to **predict** an outcome before showing it. Every statement carries a label: *principle*, *typical practice*, *illustrative* or *regulation – verify*. Each method ends with a quiz built on common misconceptions, plus review questions from earlier modules. Three location exercises ask which protection fits a given place.
 
@@ -50,12 +60,17 @@ node test/e2e.js http://localhost:8765/
 - `js/core/` – namespace, store, i18n, router, renderer, quiz and practice, app shell. Navigation is ported from agl-edu.
 - `js/model.js` – the electrical model: pure functions, also used by Node.
 - `js/sims/` – IEC 60617 symbols, the simulator kit and one file per simulator.
+- `js/three/` – the 3D kit (three.js loaded lazily from `vendor/`) and the three scenes.
 - `js/content/` – course content, one file per module. Text is stored as `{he, en}`, with Hebrew as the master copy. `{{…}}` marks a left-to-right run.
 - `vendor/` – pinned d3 7.9.0 and three.js r147. Sources and hashes are in `vendor/README.md`.
 - `modules/` – redirects from the old v1 pages.
 - `docs/designs/` – the design, written with the Elephant-Goldfish Model. Start with `SITEMAP.md`.
 
 v1 is kept on the `backup/v1-simple` branch.
+
+## Regulations
+
+Regulatory figures are labelled with their source. `docs/designs/reviews/regulation_check.md` records which items were checked and how. In this build, items quoted from the Israeli regulations come from secondary sources, because the primary text (Nevo, Wikisource) could not be reached from the development environment. These items keep the "regulation – verify" label.
 
 ## Disclaimer
 

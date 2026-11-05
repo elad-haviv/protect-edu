@@ -40,7 +40,8 @@
       S.wire(g, [[250, yL], [262, yL]], "L"); S.mcb(g, 262, yL, { open: tripped, flash: tripped, label: s.mcb });
       S.wire(g, [[322, yL], [900, yL]], "L"); S.wire(g, [[330, yN], [900, yN]], "N"); S.wire(g, [[330, yPE], [900, yPE]], "PE");
       S.wireTag(g, 440, yL - 22, "L"); S.wireTag(g, 440, yN - 22, "N"); S.wireTag(g, 440, yPE + 24, "PE");
-      S.text(g, 610, 46, ctx.L({ he: `כבל {{${s.len} m}}, {{${s.area} ממ"ר}}`, en: `Cable ${s.len} m, ${s.area} mm²` }).replace(/\{\{|\}\}/g, ""), "lbl-s");
+      S.text(g, 560, 46, ctx.L({ he: "כבל", en: "Cable" }), "lbl-s", "end");
+      S.text(g, 570, 46, `${s.len} m · ${s.area} mm²`, "lbl-s", "start");
       // three class I appliances
       const xs = [480, 630, 780];
       xs.forEach((x, i) => {

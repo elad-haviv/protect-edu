@@ -1044,3 +1044,38 @@ three.js (R2). The fallback is `PE.figures[id](svg, ctx)`.
 - The simulator contract is `render(svg, state, ctx) → {meters, verdict, note}`. It redraws the whole scene on each change and replaces the separate `draw`/`update` pair. Sims may also set `fmt` on a range param to format its display value.
 - The four module A simulators share `js/sims/a-sims.js`; shared drawing helpers are in `js/sims/common.js`. Sim ids stay as listed in R-2/R-5.
 - While a prediction is open, `PE.sym.locked` makes symbols draw in their neutral state: closed breakers, no live cases, a grey person. This stops the diagram from giving the answer away.
+
+### R-9. 3D scenes (R2)
+
+- `js/three/kit.js` defines `PE.scene3d(host, block, key)`. On first use it loads `vendor/three@0.147.0/three.min.js` and then `OrbitControls.js` by script injection. If WebGL or the scripts are unavailable, it falls back to `PE.sceneFallback` (static SVG figure + parts list).
+- A scene registers `PE.scenes[id] = { params, camera: {pos, target}, build(THREE, scene, ctx) → { parts: [{key, name, desc, object, anchor}], update(state, ctx) → {labels: [{pos, text, tone}], status, animate?} } }`. `params` uses the simulator schema; the kit builds the same controls.
+- Rendering is on demand: it happens on control changes, camera moves and while `animate` is true.
+- Labels are HTML elements projected over the canvas. No text is ever drawn inside WebGL, so labels stay accessible and RTL-correct.
+- The parts list is a set of HTML buttons. Selecting a part highlights it, moves the orbit target to it and announces its description in an `aria-live` region.
+- Keyboard: the arrow keys rotate, + and − zoom, R resets. On coarse-pointer (touch) devices the canvas only takes gestures after the "Interact" toggle is on, so the page still scrolls.
+- Model additions: `electrodeTT({rho, a, Rb})` returns the hemispherical-equivalent earth electrode values `{Re, If, Ve}`, and `potentialAt(r, If, rho)` gives the surface potential (illustrative).
+- Scenes:
+  - **B3 `b-earth`:** the potential funnel. Touch voltage for a person 1 m from the electrode, and step voltage at distance d.
+  - **D3 `d-rcd`:** an RCD cut-away with balanced, leakage and test-button modes, and an animated latch.
+  - **H3 `h-bath`:** a bathroom. The bond toggle feeds `bonding()`, and the labels show part potentials and ΔU.
+
+### R-10. R3 implementation (J, K, L, M, presenter, print, branding)
+
+- **Releases.** The owner chose one deployment once R1–R3 are complete (2026-11-05). This replaces the per-release deployment in R-1.
+- **J1 card.** `PE.card` renders a 7-row comparison table with columns: protects against, how, when it fails, typical use. A row is marked ✓ when `PE.moduleDone(code)` is true, i.e. that module's check is passed (≥ 70%).
+- **J2.** Location exercise, set 3.
+- **J3.** Layered protection table plus the `h-bond` simulator with `defaults: {bond: true}`.
+- **K1 final check.** The block `{type: "final", n: 12, pass: 0.8}` runs `PE.finalCheck`. The pool is `PE.content.kpool`: 41 items, each tagged `{method, lesson, goal, level}`.
+  - The learner picks a band. The basic band excludes advanced calculation items (goal 1); the advanced band uses the whole pool.
+  - 12 items are drawn at random. Each wrong item links to its lesson.
+  - A passing score shows a name field and "Print completion record". The record uses print CSS on `body.printing-record` and contains the escaped name, date, band, score and a "not a licence" note.
+  - Scores are stored as `quiz["k-final-<band>"]` and `final`.
+- **L1 glossary.** `PE.glossary`: a searchable table over `PE.content.glossary` with he, en, abbreviation, definition and a lesson link.
+- **M1 references.** The law, the regulations with Nevo and Wikisource links, the OSH collection, the IEC standards table and links to sibling courses.
+- **Presenter mode.** `PE.setPresent(on)` is driven by the header button ▣, `?present=1` (via the router) or Esc to exit.
+  - Turning it on forces the light theme; turning it off restores the previous theme.
+  - A presenter deep link re-locks a simulator's prediction, so a class can go predict → vote → reveal.
+  - Space reveals the prediction.
+- **Print.** Check, practice and location lessons show a Print button. Print CSS hides navigation and interactive controls.
+- **Branding.** Haviv Academy tokens are a 3 px gradient strip and a gradient dot. The header links to https://academy.haviv.pro; the footer links to the academy, AGL and GENSET. The document title ends with "· Haviv Academy". The course keeps its own yellow safety-sign identity.
+- **Regulations.** The verification pass is recorded in `reviews/regulation_check.md`. The primary text could not be reached, so items from secondary sources carry `source: "IL-1991 · מקור משני"` and keep the `regulation` label.

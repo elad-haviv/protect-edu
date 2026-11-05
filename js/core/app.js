@@ -23,10 +23,13 @@
       <button type="button" class="icon-btn menu-btn" aria-controls="rail" aria-expanded="false" aria-label="${esc(PE.t("menu"))}">☰</button>
       <a class="brand" href="#A1"><span class="brand-ic" aria-hidden="true">⚡</span><span class="brand-text"><b>${esc(PE.t("appTitle"))}</b><small>${esc(PE.t("appSub"))}</small></span></a>
       <div class="tools">
+        <a class="hv" href="https://academy.haviv.pro" rel="noopener" title="Haviv Academy"><span class="hv-mark" aria-hidden="true"></span><span class="hv-txt">Haviv Academy</span></a>
+        <button type="button" class="tool present-btn" aria-pressed="${document.body.classList.contains("present")}" title="${esc(PE.t("present"))}">▣ <span class="tool-l">${esc(PE.t("present"))}</span></button>
         <button type="button" class="tool lang-btn" lang="${PE.lang === "he" ? "en" : "he"}" aria-label="${esc(PE.t("langSwitchLabel"))}">${esc(PE.t("langSwitch"))}</button>
         <button type="button" class="tool theme-btn" aria-label="${esc(PE.t("theme"))}: ${esc(PE.t("theme" + th[0].toUpperCase() + th.slice(1)))}" title="${esc(PE.t("theme"))}">${th === "dark" ? "☾" : th === "light" ? "☀" : "🌓"} <span class="tool-l">${esc(PE.t("theme" + th[0].toUpperCase() + th.slice(1)))}</span></button>
       </div></div>`;
     h.querySelector(".lang-btn").addEventListener("click", () => { PE.setLang(PE.lang === "he" ? "en" : "he"); });
+    h.querySelector(".present-btn").addEventListener("click", () => setPresent(!document.body.classList.contains("present")));
     h.querySelector(".theme-btn").addEventListener("click", () => {
       const order = ["auto", "light", "dark"]; const next = order[(order.indexOf(th) + 1) % 3];
       setTheme(next, true);
@@ -42,6 +45,17 @@
     renderHeader();
     PE.emit("theme", t);
   }
+  let themeBeforePresent = null;
+  function setPresent(on, fromRoute) {
+    const was = document.body.classList.contains("present");
+    if (on === was) return;
+    document.body.classList.toggle("present", on);
+    if (on) { themeBeforePresent = document.documentElement.dataset.theme; document.documentElement.dataset.theme = "light"; }
+    else if (themeBeforePresent) document.documentElement.dataset.theme = themeBeforePresent;
+    renderHeader();
+    if (current && !fromRoute) { const p = PE.parseHash(location.hash).params; if (on) p.present = "1"; else delete p.present; PE.replaceHash(current.code, p); show(current.code, { params: {} }); }
+  }
+  PE.setPresent = setPresent;
   PE.isDark = () => {
     const t = document.documentElement.dataset.theme;
     return t === "dark" || (t !== "light" && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
@@ -53,6 +67,7 @@
     if (!chk) return m.lessons.every(l => PE.store.visited(l.id));
     const r = PE.store.quizResult(chk.id); return !!(r && r.score / r.of >= 0.7);
   }
+  PE.moduleDone = code => { const m = (modules || PE.course).find(x => x.code === code); return !!m && moduleDone(m); };
   function renderRail(l) {
     const rail = document.getElementById("rail");
     rail.innerHTML = `<h2 class="sr">${esc(PE.t("course"))}</h2><ol class="mods">${modules.map(m => {
@@ -85,9 +100,14 @@
     const main = document.getElementById("main");
     main.innerHTML = crumbHtml(l) + `<article class="lesson" id="lesson" data-code="${l.code}" data-kind="${l.kind}"></article>` + pagerHtml(l);
     cleanup = PE.renderLesson(l, main.querySelector("#lesson"), opts.params || {});
+    if (["check", "practice", "location"].includes(l.kind) && l.id !== "k-final") {
+      const b = PE.el("button", { type: "button", class: "btn sec print-btn" }, "🖨 " + esc(PE.t("print")));
+      b.addEventListener("click", () => window.print());
+      main.querySelector(".lesson-title").appendChild(b);
+    }
     PE.store.visit(l.id); PE.store.set("last", l.code);
     renderRail(l);
-    document.title = `${l.code} · ${PE.L(l.title)} – ${PE.t("appTitle")}`;
+    document.title = `${l.code} · ${PE.L(l.title)} – ${PE.t("appTitle")} · Haviv Academy`;
     document.body.classList.remove("rail-open");
     if (opts.scroll) window.scrollTo(0, 0);
     if (opts.focus) main.focus({ preventScroll: true });
@@ -98,7 +118,9 @@
   function chrome() {
     document.querySelector(".skip").textContent = PE.t("skip");
     const f = document.getElementById("foot");
-    f.innerHTML = `<p>${esc(PE.t("footer"))}</p><button type="button" class="linkish reset">${esc(PE.t("resetProgress"))}</button>`;
+    f.innerHTML = `<p>${esc(PE.t("footer"))}</p>
+      <p class="hv-links"><a href="https://academy.haviv.pro" rel="noopener"><span class="hv-mark" aria-hidden="true"></span> Haviv Academy</a> · ${esc(PE.t("moreCourses"))}: <a href="https://agl-edu.haviv.pro" rel="noopener">AGL</a> · <a href="https://genset-edu.haviv.pro" rel="noopener">GENSET</a></p>
+      <button type="button" class="linkish reset">${esc(PE.t("resetProgress"))}</button>`;
     f.querySelector(".reset").addEventListener("click", () => { PE.store.reset(); PE.cache = {}; PE.refresh(); });
     document.getElementById("rail").setAttribute("aria-label", PE.t("course"));
   }
@@ -106,7 +128,7 @@
     const { code, params: p } = PE.parseHash(hash);
     params = p;
     if (p.lang && p.lang !== PE.lang) { PE.setLang(p.lang, { transient: true, silent: true }); chrome(); }
-    if (p.present) document.body.classList.add("present");
+    if (p.present && !document.body.classList.contains("present")) setPresent(true, true);
     show(code, { scroll, params: p });
     renderHeader();
   }
@@ -137,7 +159,7 @@
     window.addEventListener("popstate", () => route(location.hash, true));
     window.addEventListener("hashchange", () => route(location.hash, true));
     document.addEventListener("keydown", e => {
-      if (e.key === "Escape") document.body.classList.remove("present");
+      if (e.key === "Escape" && document.body.classList.contains("present")) setPresent(false);
       if (e.target.closest("input, select, textarea, [contenteditable]") || e.altKey || e.ctrlKey || e.metaKey) return;
       if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
       if (e.target.closest(".sim, .scene3d")) return;      // simulators and 3D use arrows themselves

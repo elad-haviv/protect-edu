@@ -51,6 +51,39 @@ const check = (cond, msg) => { if (!cond) fails.push(msg); };
   await page.goto(BASE + "#B4"); await page.waitForTimeout(150);
   await page.fill('.prac[data-i="0"] input', "184"); await page.click('.prac[data-i="0"] .chk');
   check((await page.textContent('.prac[data-i="0"] .prac-res')).includes("184"), "practice check");
+  // 3D scenes render a canvas (swiftshader)
+  for (const c of ["B3", "D3", "H3"]) {
+    await page.goto(BASE + "#" + c); await page.waitForTimeout(1800);
+    check(await page.$(".s3-canvas canvas"), c + ": no 3D canvas");
+    check((await page.$$(".lbl3d")).length > 0, c + ": no 3D labels");
+    const btn = await page.$(".part-btns button"); if (btn) { await btn.click(); check((await page.textContent(".part-desc")).length > 5, c + ": part description"); }
+  }
+  // presenter mode: deep link, locked prediction, Space reveals, Esc exits
+  await page.goto(BASE + "#D2?present=1&lang=he"); await page.waitForTimeout(300);
+  check(await page.evaluate(() => document.body.classList.contains("present")), "presenter: not on");
+  check(!!(await page.$(".sim.locked")), "presenter: sim not locked");
+  await page.click("#lesson h2"); await page.keyboard.press("Space"); await page.waitForTimeout(150);
+  check(!(await page.$(".sim.locked")), "presenter: Space did not reveal");
+  await page.keyboard.press("Escape"); await page.waitForTimeout(150);
+  check(await page.evaluate(() => !document.body.classList.contains("present")), "presenter: Esc did not exit");
+  // final check: answer all correctly, see the record form
+  await page.goto(BASE + "#K1?lang=en"); await page.waitForTimeout(200);
+  await page.click('[data-b="basic"]');
+  for (let i = 0; i < 12; i++) {
+    const a = await page.evaluate(i => { const st = Object.values(PE.cache).find(x => x && x.items && x.band); return PE.content.kpool[st.items[i]].a; }, i);
+    await page.click(`.q[data-i="${i}"] .opt[data-j="${a}"]`);
+  }
+  check(await page.$eval(".final-res .score", e => e.dataset.pass) === "true", "final check: not passed");
+  check(!!(await page.$(".record-form input")), "final check: no record form");
+  // glossary search
+  await page.goto(BASE + "#L1?lang=en"); await page.waitForTimeout(150);
+  await page.fill(".gloss-search input", "RCD");
+  check((await page.$$("#gloss-t tbody tr")).length >= 1 && (await page.$$("#gloss-t tbody tr")).length < 6, "glossary search");
+  // branding and comparison card
+  check(!!(await page.$('#top a[href="https://academy.haviv.pro"]')), "branding: academy link in header");
+  check(!!(await page.$('#foot a[href="https://agl-edu.haviv.pro"]')), "branding: AGL link in footer");
+  await page.goto(BASE + "#J1"); await page.waitForTimeout(150);
+  check((await page.$$(".card-t tbody tr")).length === 7, "comparison card rows");
   // v1 stubs
   await page.goto(BASE + "modules/m3-rcd.html"); await page.waitForTimeout(400);
   check(page.url().endsWith("#D1"), "v1 stub redirect: " + page.url());
@@ -58,8 +91,13 @@ const check = (cond, msg) => { if (!cond) fails.push(msg); };
     const p = await browser.newPage({ viewport: { width: w, height: h }, colorScheme: scheme }); await p.goto(BASE + hash); await p.waitForTimeout(400);
     await p.screenshot({ path: `${OUT}/${name}.png`, fullPage: true }); await p.close();
   }
-  check(errs.length === 0, "console errors: " + errs.slice(0, 5).join(" | "));
+  // no-WebGL fallback
+  const b2 = await chromium.launch({ args: ["--disable-webgl", "--disable-3d-apis"] }); const p2 = await b2.newPage();
+  await p2.goto(BASE + "#D3"); await p2.waitForTimeout(800);
+  check(!!(await p2.$(".scene-host .fig-svg")) && !!(await p2.$(".parts dl")), "no-WebGL fallback missing"); await b2.close();
+  const real = errs.filter(e => !/GL Driver Message|GPU stall/.test(e));
+  check(real.length === 0, "console errors: " + real.slice(0, 5).join(" | "));
   await browser.close();
-  console.log(fails.length ? "FAIL\n - " + fails.join("\n - ") : `OK – ${codes.length} lessons × 2 languages, simulator checks, quiz, practice, redirect`);
+  console.log(fails.length ? "FAIL\n - " + fails.join("\n - ") : `OK – ${codes.length} lessons × 2 languages, simulators, 3D, presenter, final check, glossary, quiz, practice, branding, redirect, no-WebGL fallback`);
   process.exit(fails.length ? 1 : 0);
 })();

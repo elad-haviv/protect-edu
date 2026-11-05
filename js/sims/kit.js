@@ -32,6 +32,8 @@
       if (block.predict && block.predict.state) Object.assign(s, block.predict.state);
       c = PE.cache[key] = { s, revealed: !block.predict, pick: null };
     }
+    // A presenter deep link always starts with the prediction closed, for predict → vote → reveal
+    if (block.predict && urlParams && urlParams.present && !c.presentLocked) { c.revealed = false; c.pick = null; c.presentLocked = true; }
     // Deep-link state (validated against the schema); never carries the reveal
     let fromUrl = false;
     def.params.forEach(p => { const v = parseParam(p, urlParams && urlParams[p.key]); if (v !== undefined) { c.s[p.key] = v; fromUrl = true; } });

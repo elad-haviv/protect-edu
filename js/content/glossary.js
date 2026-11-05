@@ -1,0 +1,29 @@
+/* Module L – Glossary. */
+PE.content.glossary = [
+  { he: "מגע ישיר", en: "Direct contact", abbr: "", code: "A3", def: { he: "נגיעה בחלק שחי בפעולה רגילה.", en: "Touching a part that is live in normal use." } },
+  { he: "מגע עקיף", en: "Indirect contact", abbr: "", code: "A3", def: { he: "נגיעה בחלק מוליך שנעשה חי עקב תקלה.", en: "Touching a conductive part made live by a fault." } },
+  { he: "מתח מגע", en: "Touch voltage", abbr: "Ut", code: "B1", def: { he: "המתח בין שתי נקודות שאדם נוגע בהן בו-זמנית.", en: "The voltage between two points a person touches at the same time." } },
+  { he: "מתח צעד", en: "Step voltage", abbr: "", code: "B3", def: { he: "המתח בין שתי רגליים על הקרקע, בערך צעד אחד זו מזו.", en: "The voltage between two feet on the ground, about one step apart." } },
+  { he: "עכבת הגוף", en: "Body impedance", abbr: "Z", code: "A1", def: { he: "ההתנגדות של גוף האדם לזרם; יורדת כשהמתח עולה וכשהעור רטוב.", en: "The body's opposition to current; it falls as voltage rises and when skin is wet." } },
+  { he: "הארקת הגנה", en: "Protective earthing", abbr: "TT", code: "B1", def: { he: "חיבור חלקים מוליכים נגישים לאלקטרודת הארקה.", en: "Connecting exposed conductive parts to an earth electrode." } },
+  { he: "איפוס", en: "Protective neutralization", abbr: "TN", code: "C1", def: { he: "חיבור חלקים מוליכים נגישים דרך PE לנקודת האפס של המקור, כך שתקלה הופכת לקצר.", en: "Connecting exposed conductive parts through a PE to the source star point, so a fault becomes a short circuit." } },
+  { he: "מוליך הגנה", en: "Protective conductor", abbr: "PE", code: "B1", def: { he: "מוליך ירוק-צהוב שמחבר את גופי המכשירים להארקה או לאיפוס.", en: "The green-yellow conductor that connects appliance cases to earth or neutral." } },
+  { he: "מוליך PEN", en: "PEN conductor", abbr: "PEN", code: "C1", def: { he: "מוליך אחד שמשמש גם אפס וגם מוליך הגנה.", en: "A single conductor serving as both neutral and protective conductor." } },
+  { he: "עכבת לולאת התקלה", en: "Fault loop impedance", abbr: "Zs", code: "A5", def: { he: "סכום העכבות במסלול זרם התקלה.", en: "The total impedance along the fault current path." } },
+  { he: "מפסק זרם-יתר (מאמ\"ת)", en: "Miniature circuit breaker", abbr: "MCB", code: "A5", def: { he: "מנתק בעומס יתר ובקצר; סוגים B, C, D לפי זרם הניתוק המיידי.", en: "Disconnects on overload and short circuit; types B, C, D by instant-trip current." } },
+  { he: "מפסק מגן לזרם דלף (פחת)", en: "Residual current device", abbr: "RCD", code: "D1", def: { he: "מנתק כשיש הפרש בין הזרם בפאזה לזרם באפס.", en: "Disconnects when line and neutral currents differ." } },
+  { he: "זרם דלף נקוב", en: "Rated residual current", abbr: "IΔn", code: "D1", def: { he: "זרם ההפרש שבו הפחת חייב לנתק, למשל {{30 mA}}.", en: "The residual current at which the RCD must trip, e.g. {{30 mA}}." } },
+  { he: "הפרד מגן / שנאי הפרדה", en: "Protective separation / isolating transformer", abbr: "", code: "E1", def: { he: "הזנת מכשיר ממעגל משני שאינו מחובר לאדמה.", en: "Supplying an appliance from a secondary circuit with no connection to earth." } },
+  { he: "בידוד בסיסי", en: "Basic insulation", abbr: "", code: "F1", def: { he: "הבידוד שמונע מגע בחלקים חיים.", en: "The insulation that prevents contact with live parts." } },
+  { he: "בידוד משלים", en: "Supplementary insulation", abbr: "", code: "F1", def: { he: "שכבה נוספת ובלתי תלויה, למקרה שהבידוד הבסיסי נכשל.", en: "An extra, independent layer in case basic insulation fails." } },
+  { he: "בידוד כפול / מגן", en: "Double insulation", abbr: "Class II", code: "F1", def: { he: "בידוד בסיסי + משלים; מכשיר מחלקה II.", en: "Basic + supplementary insulation; a class II appliance." } },
+  { he: "מתח נמוך מאוד", en: "Extra-low voltage", abbr: "ELV", code: "G1", def: { he: "מתח שאינו עולה על {{50 V}} AC או {{120 V}} DC.", en: "A voltage not exceeding {{50 V}} AC or {{120 V}} DC." } },
+  { he: "SELV / PELV", en: "SELV / PELV", abbr: "SELV/PELV", code: "G1", def: { he: "מתח נמוך מאוד ממקור מופרד: SELV לא מוארק, PELV מוארק.", en: "Extra-low voltage from a separated source: SELV unearthed, PELV earthed." } },
+  { he: "שנאי בטיחות", en: "Safety isolating transformer", abbr: "", code: "G3", def: { he: "שנאי שמפריד בבטחה בין הרשת למעגל מתח נמוך מאוד.", en: "A transformer that safely separates the mains from an extra-low-voltage circuit." } },
+  { he: "השוואת פוטנציאלים", en: "Equipotential bonding", abbr: "", code: "H1", def: { he: "חיבור חלקים מוליכים יחד כדי שלא יהיה ביניהם הפרש מתח מסוכן.", en: "Connecting conductive parts together so there is no dangerous voltage between them." } },
+  { he: "פס השוואת פוטנציאלים ראשי", en: "Main earthing terminal", abbr: "MET", code: "H1", def: { he: "נקודת החיבור המשותפת של מוליכי ההשוואה וההארקה.", en: "The common connection point for bonding and earthing conductors." } },
+  { he: "מקום מבודד (לא מוליך)", en: "Non-conducting location", abbr: "", code: "H1", def: { he: "מקום עם רצפה וקירות מבודדים, ללא PE, בפיקוח אנשי מקצוע.", en: "A location with insulating floor and walls, no PE, under skilled supervision." } },
+  { he: "אזורי השפעה AC-1 עד AC-4", en: "Effect zones AC-1 to AC-4", abbr: "IEC 60479", code: "A2", def: { he: "חלוקת מישור זרם–זמן לפי חומרת ההשפעה על הגוף.", en: "The division of the current–time plane by severity of effect on the body." } }
+];
+PE.content.L = { code: "L", icon: "📖", title: { he: "מונחון", en: "Glossary" }, short: { he: "מונחון", en: "Glossary" },
+  lessons: [{ code: "L1", id: "l-glossary", kind: "ref", title: { he: "מונחון", en: "Glossary" }, blocks: [{ type: "glossary" }] }] };
