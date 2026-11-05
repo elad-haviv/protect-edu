@@ -250,10 +250,14 @@
     }
     if (p.fault1) {                                   // first fault: only capacitive return through the healthy conductor
       const Rf = Riso_k * 1000, Id = p.U0 / Math.hypot(Rf + p.Ra, Xc), Ut = Id * p.Ra;
+      const IdBolted = p.U0 / Math.hypot(p.Ra, Xc);          // §411.6.2: Id for a fault of negligible impedance
       let b = none;
       if (p.touch === "case") b = body(Ut, p, 5000);
-      else { const Z = bodyZ(p.U0, p.skin, p.path), I = p.U0 / (Z + p.Rfoot + Rf + p.Ra) * 1000; b = { I_mA: I, t_ms: 5000, zone: zone(I, 5000), Z }; }
-      return { Riso_k, alarm, Id_mA: Id * 1000, If: Id, Ut, cond: { key: "RaId", value: p.Ra * Id, limit: p.UL, ok: p.Ra * Id <= p.UL }, trip: null, body: b, stage: 1 };
+      else {                                                 // L2 returns to earth through Rf in parallel with its own capacitance
+        const XcL2 = Xc, ret = Math.hypot(Rf * XcL2 / Math.hypot(Rf, XcL2) + p.Ra, 0);
+        const Z = bodyZ(p.U0, p.skin, p.path), I = p.U0 / (Z + p.Rfoot + ret) * 1000; b = { I_mA: I, t_ms: 5000, zone: zone(I, 5000), Z };
+      }
+      return { Riso_k, alarm, Id_mA: Id * 1000, If: Id, Ut, cond: { key: "RaId", value: p.Ra * IdBolted, limit: p.UL, ok: p.Ra * IdBolted <= p.UL }, trip: null, body: b, stage: 1 };
     }
     // healthy: touching a live conductor drives current only through the system capacitance
     let b = none;

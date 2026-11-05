@@ -27,8 +27,8 @@
       S.text(g, 230, y1 - 12, "L1", "lbl-b"); S.text(g, 230, y2 + 28, "L2", "lbl-b");
       // IMD between conductors and earth
       if (s.imd) {
-        S.dot(g, 270, y1); S.dot(g, 270, y2);
-        S.wire(g, [[270, y1], [270, 235]], "gen", "w-thin");
+        S.dot(g, 250, y1); S.dot(g, 290, y2);
+        S.wire(g, [[250, y1], [250, 235]], "gen", "w-thin"); S.wire(g, [[290, y2], [290, 235]], "gen", "w-thin");
         const alarm = r.alarm && !S.locked;
         g.append("rect").attr("x", 215).attr("y", 235).attr("width", 110).attr("height", 74).attr("rx", 8).attr("class", "sym-fill");
         S.text(g, 270, 258, ctx.L({ he: "השגחה על בידוד", en: "Insulation monitor" }), "lbl-s").style("font-size", "13px");
@@ -68,11 +68,11 @@
         { label: { he: "מתח על הגופים", en: "Voltage on the cases" }, value: tripped ? 0 : r.Ut, unit: "V", tone: r.Ut > 50 && !tripped ? "bad" : "ok" },
         PE.kit.bodyMeter(r.body)];
       let verdict;
-      if (!s.fault1) verdict = s.touch === "L1" ? { tone: "warn", zone: r.body.zone, text: { he: `הבידוד תקין: נגיעה במוליך חי סוגרת מעגל רק דרך הקיבול של הרשת – כ-{{${PE.fmt(r.body.I_mA)} mA}}. מורגש, אבל לא כמו ברשת מוארקת.`, en: `Insulation healthy: touching a live conductor closes a circuit only through the system capacitance – about {{${PE.fmt(r.body.I_mA)} mA}}. Perceptible, but far less than on an earthed system.` } }
+      if (!s.fault1) verdict = s.touch === "L1" ? { tone: "warn", zone: r.body.zone, text: { he: `הבידוד תקין: נגיעה במוליך חי סוגרת מעגל דרך הקיבול של הרשת – כ-{{${PE.fmt(r.body.I_mA)} mA}}. זינה צפה <b>אינה</b> הגנה מפני נגיעה בחלק חי: ברשת גדולה הזרם הקיבולי יכול לעבור {{30 mA}}.`, en: `Insulation healthy: touching a live conductor closes a circuit through the system capacitance – about {{${PE.fmt(r.body.I_mA)} mA}}. A floating supply is <b>not</b> protection against touching a live part: on a large network the capacitive current can exceed {{30 mA}}.` } }
         : { tone: "safe", text: { he: "הבידוד תקין – אין זרם תקלה. הפעילו תקלה ראשונה.", en: "Insulation healthy – no fault current. Switch on a first fault." } };
       else if (s.fault2) verdict = tripped ? { tone: "safe", trip: true, zone: r.body.zone, text: { he: `תקלה שנייה בקוטב השני = קצר בין המוליכים דרך ה-PE: {{${PE.fmt(r.If)} A}}, והמאמ"ת מנתק.`, en: `A second fault on the other conductor = a short between conductors through the PE: {{${PE.fmt(r.If)} A}}, and the MCB trips.` }, sub: { he: "המטרה של זינה צפה היא לאתר ולתקן את התקלה הראשונה <b>לפני</b> שמגיעה שנייה.", en: "The point of a floating supply is to find and fix the first fault <b>before</b> a second one arrives." } }
         : { tone: "danger", trip: false, zone: r.body.zone, text: { he: "התקלה השנייה לא נותקה!", en: "The second fault was not disconnected!" } };
-      else if (s.touch === "L1") verdict = { tone: "danger", zone: r.body.zone, text: { he: "אחרי תקלה ראשונה, L2 מחובר לאדמה – והמערכת מתנהגת כמו רשת מוארקת. נגיעה ב-L1 מסוכנת.", en: "After a first fault, L2 is connected to earth – the system now behaves like an earthed one. Touching L1 is dangerous." }, sub: C.bodyLine(r.body) };
+      else if (s.touch === "L1") verdict = { tone: C.lvl(r.body.zone) >= 2 ? "danger" : "warn", zone: r.body.zone, text: { he: "אחרי תקלה ראשונה, L2 מחובר לאדמה – והמערכת מתנהגת כמו רשת מוארקת. נגיעה ב-L1 מסוכנת.", en: "After a first fault, L2 is connected to earth – the system now behaves like an earthed one. Touching L1 is dangerous." }, sub: C.bodyLine(r.body) };
       else verdict = { tone: r.alarm ? "warn" : s.imd ? "safe" : "danger", zone: r.body.zone,
         text: r.alarm ? { he: `תקלה ראשונה: זורמים רק {{${PE.fmt(r.Id_mA)} mA}} דרך הקיבול, והמתח על הגופים {{${PE.fmt(r.Ut)} V}}. <b>אין ניתוק</b> – הזינה ממשיכה (חשוב בחדר ניתוח), ומכשיר ההשגחה מתריע.`, en: `First fault: only {{${PE.fmt(r.Id_mA)} mA}} flows through the capacitance and the cases sit at {{${PE.fmt(r.Ut)} V}}. <b>No disconnection</b> – supply continues (vital in an operating theatre), and the monitor raises an alarm.` }
           : s.imd ? { he: `התנגדות התקלה ({{${PE.fmt(r.Riso_k)} kΩ}}) מעל סף ההתראה – מכשיר ההשגחה עוד לא מתריע.`, en: `The fault resistance ({{${PE.fmt(r.Riso_k)} kΩ}}) is above the alarm threshold – the monitor does not alarm yet.` }
