@@ -11,6 +11,11 @@ PE.content.H = {
         [{ he: "השוואת פוטנציאלים ראשית", en: "Main bonding" }, { he: "צנרת נכנסת (מים, גז), חלקי מבנה מתכתיים, מוליך ההארקה – לפס ההשוואה הראשי (MET)", en: "Incoming pipes (water, gas), metal structure, the earthing conductor – to the main earthing terminal (MET)" }],
         [{ he: "השוואת פוטנציאלים משלימה (מקומית)", en: "Supplementary (local) bonding" }, { he: "חלקים שאפשר לגעת בהם יחד במקום מסוכן – למשל בחדר רחצה", en: "Parts that can be touched together in a hazardous location – e.g. a bathroom" }]] },
       { type: "p", label: "principle", he: "<b>מקום מבודד (לא מוליך)</b> פועל אחרת: רצפה וקירות מבודדים, אין מוליך הגנה, וחלקים מוליכים מרוחקים כך שאי אפשר לגעת בשניים יחד. כך אין מסלול לאדמה דרך הגוף.", en: "A <b>non-conducting location</b> works differently: insulating floor and walls, no protective conductor, and conductive parts spaced so two cannot be touched at once. So there is no path to earth through the body." },
+      { type: "h", he: "בדיקה קצרה", en: "Quick check" },
+      { type: "quiz", items: [
+        { q: { he: "מה מסוכן לאדם שנוגע בשני חלקים?", en: "What is dangerous for a person touching two parts?" }, o: [{ he: "הפרש המתח ביניהם", en: "The voltage difference between them" }, { he: "המתח של כל אחד לבד", en: "The voltage of each one alone" }], a: 0, why: { he: "זרם עובר רק כשיש הפרש.", en: "Current only flows when there is a difference." } },
+        { q: { he: "מה עושה השוואת פוטנציאלים בזמן תקלה?", en: "What does bonding do during a fault?" }, o: [{ he: "כל החלקים עולים יחד וההפרש קטן", en: "All parts rise together and the difference stays small" }, { he: "היא מנתקת את המעגל", en: "It disconnects the circuit" }], a: 0, why: { he: "הניתוק עדיין תפקיד המפסק.", en: "Disconnection is still the device's job." } }
+      ] },
       { type: "callout", tone: "warn", label: "regulation", source: "IEC 60364-4-41 Annex C", he: "מקום מבודד והשוואת פוטנציאלים מקומית לא מוארקת מיועדים <b>רק</b> למתקנים בפיקוח אנשי מקצוע מוסמכים – לא לדירות.", en: "Non-conducting locations and earth-free local bonding are <b>only</b> for installations supervised by skilled persons – not for homes." }
     ] },
     { code: "H2", id: "h-sim", kind: "sim", title: { he: "סימולטור: חדר רחצה בזמן תקלה", en: "Simulator: a bathroom during a fault" }, blocks: [
@@ -29,7 +34,7 @@ PE.content.H = {
     ] },
     { code: "H4", id: "h-practice", kind: "practice", title: { he: "בפועל ותרגול", en: "In practice, and practice" }, blocks: [
       { type: "list", items: [
-        { label: "regulation", source: "IL-1991 / IEC 60364-4-41 §411.3.1.2", he: "בכל מבנה מבצעים השוואת פוטנציאלים ראשית לפס השוואה ראשי. חתכים מינימליים לפי התקנות – לאמת.", en: "Every building has main bonding to a main earthing terminal. Minimum sizes per the regulations – verify." },
+        { label: "regulation", source: "IL-1991 · מקור משני / IEC 60364-4-41 §411.3.1.2", he: "בכל מבנה מבצעים השוואת פוטנציאלים ראשית לפס השוואה ראשי. חתכים מינימליים לפי התקנות – לאמת.", en: "Every building has main bonding to a main earthing terminal. Minimum sizes per the regulations – verify." },
         { label: "regulation", source: "IEC 60364-7-701", he: "בחדרי רחצה: פחת {{30 mA}} לכל המעגלים, והשוואה משלימה כשנדרשת. יש לאמת את הדרישות הישראליות.", en: "In bathrooms: a {{30 mA}} RCD on all circuits, plus supplementary bonding where required. Verify the Israeli requirements." },
         { label: "practice", he: "חיבורי השוואה צריכים להיות נגישים לבדיקה ומסומנים; צנרת פלסטיק לא מחייבת השוואה.", en: "Bonding connections should be accessible for inspection and labelled; plastic pipework needs no bonding." },
         { label: "principle", he: "השוואה משלימה לא מחליפה ניתוק – היא מקטינה את מתח המגע עד שהמפסק מנתק.", en: "Supplementary bonding does not replace disconnection – it reduces the touch voltage until the device disconnects." }] },

@@ -1,6 +1,6 @@
 # Protect-Edu v2: Design Document
 
-Status: draft for Goldfish review
+Status: approved; implemented (R1–R3). Amendments R-1 to R-11 at the end are authoritative.
 Owner: Elad Haviv
 Source brief: [concepts_brief.md](concepts_brief.md)
 
@@ -133,7 +133,7 @@ Other fixed terms:
 
 ### CUJ 2: Teacher presents
 
-1. The teacher opens `…/#C2?present=1&pen=0&lang=he`.
+1. The teacher opens `…/#C2?present=1&pen=broken&lang=he`.
 2. The simulator fills the screen: light theme, large type, the broken-PEN state
    preset, and the reveal hidden.
 3. The class votes. The teacher presses "Reveal" (or Space), and every class I
@@ -782,7 +782,7 @@ Index of the design documents.
      - G2: 12 V dry is not dangerous.
    - Predict → reveal hides the verdict until the reveal.
    - Switching language mid-simulation keeps the state.
-   - A deep link `#C2?pen=0&lang=en&present=1` sets the state, language and
+   - A deep link `#C2?pen=broken&lang=en&present=1` sets the state, language and
      presenter mode.
    - The 3D lessons render a canvas. With WebGL disabled, the fallback SVG
      appears.
@@ -1079,3 +1079,35 @@ three.js (R2). The fallback is `PE.figures[id](svg, ctx)`.
 - **Print.** Check, practice and location lessons show a Print button. Print CSS hides navigation and interactive controls.
 - **Branding.** Haviv Academy tokens are a 3 px gradient strip and a gradient dot. The header links to https://academy.haviv.pro; the footer links to the academy, AGL and GENSET. The document title ends with "· Haviv Academy". The course keeps its own yellow safety-sign identity.
 - **Regulations.** The verification pass is recorded in `reviews/regulation_check.md`. The primary text could not be reached, so items from secondary sources carry `source: "IL-1991 · מקור משני"` and keep the `regulation` label.
+
+### R-11. Drift report follow-ups (Goldfish, 2026-11-05)
+
+Code and content changes made:
+- D1–H1 each gain a 2-item quick check. B1 and C1 already had one, so every lesson 1 now has a hook, a principle and a check. Figures are still only in B1, D1 and F1.
+- Regulation claims that come only from secondary sources are tagged `IL-1991 · מקור משני`: D4 (RCD on domestic circuits), A3, H4, and a new G1 note on the 50 V limit. In English the tag reads "secondary source".
+- The final-check item about earthing in ELV installations now links to G3.
+
+Doc corrections; the code is authoritative for each of these:
+- **Protective devices.**
+  - `mcbTrip(I, "C16")` takes the breaker as a string and returns `{by, mode, t_ms, status: "yes" | "slow"}` or `null`.
+  - `rcdTrip` can also return `status: "none"` when there is no RCD.
+- **Model defaults.**
+  - `it()` defaults to `C_uF = 0.1`.
+  - `nonConducting` returns `limit_k` 50, or 100 above 500 V.
+  - `tt` accepts `fault`; `tn` accepts `Rb` (default 2).
+- **ELV.**
+  - `elv().within` also requires `source = "safety"`.
+  - For DC, a reading under 2 mA is shown as AC-1; zones are AC-based, as the UI states.
+- **Content field names.**
+  - Quiz items use `{q, o, a, why, mis?, from?}`.
+  - Practice items use `{given, ask, answer, tol?, unit, steps, fade?}`.
+  - Location blocks use `{set: [n]}`.
+  - Scene blocks use `{id, title, parts}`; the fallback is always `PE.figures[id]`.
+- **Block types in use:** `p`, `h`, `list`, `formula`, `callout` (tones info, warn, danger, ok, hook), `table`, `figure`, `sim`, `scene`, `practice`, `quiz`, `location`, `card`, `final`, `glossary`, `html`. A content claim is a `p` with `label` (and optional `source`).
+- **Progress store.** `{v, lang, theme, last, visited, quiz, final: {band, score, of, date}}`. There is no `cards` field: comparison-card ticks come from `moduleDone` (that module's check passed at 70% or more).
+- **Scenes.** `PE.scene3d(host, block)` caches scene state per scene id. Scene state is not put in the URL.
+- **Layers.** Module A sims live in `js/sims/a-sims.js` and shared helpers in `js/sims/common.js`. Static figures and 3D fallbacks are in `js/sims/figures.js`. The simulator contract is `render()` (R-8). The `{{…}}` markup in content renders as `<bdi dir="ltr">`.
+- **Source tag.** The UI shows "Regulation – verify · <source>".
+- **Tests.** `test/run.js` runs the fixed list `model.test.js` and `content.test.js`.
+- **Covered elsewhere, not by `test/e2e.js`.** The `file://` smoke test is run separately (A1, B2, B3 pass). Phone screenshots use 390 × 844, not 360 × 780. Deletion of the v1 key is covered by code review only.
+- **Phone layout.** Simulator diagrams keep a minimum width of 640 px and scroll sideways inside their frame, so symbols stay legible. The controls stack below the diagram.

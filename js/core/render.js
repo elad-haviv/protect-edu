@@ -6,7 +6,7 @@
 
   function tag(label, source) {
     if (!label) return "";
-    const src = source ? ` · ${esc(source)}` : "";
+    const src = source ? ` · ${esc(PE.lang === "en" ? String(source).replace("מקור משני", "secondary source") : source)}` : "";
     return `<span class="tag tag-${label}" title="${esc(PE.t("tagTip_" + label))}">${esc(PE.t("tag_" + label))}${src}</span>`;
   }
   PE.tag = tag;
