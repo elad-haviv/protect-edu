@@ -236,7 +236,32 @@
   }
   function potentialAt(r, If, rho, a = 0.3) { return If * rho / (2 * Math.PI * Math.max(Math.abs(r), a)); }
 
-  const Model = { U0: U0_DEFAULT, bodyZ, zone, ZONE_LEVEL, zoneCurves, curveB, curveC1, MCB_BAND, parseMcb, mcbInstant, mcbTrip, rcdTrip, tt, tn, rcdScenario, separation, classProtection, ELV_LIMITS, elv, bonding, nonConducting, it, body, electrodeTT, potentialAt };
+  // ---------- floating supply (זינה צפה, IT) with insulation monitoring ----------
+  function itSupply(o = {}) {
+    const p = Object.assign({ U0: U0_DEFAULT, C_uF: 0.1, f: 50, Ra: 10, Rf_k: 0, fault1: false, fault2: false, imd: true, imd_k: 50, mcb: "C16", Zloop2: 0.84, Rpe: 0.27, touch: "case", skin: "dry", path: "hf", Rfoot: 1000, UL: 50 }, o);
+    const Xc = 1 / (2 * Math.PI * p.f * p.C_uF * 1e-6);
+    const Riso_k = p.fault1 ? Math.max(0.01, p.Rf_k) : 1000;
+    const alarm = !!(p.imd && Riso_k < p.imd_k);
+    const none = { I_mA: 0, t_ms: 0, zone: "AC-1" };
+    if (p.fault1 && p.fault2) {                       // second fault on the other conductor: conductor-to-conductor short through the PE
+      const If = p.U0 / p.Zloop2, trip = mcbTrip(If, p.mcb), Vcase = If * p.Rpe;
+      const b = p.touch === "case" ? body(Vcase, p, exposure(trip)) : body(p.U0, p, exposure(trip));
+      return { Riso_k, alarm, Id_mA: If * 1000, If, Ut: Vcase, cond: { key: "RaId", value: 0, limit: p.UL, ok: true }, trip, body: b, stage: 2 };
+    }
+    if (p.fault1) {                                   // first fault: only capacitive return through the healthy conductor
+      const Rf = Riso_k * 1000, Id = p.U0 / Math.hypot(Rf + p.Ra, Xc), Ut = Id * p.Ra;
+      let b = none;
+      if (p.touch === "case") b = body(Ut, p, 5000);
+      else { const Z = bodyZ(p.U0, p.skin, p.path), I = p.U0 / (Z + p.Rfoot + Rf + p.Ra) * 1000; b = { I_mA: I, t_ms: 5000, zone: zone(I, 5000), Z }; }
+      return { Riso_k, alarm, Id_mA: Id * 1000, If: Id, Ut, cond: { key: "RaId", value: p.Ra * Id, limit: p.UL, ok: p.Ra * Id <= p.UL }, trip: null, body: b, stage: 1 };
+    }
+    // healthy: touching a live conductor drives current only through the system capacitance
+    let b = none;
+    if (p.touch === "L1") { const Z = bodyZ(p.U0, p.skin, p.path), I = p.U0 / Math.hypot(Z + p.Rfoot, Xc) * 1000; b = { I_mA: I, t_ms: 5000, zone: zone(I, 5000), Z }; }
+    return { Riso_k, alarm, Id_mA: 0, If: 0, Ut: 0, cond: { key: "RaId", value: 0, limit: p.UL, ok: true }, trip: null, body: b, stage: 0 };
+  }
+
+  const Model = { U0: U0_DEFAULT, bodyZ, zone, ZONE_LEVEL, zoneCurves, curveB, curveC1, MCB_BAND, parseMcb, mcbInstant, mcbTrip, rcdTrip, tt, tn, rcdScenario, separation, classProtection, ELV_LIMITS, elv, bonding, nonConducting, it, body, electrodeTT, potentialAt, itSupply };
   if (typeof module !== "undefined" && module.exports) module.exports = Model;
   else { root.PE = root.PE || {}; root.PE.model = Model; }
 })(typeof window !== "undefined" ? window : this);

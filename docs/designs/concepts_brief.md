@@ -34,6 +34,8 @@ projects by the same author:
 
 ## The seven methods (fixed by the owner)
 
+> **Correction (2026-11-05):** The owner corrected two entries. E is "הפרד מגן", and H is "זינה צפה" (floating supply), not bonding. Bonding moves to module J as a complementary measure. See the design doc, R-12.
+
 | Code | Method (he) | Method (en) |
 |---|---|---|
 | B | הארקת הגנה | Protective earthing (TT) |

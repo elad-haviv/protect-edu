@@ -66,6 +66,18 @@
     S.classII(g, 440, 50, 70); S.text(g, 475, 160, L({ he: "מחלקה II", en: "Class II" }), "lbl-b");
     S.classIII(g, 740, 40, 80); S.text(g, 780, 160, L({ he: "מחלקה III", en: "Class III" }), "lbl-b");
   };
+  // fallback for H3: floating supply in an operating theatre (single-line)
+  F["h-or"] = (svg) => {
+    S.defs(svg); const g = svg.append("g");
+    S.transformer(g, 140, 150, { r: 30 }); S.text(g, 140, 95, L({ he: "שנאי מבדל", en: "Isolating transformer" }), "lbl");
+    S.text(g, 140, 215, L({ he: "ללא הארקה", en: "Not earthed" }), "lbl-s");
+    S.wire(g, [[182, 140], [880, 140]], "gen"); S.wire(g, [[182, 165], [880, 165]], "gen");
+    g.append("rect").attr("x", 250).attr("y", 220).attr("width", 150).attr("height", 80).attr("rx", 8).attr("class", "sym-fill");
+    S.text(g, 325, 255, L({ he: "השגחה על בידוד", en: "Insulation monitor" }), "lbl-s"); S.text(g, 325, 282, "kΩ", "sym-txt");
+    S.wire(g, [[300, 140], [300, 220]], "gen", "w-thin"); S.wire(g, [[325, 300], [325, 380], [880, 380]], "PE");
+    [540, 720].forEach((x, i) => { S.wire(g, [[x, 140], [x, 230]], "gen", "w-thin"); S.wire(g, [[x + 30, 165], [x + 30, 230]], "gen", "w-thin"); S.appliance(g, x - 20, 230, 110, 90, { label: L(i ? { he: "שולחן", en: "Table" } : { he: "ציוד רפואי", en: "Equipment" }) }); S.wire(g, [[x + 60, 320], [x + 60, 380]], "PE", "w-thin"); });
+    S.earth(g, 880, 380);
+  };
   // 3D fallbacks for D3 and H3
   F["d-rcd"] = (svg) => { F["rcd-toroid"](svg); };
   F["h-bath"] = (svg) => {

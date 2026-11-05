@@ -50,5 +50,13 @@ module.exports = {
     near(M.potentialAt(2, e.If, 100) / M.potentialAt(1, e.If, 100), 0.5, 1e-9);
     const touch = e.Ve - M.potentialAt(1, e.If, 100), step = M.potentialAt(2, e.If, 100) - M.potentialAt(2.8, e.If, 100); assert.ok(touch > step);
   },
+  "floating supply (IT): first fault alarms, no trip, low touch voltage"() {
+    const r = M.itSupply({ fault1: true });
+    assert.ok(r.Id_mA < 10 && r.Ut < 50 && r.cond.ok, JSON.stringify(r)); assert.strictEqual(r.trip, null); assert.ok(r.alarm);
+    assert.strictEqual(M.itSupply({ fault1: true, imd: false }).alarm, false);
+    assert.ok(!M.itSupply({ fault1: true, Rf_k: 200 }).alarm);
+  },
+  "floating supply: touching the other conductor after a first fault is dangerous"() { assert.ok(["AC-3", "AC-4"].includes(M.itSupply({ fault1: true, touch: "L1" }).body.zone)); assert.ok(["AC-1", "AC-2"].includes(M.itSupply({ touch: "L1" }).body.zone)); },
+  "floating supply: second fault trips the MCB"() { const r = M.itSupply({ fault1: true, fault2: true }); assert.strictEqual(r.trip.mode, "instant"); },
   "non-conducting location and IT"() { assert.ok(M.nonConducting({}).ok); assert.ok(!M.nonConducting({ Rfloor_k: 10 }).ok); assert.strictEqual(M.it({}).body.zone, "AC-2"); }
 };

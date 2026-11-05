@@ -1,8 +1,8 @@
-/* Module E – Electrical separation (isolating transformer). */
+/* Module E – Protective separation (הפרד מגן). */
 PE.content.E = {
   code: "E", icon: "⧉",
-  title: { he: "שנאי הפרדה (הפרדה חשמלית)", en: "Isolating transformer (electrical separation)" },
-  short: { he: "שנאי הפרדה", en: "Separation" },
+  title: { he: "הפרד מגן", en: "Protective separation" },
+  short: { he: "הפרד מגן", en: "Separation" },
   lessons: [
     { code: "E1", id: "e-intro", kind: "intro", title: { he: "העיקרון: לנתק את הדרך חזרה", en: "The principle: cut the way back" }, blocks: [
       { type: "callout", tone: "hook", he: "רתך עובד בתוך מיכל מתכת רטוב עם מנורה ידנית. המנורה מוזנת משנאי קטן שעומד בחוץ. הכבל של המנורה נקרע והוא נוגע בגיד חשוף – ולא קורה כלום. למה?", en: "A welder works inside a wet metal tank with a hand lamp fed from a small transformer standing outside. The lamp cable tears and he touches a bare core – and nothing happens. Why?" },
@@ -44,7 +44,7 @@ PE.content.E = {
       { type: "quiz", items: [
         { q: { he: "למה נגיעה במוליך אחד אחרי שנאי הפרדה אינה מסוכנת (בתנאים תקינים)?", en: "Why is touching one conductor after an isolating transformer not dangerous (when healthy)?" }, o: [{ he: "כי המתח נמוך", en: "Because the voltage is low" }, { he: "כי למעגל המשני אין חיבור לאדמה, ולכן הזרם לא יכול לחזור", en: "Because the secondary has no connection to earth, so current cannot return" }, { he: "כי יש פחת מובנה", en: "Because there is a built-in RCD" }], a: 1, why: { he: "המתח {{230 V}} – אבל אין מסלול סגור.", en: "The voltage is {{230 V}} – but there is no closed path." }, mis: { he: "\"שנאי הפרדה מוריד את המתח\".", en: "\"An isolating transformer lowers the voltage.\"" } },
         { q: { he: "חשמלאי מאריק את המעגל המשני \"ליתר ביטחון\". מה התוצאה?", en: "An electrician earths the secondary \"to be safe\". What is the result?" }, o: [{ he: "הבטיחות משתפרת", en: "Safety improves" }, { he: "ההגנה מתבטלת – נגיעה במוליך השני מסוכנת", en: "The protection is lost – touching the other conductor is dangerous" }], a: 1, why: { he: "זו בדיוק \"תקלה ראשונה\" שנעשתה בכוונה.", en: "That is a deliberate \"first fault\"." }, mis: { he: "\"הארקה תמיד מוסיפה בטיחות\".", en: "\"Earthing always adds safety.\"" } },
-        { q: { he: "מתי שנאי הפרדה <b>לא</b> מגן?", en: "When does an isolating transformer <b>not</b> protect?" }, o: [{ he: "כשנוגעים בשני מוליכי המעגל המשני", en: "When both secondary conductors are touched" }, { he: "כשנוגעים במוליך אחד בלבד", en: "When only one conductor is touched" }], a: 0, why: { he: "האדם סוגר את המעגל בעצמו.", en: "The person closes the circuit themselves." } },
+        { q: { he: "מתי הפרד מגן <b>לא</b> מגן?", en: "When does protective separation <b>not</b> protect?" }, o: [{ he: "כשנוגעים בשני מוליכי המעגל המשני", en: "When both secondary conductors are touched" }, { he: "כשנוגעים במוליך אחד בלבד", en: "When only one conductor is touched" }], a: 0, why: { he: "האדם סוגר את המעגל בעצמו.", en: "The person closes the circuit themselves." } },
         { q: { he: "שני מכשירים על אותו שנאי הפרדה. מה תפקיד מוליך ההשוואה ביניהם?", en: "Two appliances on one isolating transformer. What does the bonding conductor between them do?" }, o: [{ he: "מאריק אותם", en: "Earths them" }, { he: "הופך תקלה שנייה בקוטב אחר לקצר שמנותק", en: "Turns a second fault on the other pole into a short that is disconnected" }], a: 1, why: { he: "המוליך <b>לא</b> מוארק – הוא רק מחבר את הגופים.", en: "The conductor is <b>not</b> earthed – it only links the cases." } },
         { q: { he: "חזרה מ-D: אדם בין פאזה לאפס על משטח מבודד – האם פחת מנתק?", en: "Review from D: a person between line and neutral on an insulating mat – does an RCD trip?" }, from: "D2", o: [{ he: "כן", en: "Yes" }, { he: "לא", en: "No" }], a: 1, why: { he: "אין הפרש בין הזרמים.", en: "There is no difference between the currents." } }
       ] }

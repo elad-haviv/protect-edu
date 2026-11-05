@@ -34,8 +34,11 @@ const check = (cond, msg) => { if (!cond) fails.push(msg); };
   await sim("#E2?isolated=1&firstFault=0", { verdict: "safe" }, "E2 single touch safe");
   await sim("#E2?firstFault=1", { verdict: "danger" }, "E2 first fault");
   await sim("#G2?u=12&src=safety", { verdict: "safe" }, "G2 12 V dry");
-  await sim("#H2?bond=1&rsb=0.02", { verdict: "safe" }, "H2 bond");
-  await sim("#H2?bond=0", { verdict: "danger" }, "H2 no bond");
+  await sim("#H2?fault1=1", { verdict: "warn" }, "H2 first fault: alarm, no trip");
+  await sim("#H2?fault1=1&touch=L1", { verdict: "danger" }, "H2 touch L1 after first fault");
+  await sim("#H2?fault1=1&fault2=1", { verdict: "safe", trip: "yes" }, "H2 second fault trips");
+  await sim("#J4?bond=1&rsb=0.02", { verdict: "safe" }, "J4 bond");
+  await sim("#J4?bond=0", { verdict: "danger" }, "J4 no bond");
   // language switch keeps simulator state
   await page.goto(BASE + "#D2?lang=he"); await page.waitForTimeout(150);
   if (await page.$(".skip-p")) await page.click(".skip-p");
@@ -52,7 +55,7 @@ const check = (cond, msg) => { if (!cond) fails.push(msg); };
   await page.fill('.prac[data-i="0"] input', "184"); await page.click('.prac[data-i="0"] .chk');
   check((await page.textContent('.prac[data-i="0"] .prac-res')).includes("184"), "practice check");
   // 3D scenes render a canvas (swiftshader)
-  for (const c of ["B3", "D3", "H3"]) {
+  for (const c of ["B3", "D3", "H3", "J5"]) {
     await page.goto(BASE + "#" + c); await page.waitForTimeout(1800);
     check(await page.$(".s3-canvas canvas"), c + ": no 3D canvas");
     check((await page.$$(".lbl3d")).length > 0, c + ": no 3D labels");
@@ -83,10 +86,12 @@ const check = (cond, msg) => { if (!cond) fails.push(msg); };
   check(!!(await page.$('#top a[href="https://academy.haviv.pro"]')), "branding: academy link in header");
   check(!!(await page.$('#foot a[href="https://agl-edu.haviv.pro"]')), "branding: AGL link in footer");
   await page.goto(BASE + "#J1"); await page.waitForTimeout(150);
-  check((await page.$$(".card-t tbody tr")).length === 7, "comparison card rows");
+  check((await page.$$(".card-t tbody tr")).length === 8, "comparison card rows");
   // v1 stubs
   await page.goto(BASE + "modules/m3-rcd.html"); await page.waitForTimeout(400);
   check(page.url().endsWith("#D1"), "v1 stub redirect: " + page.url());
+  await page.goto(BASE + "modules/m7-equipotential.html"); await page.waitForTimeout(400);
+  check(page.url().endsWith("#J4"), "v1 stub m7 redirect: " + page.url());
   if (OUT) for (const [hash, w, h, scheme, name] of [["#B2?lang=he", 1366, 900, "light", "b2-he-desktop"], ["#C2?lang=en", 1366, 900, "dark", "c2-en-dark"], ["#D2?lang=he", 390, 844, "light", "d2-he-phone"], ["#A2?lang=he", 1366, 900, "dark", "a2-he-dark"]]) {
     const p = await browser.newPage({ viewport: { width: w, height: h }, colorScheme: scheme }); await p.goto(BASE + hash); await p.waitForTimeout(400);
     await p.screenshot({ path: `${OUT}/${name}.png`, fullPage: true }); await p.close();

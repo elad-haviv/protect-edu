@@ -1,9 +1,9 @@
-/* E2 – Electrical separation (isolating transformer). */
+/* E2 – Protective separation (הפרד מגן) with an isolating transformer. */
 (function () {
   "use strict";
   const S = PE.sym, C = PE.simc;
   PE.sims["e-sep"] = {
-    title: { he: "סימולטור שנאי הפרדה", en: "Isolating transformer simulator" },
+    title: { he: "סימולטור הפרד מגן", en: "Protective separation simulator" },
     params: [
       { key: "isolated", type: "bool", def: true, label: { he: "המכשיר מוזן דרך שנאי הפרדה", en: "Appliance fed through an isolating transformer" } },
       { key: "touch", type: "enum", def: "one", label: { he: "האדם נוגע ב-", en: "The person touches" }, values: [{ v: "one", label: { he: "מוליך אחד", en: "One conductor" } }, { v: "two", label: { he: "שני המוליכים", en: "Both conductors" } }], show: s => !s.dual },

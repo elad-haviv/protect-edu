@@ -91,10 +91,10 @@ v1 has four problems:
 | B | הארקת הגנה | Protective earthing |
 | C | איפוס (TN) | Protective neutralization (TN system) |
 | D | מפסק מגן לזרם דלף (פחת) | Residual current device (RCD) |
-| E | שנאי הפרדה (הפרדה חשמלית) | Electrical separation (isolating transformer) |
+| E | הפרד מגן | Protective separation |
 | F | בידוד מגן / בידוד כפול | Double / reinforced insulation (class II) |
 | G | מתח נמוך מאוד (SELV / PELV) | Extra-low voltage (SELV / PELV) |
-| H | השוואת פוטנציאלים ומקום מבודד | Equipotential bonding and non-conducting location |
+| H | זינה צפה | Floating supply (IT) |
 
 Other fixed terms:
 - מוליך הגנה (PE)
@@ -1111,3 +1111,37 @@ Doc corrections; the code is authoritative for each of these:
 - **Tests.** `test/run.js` runs the fixed list `model.test.js` and `content.test.js`.
 - **Covered elsewhere, not by `test/e2e.js`.** The `file://` smoke test is run separately (A1, B2, B3 pass). Phone screenshots use 390 × 844, not 360 × 780. Deletion of the v1 key is covered by code review only.
 - **Phone layout.** Simulator diagrams keep a minimum width of 640 px and scroll sideways inside their frame, so symbols stay legible. The controls stack below the diagram.
+
+### R-12. Method list corrected by the owner (2026-11-05)
+
+The owner corrected two of the seven methods to match the regulation's terms:
+
+- **E: "הפרד מגן"** (protective separation). This is the only name used in titles. "שנאי הפרדה" now means only the transformer device.
+- **H: "זינה צפה"** (floating supply, IT): an unearthed source, earthed exposed parts and insulation monitoring.
+  - The previous H, equipotential bonding and non-conducting location, is **not** one of the regulation's seven methods.
+  - It moves to module J as a *complementary measure*: J4 holds the text and the `h-bond` simulator; J5 holds the 3D bathroom `h-bath`.
+
+Corrected list: B הארקת הגנה · C איפוס · D מפסק מגן (פחת) · E הפרד מגן · F בידוד מגן/כפול · G מתח נמוך מאוד · H זינה צפה.
+
+New and changed codes:
+- **H1** intro (hook, principle, Ra·Id ≤ 50 V, comparison with E, quick check).
+- **H2** sim `h-it`.
+- **H3** scene `h-or` (operating theatre; fallback figure `h-or`).
+- **H4** practice (first-fault current through system capacitance, Ra limit).
+- **H5** check.
+- **J4** complementary measures (sim).
+- **J5** 3D bathroom.
+
+Model: `itSupply({U0, C_uF, Ra, Rf_k, fault1, fault2, imd, imd_k, mcb, Zloop2, Rpe, touch})` returns `{Riso_k, alarm, Id_mA, If, Ut, cond: Ra·Id ≤ UL, trip, body, stage}`.
+- With a first fault, current returns only through the system capacitance. There is no trip, and the IMD alarms when `Riso < imd_k`.
+- Touching the healthy conductor after a first fault is dangerous.
+- A second fault on the other conductor is a short through the PE, and the MCB trips.
+
+Other updates:
+- A4 now points to H rather than describing IT as background only.
+- Location exercise set 3: the supervised lab is replaced by an operating theatre (needs H).
+- The bathroom needs C and D, with bonding as a complementary measure.
+- The final-check pool has 5 H items on floating supply; the bonding items are re-tagged J4.
+- The glossary adds floating supply, IMD, and first/second fault.
+- The comparison card gains a "complementary" note row.
+- The v1 stub `m7-equipotential.html` now redirects to `#J4`.

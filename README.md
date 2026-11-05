@@ -12,16 +12,16 @@ Live: https://protect-edu.haviv.pro
 | B | הארקת הגנה – Protective earthing (TT) | TT fault simulator with earthing, RCD and MCB; potential funnel; Ra·IΔn practice |
 | C | איפוס – Neutralization (TN) | Fault-loop simulator, broken PEN, Zs·Ia practice |
 | D | פחת – RCD | What an RCD sees and what it misses (L–N touch, overload), trip staircase |
-| E | שנאי הפרדה – Isolating transformer | Single touch, first fault, cable capacitance, two appliances with and without bonding |
+| E | הפרד מגן – Protective separation | Single touch, first fault, cable capacitance, two appliances with and without bonding |
 | F | בידוד כפול – Class II | Insulation layers for class 0, I and II |
 | G | מתח נמוך מאוד – SELV/PELV | Voltage, location and source; the risk of a non-isolated adapter |
-| H | השוואת פוטנציאלים / מקום מבודד | Supplementary bonding in a bathroom; non-conducting location |
-| J | Compare and choose | A comparison card of all seven methods, the third location exercise, layered protection |
+| H | זינה צפה – Floating supply (IT) | First fault (alarm only), second fault (disconnection), insulation monitoring; 3D operating theatre |
+| J | Compare and choose | A comparison card of all seven methods, the third location exercise, layered protection, and complementary measures (equipotential bonding and non-conducting location, with a 3D bathroom) |
 | K | Final check | Basic and advanced bands drawn at random from a pool of 41 items; pass mark 80%; printable completion record (not a licence) |
 | L | Glossary | Searchable terms in Hebrew and English, with abbreviations, linked to lessons |
 | M | References | The law, the regulations (with links) and the IEC standards |
 
-Three modules include rotatable **3D scenes** built with three.js: the potential funnel (B3), inside an RCD (D3) and a bathroom (H3). Each scene has an HTML parts list, keyboard controls and a 2D fallback.
+Three modules include rotatable **3D scenes** built with three.js: the potential funnel (B3), inside an RCD (D3), an operating theatre on a floating supply (H3) and a bathroom with bonding (J5). Each scene has an HTML parts list, keyboard controls and a 2D fallback.
 
 **Presenter mode** is turned on with the ▣ button or `?present=1`. It shows the content full width with the light theme. The prediction stays locked until the teacher presses Space or "Reveal", and Esc leaves the mode.
 

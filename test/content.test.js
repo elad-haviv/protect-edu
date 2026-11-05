@@ -5,7 +5,7 @@ const PE = ctx.PE;
 const plain = x => JSON.parse(JSON.stringify(x));
 const LABELS = ["principle", "practice", "illustrative", "regulation"];
 const KINDS = ["intro", "sim", "scene", "practice", "check", "location", "card", "ref"];
-const CODES = { A: ["A1", "A2", "A3", "A4", "A5"], B: ["B1", "B2", "B3", "B4", "B5"], C: ["C1", "C2", "C3", "C4"], D: ["D1", "D2", "D3", "D4", "D5", "D6"], E: ["E1", "E2", "E3", "E4"], F: ["F1", "F2", "F3"], G: ["G1", "G2", "G3", "G4", "G5"], H: ["H1", "H2", "H3", "H4", "H5"], J: ["J1", "J2", "J3"], K: ["K1"], L: ["L1"], M: ["M1"] };
+const CODES = { A: ["A1", "A2", "A3", "A4", "A5"], B: ["B1", "B2", "B3", "B4", "B5"], C: ["C1", "C2", "C3", "C4"], D: ["D1", "D2", "D3", "D4", "D5", "D6"], E: ["E1", "E2", "E3", "E4"], F: ["F1", "F2", "F3"], G: ["G1", "G2", "G3", "G4", "G5"], H: ["H1", "H2", "H3", "H4", "H5"], J: ["J1", "J2", "J3", "J4", "J5"], K: ["K1"], L: ["L1"], M: ["M1"] };
 const strip = s => String(s).replace(/<[^>]+>/g, "").replace(/\{\{|\}\}/g, "").replace(/\b3D\b/g, "");
 const digits = s => (strip(s).match(/\d+(?:[.,]\d+)*/g) || []).map(x => x.replace(/,/g, "")).sort().join(" ");
 // Walk every {he, en} pair in the content
