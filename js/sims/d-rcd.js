@@ -13,7 +13,7 @@
     title: { he: "סימולטור מפסק פחת ארבע-קוטבי", en: "Four-pole RCD simulator" },
     params: [
       { key: "scn", type: "enum", def: "LE", label: { he: "תרחיש", en: "Scenario" }, values: SCN },
-      { key: "idn", type: "enum", def: 30, label: { he: "רגישות IΔn", en: "Sensitivity IΔn" }, values: [10, 30, 100, 300].map(v => ({ v, label: v + " mA" })) },
+      { key: "idn", type: "enum", def: 30, label: { he: "רגישות $I_{\\Delta n}$", en: "Sensitivity $I_{\\Delta n}$" }, values: [10, 30, 100, 300].map(v => ({ v, label: v + " mA" })) },
       { key: "leak", type: "range", min: 0, max: 400, step: 1, def: 20, unit: "mA", label: { he: "זרם הדליפה", en: "Leakage current" }, show: s => s.scn === "leak" },
       C.SKIN
     ],

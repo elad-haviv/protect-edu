@@ -11,7 +11,7 @@
       Object.assign(LOAD("i1"), { def: 10, label: { he: "עומס על L1 (מכשיר 1)", en: "Load on L1 (appliance 1)" } }),
       Object.assign(LOAD("i2"), { def: 2, label: { he: "עומס על L2 (מכשיר 2)", en: "Load on L2 (appliance 2)" } }),
       Object.assign(LOAD("i3"), { def: 2, label: { he: "עומס על L3 (מכשיר 3)", en: "Load on L3 (appliance 3)" } }),
-      { key: "earth", type: "bool", def: true, label: { he: "הארקת יסוד במבנה (Ra = 10 Ω)", en: "Foundation earth at the building (Ra = 10 Ω)" }, show: s => s.pen === "broken" },
+      { key: "earth", type: "bool", def: true, label: { he: "הארקת יסוד במבנה ($R_a = 10\\,\\Omega$)", en: "Foundation earth at the building ($R_a = 10\\,\\Omega$)" }, show: s => s.pen === "broken" },
       { key: "len", type: "range", min: 5, max: 300, step: 5, def: 30, unit: "m", label: { he: "אורך הכבל", en: "Cable length" }, show: s => s.pen === "ok" },
       { key: "area", type: "enum", def: 2.5, label: { he: "חתך מוליך (פאזה = PE), ממ\"ר", en: "Conductor size (line = PE), mm²" }, values: [1.5, 2.5, 4, 6, 10].map(v => ({ v, label: String(v) })), show: s => s.pen === "ok" },
       Object.assign(C.MCB("C16", ["B16", "C16", "C32", "D16"]), { show: s => s.pen === "ok" }),

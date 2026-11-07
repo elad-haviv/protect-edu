@@ -27,17 +27,17 @@ PE.content.E = {
     { code: "4.3", id: "e-practice", kind: "practice", title: { he: "בפועל ובתקנות", en: "In practice and in the regulations" }, blocks: [
       { type: "list", items: [
         { label: "regulation", source: "IEC 60364-4-41 §413", he: "המעגל המשני: מתח עד {{500 V}}; אסור לחבר חלק חי שלו לאדמה או למעגל אחר; גופי המכשירים אינם מחוברים לאדמה או ל-PE.", en: "Secondary circuit: up to {{500 V}}; no live part connected to earth or to another circuit; appliance cases not connected to earth or to a PE." },
-        { label: "regulation", source: "IEC 60364-4-41 §413", he: "מגבלה מקובלת: {{U × L ≤ 100,000 V·m}} ואורך כבל עד {{500 m}}. יש לאמת מול התקנות.", en: "Usual limit: {{U × L ≤ 100,000 V·m}} and cable length up to {{500 m}}. Verify against the regulations." },
+        { label: "regulation", source: "IEC 60364-4-41 §413", he: "מגבלה מקובלת: $U \\times L \\le 100{,}000\\,\\mathrm{V\\cdot m}$ ואורך כבל עד {{500 m}}. יש לאמת מול התקנות.", en: "Usual limit: $U \\times L \\le 100{,}000\\,\\mathrm{V\\cdot m}$ and cable length up to {{500 m}}. Verify against the regulations." },
         { label: "regulation", source: "IEC 60364-4-41 Annex C", he: "כשמזינים יותר ממכשיר אחד: מחברים את הגופים זה לזה במוליך השוואה <b>לא מוארק</b>, כדי שתקלה שנייה תהפוך לקצר ותנותק.", en: "When more than one appliance is fed: the cases are connected together by an <b>unearthed</b> bonding conductor, so a second fault becomes a short circuit and is disconnected." },
         { label: "regulation", source: "IL-1991 · מקור משני", he: "בתקנות השיטה נקראת \"הפרד מגן\". במיתקן המוגן בהפרד מגן לא תותקן הארקת שיטה או הארקת הגנה.", en: "The regulations call this method \"protective separation\". An installation protected by it must have no system earthing or protective earthing." },
         { label: "practice", he: "שימושים: עבודה במקומות מוליכים מוגבלים (מיכלים, דודים), שקעי מכונות גילוח, כלי עבודה באתרים רטובים.", en: "Uses: work in confined conductive locations (tanks, boilers), shaver sockets, tools on wet sites." },
         { label: "practice", he: "השנאי עצמו חייב להיות שנאי הפרדה תקני (IEC 61558-2-4) – לא כל שנאי {{1:1}} מתאים.", en: "The transformer must be a standard isolating transformer (IEC 61558-2-4) – not every {{1:1}} transformer qualifies." }] },
       { type: "h", he: "תרגול", en: "Practice" },
       { type: "practice", items: [
-        { given: { he: "מעגל משני {{230 V}}", en: "{{230 V}} secondary" }, ask: { he: "מהו אורך הכבל המרבי לפי {{U·L ≤ 100,000}} (m)?", en: "What is the maximum cable length by {{U·L ≤ 100,000}} (m)?" }, answer: 434.8, tol: 0.01, unit: "m",
-          steps: [{ he: "{{L ≤ 100000 / 230}}", en: "{{L ≤ 100000 / 230}}" }, { he: "{{≈ 435 m}} (וגם לא יותר מ-{{500 m}})", en: "{{≈ 435 m}} (and no more than {{500 m}})" }] },
-        { given: { he: "כבל {{100 m}}, קיבול {{100 pF/m}}, {{50 Hz}}", en: "{{100 m}} cable, {{100 pF/m}}, {{50 Hz}}" }, ask: { he: "מהי ההיגב הקיבולי של הכבל לאדמה (MΩ)?", en: "What is the cable's capacitive reactance to earth (MΩ)?" }, answer: 0.318, tol: 0.03, unit: "MΩ",
-          steps: [{ he: "{{C = 100 × 100 pF = 10 nF}}", en: "{{C = 100 × 100 pF = 10 nF}}" }, { he: "{{Xc = 1 / (2π·50·10⁻⁸) ≈ 318 kΩ = 0.318 MΩ}}", en: "{{Xc = 1 / (2π·50·10⁻⁸) ≈ 318 kΩ = 0.318 MΩ}}" }] }
+        { given: { he: "מעגל משני {{230 V}}", en: "{{230 V}} secondary" }, ask: { he: "מהו אורך הכבל המרבי לפי $U \\cdot L \\le 100{,}000$ (m)?", en: "What is the maximum cable length by $U \\cdot L \\le 100{,}000$ (m)?" }, answer: 434.8, tol: 0.01, unit: "m",
+          steps: [{ he: "$L \\le 100000 / 230$", en: "$L \\le 100000 / 230$" }, { he: "$\\approx 435\\,\\mathrm{m}$ (וגם לא יותר מ-{{500 m}})", en: "$\\approx 435\\,\\mathrm{m}$ (and no more than {{500 m}})" }] },
+        { given: { he: "כבל {{100 m}}, קיבול $100\\,\\mathrm{pF/m}$, {{50 Hz}}", en: "{{100 m}} cable, $100\\,\\mathrm{pF/m}$, {{50 Hz}}" }, ask: { he: "מהי ההיגב הקיבולי של הכבל לאדמה (MΩ)?", en: "What is the cable's capacitive reactance to earth (MΩ)?" }, answer: 0.318, tol: 0.03, unit: "MΩ",
+          steps: [{ he: "$C = 100 \\times 100\\,\\mathrm{pF} = 10\\,\\mathrm{nF}$", en: "$C = 100 \\times 100\\,\\mathrm{pF} = 10\\,\\mathrm{nF}$" }, { he: "$X_C = 1 / (2\\pi \\cdot 50 \\cdot 10⁻⁸) \\approx 318\\,\\mathrm{k\\Omega} = 0.318\\,\\mathrm{M\\Omega}$", en: "$X_C = 1 / (2\\pi \\cdot 50 \\cdot 10⁻⁸) \\approx 318\\,\\mathrm{k\\Omega} = 0.318\\,\\mathrm{M\\Omega}$" }] }
       ] }
     ] },
     { code: "4.4", id: "e-check", kind: "check", title: { he: "בדקו את עצמכם", en: "Check yourself" }, blocks: [

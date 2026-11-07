@@ -5,21 +5,20 @@
   const L = o => PE.L(o);
 
   F["tt-principle"] = (svg) => {
-    S.defs(svg); const g = svg.append("g"); const yL = 90, yN = 140, floor = 290;
-    S.ground(g, 0, 960, floor, { h: 90 });
-    C.supply(g, 70, yL, yN, { earthY: 200 });
-    S.wire(g, [[122, 278], [122, floor]], "gen", "w-thin");
-    S.wire(g, [[140, yL], [560, yL]], "L"); S.wire(g, [[140, yN], [560, yN]], "N");
-    S.wireTag(g, 330, yL - 22, "L"); S.wireTag(g, 330, yN + 22, "N");
-    S.appliance(g, 560, 60, 160, 170, { warm: true, label: L({ he: "גוף מתכת (מחלקה I)", en: "Metal case (class I)" }) });
-    C.bolt(g, 575, yL + 4, .8);
-    S.wire(g, [[620, 230], [620, 250]], "PE");
-    S.resistor(g, 620, 250, { vertical: true, len: 34, label: "Ra" });
-    S.wire(g, [[620, 284], [620, floor]], "gen", "w-thin");
-    g.append("path").attr("d", `M615 ${floor} v60 l5 10 l5 -10 v-60`).attr("fill", "#7d858c");
-    S.flow(g, [[140, yL], [575, yL], [575, 220], [620, 220], [620, floor + 45], [122, floor + 45], [122, 278]], 19);
-    S.badge(g, 640, 36, "U = If · Ra", "warn");
-    S.text(g, 380, floor + 75, L({ he: "זרם התקלה חוזר דרך האדמה", en: "Fault current returns through the soil" }), "lbl");
+    S.defs(svg); const g = svg.append("g"); const floor = 300, Lk = ["L1", "L2", "L3"];
+    S.ground(g, 0, 960, floor, { h: 80 });
+    const sup = C.supply3(g, { sys: "TT", earthY: 190, x1: 640, ys: { L1: 40, L2: 60, L3: 80, N: 100 } }), ys = sup.ys, sx = sup.star[0];
+    S.wire(g, [[sx, 268], [sx, floor]], "gen", "w-thin");
+    Lk.forEach((k, i) => { S.dot(g, 600 + i * 20, ys[k]); S.wire(g, [[600 + i * 20, ys[k]], [600 + i * 20, 130]], k, "w-thin"); });
+    S.appliance(g, 560, 130, 170, 120, { warm: true, label: L({ he: "גוף מתכת (מחלקה I)", en: "Metal case (class I)" }) });
+    S.motor3(g, 620, 180, 24);
+    C.bolt(g, 700, 150, .8);
+    S.wire(g, [[690, 250], [690, 262]], "PE"); S.resistor(g, 690, 262, { vertical: true, len: 30 }); S.math(g, 712, 278, "R_a", { anchor: "start", w: 40 });
+    S.wire(g, [[690, 292], [690, floor]], "gen", "w-thin");
+    g.append("path").attr("d", `M685 ${floor} v50 l5 10 l5 -10 v-50`).attr("fill", "#7d858c");
+    S.flow(g, [[sx + 20, ys.L1], [600, ys.L1], [600, 150], [690, 150], [690, floor + 40], [sx, floor + 40], [sx, 268]], 19);
+    S.math(g, 840, 150, "U_t = I_f \\cdot R_a", { box: true, tone: "warn", w: 200, h: 36 });
+    S.text(g, 400, floor + 70, L({ he: "זרם התקלה חוזר דרך האדמה", en: "Fault current returns through the soil" }), "lbl");
   };
 
   // Fallback for 3D scene B3: potential profile across the soil surface
@@ -47,18 +46,15 @@
   };
 
   F["rcd-toroid"] = (svg) => {
-    S.defs(svg); const g = svg.append("g");
-    S.wire(g, [[40, 120], [920, 120]], "L"); S.wire(g, [[40, 200], [920, 200]], "N");
-    S.wireTag(g, 70, 98, "L"); S.wireTag(g, 70, 222, "N");
-    g.append("ellipse").attr("cx", 420).attr("cy", 160).attr("rx", 34).attr("ry", 100).attr("fill", "none").attr("stroke", "#7d858c").attr("stroke-width", 18);
-    S.text(g, 420, 290, L({ he: "ליבה טורואידית", en: "Toroidal core" }), "lbl");
-    for (let i = 0; i < 6; i++) g.append("path").attr("class", "sym").attr("d", `M${396 + i * 8} 255 q4 12 8 0`);
-    S.wire(g, [[440, 262], [440, 300], [600, 300]], "gen", "w-thin");
-    g.append("rect").attr("x", 600).attr("y", 282).attr("width", 70).attr("height", 36).attr("rx", 6).attr("class", "sym-fill");
-    S.text(g, 635, 306, L({ he: "ממסר", en: "Relay" }), "lbl-s");
-    S.flow(g, [[60, 120], [900, 120]], 10); S.flow(g, [[900, 200], [60, 200]], 10);
-    S.badge(g, 240, 80, "I(L) →", "info"); S.badge(g, 240, 245, "← I(N)", "info");
-    S.badge(g, 760, 160, "ΣI = I(L) − I(N)", "warn");
+    S.defs(svg); const g = svg.append("g"); const ys = [70, 110, 150, 190], kinds = ["L1", "L2", "L3", "N"];
+    ys.forEach((y, i) => { S.wire(g, [[40, y], [920, y]], kinds[i]); S.wireTag(g, 70, y, kinds[i]); });
+    g.append("ellipse").attr("cx", 420).attr("cy", 130).attr("rx", 34).attr("ry", 100).attr("fill", "none").attr("stroke", "#7d858c").attr("stroke-width", 18);
+    S.text(g, 420, 262, L({ he: "ליבה טורואידית", en: "Toroidal core" }), "lbl");
+    for (let i = 0; i < 6; i++) g.append("path").attr("class", "sym").attr("d", `M${396 + i * 8} 228 q4 12 8 0`);
+    S.wire(g, [[440, 236], [440, 290], [600, 290]], "gen", "w-thin");
+    g.append("rect").attr("x", 600).attr("y", 272).attr("width", 70).attr("height", 36).attr("rx", 6).attr("class", "sym-fill");
+    S.text(g, 635, 296, L({ he: "ממסר", en: "Relay" }), "lbl-s");
+    S.math(g, 760, 290, "I_\\Delta = \\left|\\sum I\\right|", { box: true, tone: "warn", w: 200, h: 38 });
   };
   F["class-marks"] = (svg) => {
     S.defs(svg); const g = svg.append("g");
@@ -71,7 +67,8 @@
     S.defs(svg); const g = svg.append("g");
     S.transformer(g, 140, 150, { r: 30 }); S.text(g, 140, 95, L({ he: "שנאי מבדל", en: "Isolating transformer" }), "lbl");
     S.text(g, 140, 215, L({ he: "ללא הארקה", en: "Not earthed" }), "lbl-s");
-    S.wire(g, [[182, 140], [880, 140]], "gen"); S.wire(g, [[182, 165], [880, 165]], "gen");
+    S.wire(g, [[182, 130], [880, 130]], "gen"); S.wire(g, [[182, 150], [880, 150]], "gen"); S.wire(g, [[182, 170], [880, 170]], "gen");
+    S.text(g, 60, 150, "3~", "lbl-s");
     g.append("rect").attr("x", 250).attr("y", 220).attr("width", 150).attr("height", 80).attr("rx", 8).attr("class", "sym-fill");
     S.text(g, 325, 255, L({ he: "השגחה על בידוד", en: "Insulation monitor" }), "lbl-s"); S.text(g, 325, 282, "kΩ", "sym-txt");
     S.wire(g, [[300, 140], [300, 220]], "gen", "w-thin"); S.wire(g, [[325, 300], [325, 380], [880, 380]], "PE");

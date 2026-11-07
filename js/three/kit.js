@@ -27,7 +27,7 @@
 
   function controlsHtml(params, s, key) {
     return params.filter(p => !p.show || p.show(s)).map(p => {
-      const lab = esc(PE.L(p.label));
+      const lab = PE.rich(esc(PE.L(p.label)));
       if (p.type === "bool") return `<div class="ctl"><button type="button" class="tog" data-k="${p.key}" aria-pressed="${!!s[p.key]}"><span>${lab}</span></button></div>`;
       if (p.type === "range") return `<div class="ctl"><label class="ctl-label" for="${key}-${p.key}"><span>${lab}</span><output dir="ltr">${PE.fmt(s[p.key])}${p.unit ? " " + esc(p.unit) : ""}</output></label><input id="${key}-${p.key}" type="range" data-k="${p.key}" min="${p.min}" max="${p.max}" step="${p.step || 1}" value="${s[p.key]}" dir="ltr"></div>`;
       return `<div class="ctl"><span class="ctl-label">${lab}</span><div class="seg" role="radiogroup">${p.values.map(v => `<button type="button" role="radio" data-k="${p.key}" data-v="${esc(v.v)}" aria-checked="${s[p.key] === v.v}"><bdi>${esc(PE.L(v.label))}</bdi></button>`).join("")}</div></div>`;

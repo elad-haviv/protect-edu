@@ -34,9 +34,9 @@ PE.content.G = {
         { label: "principle", he: "מתח נמוך מאוד הוא <b>גם</b> הגנה בסיסית וגם הגנה בעת תקלה – לכן הוא נחשב שיטה שלמה בפני עצמה.", en: "Extra-low voltage provides <b>both</b> basic and fault protection – so it counts as a complete method by itself." }] },
       { type: "practice", items: [
         { given: { he: "{{24 V}}, עכבת גוף יבש בכ-{{24 V}}: {{3300 Ω}}", en: "{{24 V}}, dry body impedance at about {{24 V}}: {{3300 Ω}}" }, ask: { he: "מהו הזרם בגוף (mA)?", en: "What is the body current (mA)?" }, answer: 7.27, tol: 0.03, unit: "mA",
-          steps: [{ he: "{{I = U / Z}}", en: "{{I = U / Z}}" }, { he: "{{24 / 3300 ≈ 0.0073 A ≈ 7.3 mA}} – אזור AC-2", en: "{{24 / 3300 ≈ 0.0073 A ≈ 7.3 mA}} – zone AC-2" }] },
+          steps: [{ he: "$I = U / Z$", en: "$I = U / Z$" }, { he: "$24 / 3300 \\approx 0.0073\\,\\mathrm{A} \\approx 7.3\\,\\mathrm{mA}$ – אזור AC-2", en: "$24 / 3300 \\approx 0.0073\\,\\mathrm{A} \\approx 7.3\\,\\mathrm{mA}$ – zone AC-2" }] },
         { given: { he: "{{230 V}}, עכבת גוף רטוב ב-{{230 V}}: {{1100 Ω}}", en: "{{230 V}}, wet body impedance at {{230 V}}: {{1100 Ω}}" }, ask: { he: "מהו הזרם בגוף (mA)?", en: "What is the body current (mA)?" }, answer: 209, tol: 0.03, unit: "mA",
-          steps: [{ he: "{{I = 230 / 1100}}", en: "{{I = 230 / 1100}}" }, { he: "{{≈ 209 mA}} – פי כמעט 30", en: "{{≈ 209 mA}} – almost 30 times more" }] }
+          steps: [{ he: "$I = 230 / 1100$", en: "$I = 230 / 1100$" }, { he: "$\\approx 209\\,\\mathrm{mA}$ – פי כמעט 30", en: "$\\approx 209\\,\\mathrm{mA}$ – almost 30 times more" }] }
       ] }
     ] },
     { code: "6.4", id: "g-check", kind: "check", title: { he: "בדקו את עצמכם", en: "Check yourself" }, blocks: [

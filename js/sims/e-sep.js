@@ -69,7 +69,7 @@
       else if (s.firstFault) verdict = { tone: "danger", zone, text: { he: "אחרי תקלה ראשונה לאדמה, המעגל המשני כבר \"מוארק\" – ונגיעה במוליך השני מסוכנת כמו ברשת רגילה. לכן אסור להאריק את המעגל המשני.", en: "After a first fault to earth, the secondary is effectively earthed – touching the other conductor is as dangerous as on the mains. This is why the secondary must not be earthed." }, sub };
       else if (r.body.I_mA > 10) verdict = { tone: "danger", zone, text: { he: "הכבל ארוך מדי: הקיבול לאדמה סוגר מעגל.", en: "The cable is too long: its capacitance to earth closes the circuit." }, sub };
       else verdict = { tone: r.warnings.length ? "warn" : "safe", zone, text: { he: `אין מסלול חזרה מלבד בידוד וקיבול הכבל – רק {{${PE.fmt(r.body.I_mA)} mA}}.`, en: `No return path except the cable's insulation and capacitance – only {{${PE.fmt(r.body.I_mA)} mA}}.` },
-        sub: r.warnings.length ? { he: "חריגה מהמגבלה המקובלת: {{U·L ≤ 100,000 V·m}} ו-{{L ≤ 500 m}} (IEC 60364-4-41 – לאמת).", en: "Exceeds the usual limit: {{U·L ≤ 100,000 V·m}} and {{L ≤ 500 m}} (IEC 60364-4-41 – verify)." } : null };
+        sub: r.warnings.length ? { he: "חריגה מהמגבלה המקובלת: $U \\cdot L \\le 100{,}000\\,\\mathrm{V\\cdot m}$ ו-$L \\le 500\\,\\mathrm{m}$ (IEC 60364-4-41 – לאמת).", en: "Exceeds the usual limit: $U \\cdot L \\le 100{,}000\\,\\mathrm{V\\cdot m}$ and $L \\le 500\\,\\mathrm{m}$ (IEC 60364-4-41 – verify)." } : null };
       return { meters, verdict };
     }
   };

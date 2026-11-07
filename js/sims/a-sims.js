@@ -142,9 +142,9 @@
       S.flow(g, [[110, 224], [110, 120], [800, 120], [800, 380], [110, 380], [110, 276]], r.If);
       S.math(g, 450, 470, `Z_s = ${PE.fmt(r.Zs)}\\,\\Omega \\;\\rightarrow\\; I_f = ${PE.fmt(r.If)}\\,\\mathrm{A} \\qquad I_a = ${PE.fmt(M.mcbInstant(s.mcb))}\\,\\mathrm{A}`, { w: 600, h: 40 });
       const inst = r.trip && r.trip.mode === "instant";
-      return { meters: [{ label: { he: "Zs", en: "Zs" }, value: r.Zs, unit: "Ω" }, { label: { he: "זרם תקלה", en: "Fault current" }, value: r.If, unit: "A" }, { label: { he: "Zs·Ia", en: "Zs·Ia" }, value: r.cond.value, unit: "V", tone: r.cond.ok ? "ok" : "bad" }],
-        verdict: inst ? { tone: "safe", trip: true, text: { he: `{{Zs·Ia = ${PE.fmt(r.cond.value)} V ≤ 230 V}}: ניתוק מיידי, בתוך {{0.4 s}}.`, en: `{{Zs·Ia = ${PE.fmt(r.cond.value)} V ≤ 230 V}}: instant trip, within {{0.4 s}}.` } }
-          : { tone: "danger", trip: false, text: { he: `{{Zs·Ia = ${PE.fmt(r.cond.value)} V > 230 V}}: אין ניתוק מיידי. אורך מרבי לחתך ולמפסק זה: כ-{{${PE.fmt(Math.max(0, (230 / M.mcbInstant(s.mcb) - 0.3) / (0.0225 * 2 / s.area)))} m}}.`, en: `{{Zs·Ia = ${PE.fmt(r.cond.value)} V > 230 V}}: no instant trip. Maximum length for this size and breaker: about {{${PE.fmt(Math.max(0, (230 / M.mcbInstant(s.mcb) - 0.3) / (0.0225 * 2 / s.area)))} m}}.` } } };
+      return { meters: [{ label: "$Z_s$", value: r.Zs, unit: "Ω" }, { label: { he: "זרם תקלה", en: "Fault current" }, value: r.If, unit: "A" }, { label: "$Z_s I_a$", value: r.cond.value, unit: "V", tone: r.cond.ok ? "ok" : "bad" }],
+        verdict: inst ? { tone: "safe", trip: true, text: { he: `$Z_s I_a = ${PE.fmt(r.cond.value)}\\,\\mathrm{V} \\le 230\\,\\mathrm{V}$: ניתוק מיידי, בתוך {{0.4 s}}.`, en: `$Z_s I_a = ${PE.fmt(r.cond.value)}\\,\\mathrm{V} \\le 230\\,\\mathrm{V}$: instant trip, within {{0.4 s}}.` } }
+          : { tone: "danger", trip: false, text: { he: `$Z_s I_a = ${PE.fmt(r.cond.value)}\\,\\mathrm{V} > 230\\,\\mathrm{V}$: אין ניתוק מיידי. אורך מרבי לחתך ולמפסק זה: כ-{{${PE.fmt(Math.max(0, (230 / M.mcbInstant(s.mcb) - 0.3) / (0.0225 * 2 / s.area)))} m}}.`, en: `$Z_s I_a = ${PE.fmt(r.cond.value)}\\,\\mathrm{V} > 230\\,\\mathrm{V}$: no instant trip. Maximum length for this size and breaker: about {{${PE.fmt(Math.max(0, (230 / M.mcbInstant(s.mcb) - 0.3) / (0.0225 * 2 / s.area)))} m}}.` } } };
     }
   };
 })();

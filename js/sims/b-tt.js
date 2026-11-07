@@ -7,7 +7,7 @@
     params: [
       { key: "fault", type: "bool", def: true, label: { he: "תקלה: הפאזה נוגעת בגוף המכשיר", en: "Fault: line touches the metal case" } },
       { key: "earthed", type: "bool", def: true, label: { he: "הגוף מחובר להארקה (PE)", en: "Case connected to earth (PE)" } },
-      { key: "ra", type: "range", min: 1, max: 200, step: 1, def: 10, unit: "Ω", label: { he: "התנגדות אלקטרודת ההארקה Ra", en: "Earth electrode resistance Ra" }, show: s => s.earthed },
+      { key: "ra", type: "range", min: 1, max: 200, step: 1, def: 10, unit: "Ω", label: { he: "התנגדות אלקטרודת ההארקה $R_a$", en: "Earth electrode resistance $R_a$" }, show: s => s.earthed },
       C.RCD(0), C.MCB("C16", ["B16", "C16", "C32"]), C.SKIN,
       { key: "person", type: "bool", def: true, label: { he: "אדם נוגע בגוף המכשיר", en: "A person touches the case" } }
     ],
@@ -72,7 +72,7 @@
         text: s.earthed ? { he: `הגוף נשאר ב-{{${PE.fmt(r.Vcase)} V}} ו${r.trip ? "המאמ\"ת ינתק רק לאחר זמן רב" : "אין ניתוק"}. הארקה לבדה לא הספיקה.`, en: `The case stays at {{${PE.fmt(r.Vcase)} V}} and ${r.trip ? "the MCB only trips after a long time" : "nothing disconnects"}. Earthing alone was not enough.` }
           : { he: "הגוף במתח הפאזה ואין דרך לזרם התקלה – רק דרך גוף האדם.", en: "The case is at line voltage and the only path for fault current is through the person." },
         sub: s.person ? C.bodyLine(r.body) : null };
-      const note = s.rcd ? { he: `תנאי: {{Ra·IΔn = ${PE.fmt(s.earthed ? s.ra * s.rcd / 1000 : Infinity)} V ≤ 50 V}} ${r.cond.ok ? "✓" : "✗"}`, en: `Condition: {{Ra·IΔn = ${PE.fmt(s.earthed ? s.ra * s.rcd / 1000 : Infinity)} V ≤ 50 V}} ${r.cond.ok ? "✓" : "✗"}` }
+      const note = s.rcd ? { he: `תנאי: $R_a I_{\\Delta n} = ${PE.fmt(s.earthed ? s.ra * s.rcd / 1000 : Infinity)}\\,\\mathrm{V} \\le 50\\,\\mathrm{V}$ ${r.cond.ok ? "✓" : "✗"}`, en: `Condition: $R_a I_{\\Delta n} = ${PE.fmt(s.earthed ? s.ra * s.rcd / 1000 : Infinity)}\\,\\mathrm{V} \\le 50\\,\\mathrm{V}$ ${r.cond.ok ? "✓" : "✗"}` }
         : { he: `ללא פחת המאמ"ת צריך {{${PE.fmt(M.mcbInstant(s.mcb))} A}} לניתוק מיידי; זרם התקלה {{${PE.fmt(r.If)} A}}.`, en: `Without an RCD the MCB needs {{${PE.fmt(M.mcbInstant(s.mcb))} A}} to trip instantly; the fault current is {{${PE.fmt(r.If)} A}}.` };
       return { meters, verdict, note: s.fault && !PE.sym.locked ? note : null };
     }

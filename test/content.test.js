@@ -77,3 +77,18 @@ module.exports["every cross-reference points to an existing lesson"] = () => {
   scan(PE.course, "course"); scan(PE.content.kpool, "kpool"); scan(PE.content.glossary, "gloss");
   assert.deepStrictEqual(bad, []);
 };
+
+// LaTeX: every $…$ and every formula.tex renders with KaTeX; Hebrew and English carry the same math
+const katex = require("../vendor/katex@0.16.11/katex.min.js");
+const mathOf = s => (String(s).match(/\$[^$]+\$/g) || []).map(m => m.slice(1, -1));
+module.exports["every LaTeX expression renders, and he/en carry the same math"] = () => {
+  const bad = [];
+  const all = pairs(PE.course, "course", []).concat(pairs(PE.content.kpool, "kpool", []), pairs(PE.content.glossary.map(g => g.def), "gloss", []), pairs(PE.content.locations, "loc", []));
+  all.forEach(p => {
+    [p.he, p.en].forEach(s => mathOf(s).forEach(tex => { try { katex.renderToString(tex, { throwOnError: true, strict: false }); } catch (e) { bad.push(`${p.at}: ${tex} → ${e.message.slice(0, 80)}`); } }));
+    const a = mathOf(p.he).sort().join(" | "), b = mathOf(p.en).sort().join(" | ");
+    if (a !== b) bad.push(`math differs at ${p.at}: he[${a}] en[${b}]`);
+  });
+  PE.course.forEach(m => m.lessons.forEach(l => l.blocks.forEach((b, i) => { if (b.type === "formula") { try { katex.renderToString(b.tex, { throwOnError: true, displayMode: true }); } catch (e) { bad.push(`${l.code}#${i} formula: ${e.message.slice(0, 80)}`); } } })));
+  assert.deepStrictEqual(bad, []);
+};
