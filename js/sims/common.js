@@ -70,7 +70,7 @@
 
   // Fault "bolt" between two points
   C.bolt = (g, x, y, s = 1) => g.append("path").attr("class", "res").attr("transform", `translate(${x},${y}) scale(${s})`)
-    .attr("d", "M0 -22 L-9 2 L-1 2 L-7 22 L10 -4 L2 -4 L8 -22 Z").attr("fill", "var(--sign-yellow)").attr("stroke", "#000").attr("stroke-width", 1.5);
+    .attr("d", "M0 -22 L-9 2 L-1 2 L-7 22 L10 -4 L2 -4 L8 -22 Z").attr("fill", "var(--bolt)").attr("stroke", "#000").attr("stroke-width", 1.5);
 
   C.tripText = trip => {
     if (!trip) return { he: "אף מפסק לא ניתק", en: "No device disconnected" };

@@ -49,8 +49,8 @@
         // exposed points
         const tapA = [640, 300], tapB = [700, 300];
         S.wire(g, [[600, y1], [600, 255], [640, 270], tapA], s.isolated ? "gen" : "L", "w-thin");
-        g.append("circle").attr("cx", tapA[0]).attr("cy", tapA[1]).attr("r", 6).attr("fill", "var(--sign-yellow)").attr("stroke", "#000");
-        if (s.touch === "two") { S.wire(g, [[690, y2], [690, 255], tapB], s.isolated ? "gen" : "N", "w-thin"); g.append("circle").attr("cx", tapB[0]).attr("cy", tapB[1]).attr("r", 6).attr("fill", "var(--sign-yellow)").attr("stroke", "#000"); }
+        g.append("circle").attr("cx", tapA[0]).attr("cy", tapA[1]).attr("r", 6).attr("fill", "var(--bolt)").attr("stroke", "#000");
+        if (s.touch === "two") { S.wire(g, [[690, y2], [690, 255], tapB], s.isolated ? "gen" : "N", "w-thin"); g.append("circle").attr("cx", tapB[0]).attr("cy", tapB[1]).attr("r", 6).attr("fill", "var(--bolt)").attr("stroke", "#000"); }
         if (s.isolated && s.firstFault) { S.wire(g, [[380, y2], [420, y2], [420, floor]], "gen", "w-thin"); C.bolt(g, 420, 330, .7); S.badge(g, 420, 290, ctx.L({ he: "תקלה ראשונה", en: "First fault" }), "warn"); }
         S.person(g, 690, floor, { s: 1.1, state: lvl, hand: [tapA[0] + 4, tapA[1] + 2], hand2: s.touch === "two" ? [tapB[0] + 2, tapB[1] + 4] : undefined });
         if (r.body.I_mA > 1) {

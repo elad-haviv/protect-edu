@@ -92,3 +92,8 @@ module.exports["every LaTeX expression renders, and he/en carry the same math"] 
   PE.course.forEach(m => m.lessons.forEach(l => l.blocks.forEach((b, i) => { if (b.type === "formula") { try { katex.renderToString(b.tex, { throwOnError: true, displayMode: true }); } catch (e) { bad.push(`${l.code}#${i} formula: ${e.message.slice(0, 80)}`); } } })));
   assert.deepStrictEqual(bad, []);
 };
+
+module.exports["no half-math: a variable in $…$ followed by a plain '= number'"] = () => {
+  const bad = pairs(PE.course, "course", []).concat(pairs(PE.content.kpool, "kpool", [])).filter(p => [p.he, p.en].some(s => /(?:^|[^$])\$[^$\s][^$]*\$\s*=\s*\d/.test(String(s)))).map(p => p.at);
+  assert.deepStrictEqual(bad, []);
+};

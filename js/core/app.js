@@ -13,7 +13,7 @@
   const byCode = code => flat.find(l => l.code === code);
   // Q0…Q9 are the board's breakers; modules 10–11 are appendices
   // Title text: escaped, with a right-to-left mark in Hebrew so a trailing "(SELV / PELV)" keeps its place
-  const T = o => esc(PE.L(o)) + (PE.lang === "he" ? "&rlm;" : "");
+  const T = o => { const s = esc(PE.L(o)); return PE.lang === "he" ? s.replace(/\(([A-Za-z0-9 /\-–]+)\)\s*$/, '<bdi dir="ltr" class="nowrap-latin">($1)</bdi>') + "&rlm;" : s; };
   PE.modLabel = m => (+m.code >= 10 ? PE.t(m.code === "10" ? "appendixA" : "appendixB") : "Q" + m.code);
   function resolve(code) {
     if (!code) return byCode(PE.store.get("last")) || flat[0];
@@ -29,7 +29,7 @@
       <a class="plate" href="#0.1"><span class="screw" aria-hidden="true"></span><span class="plate-text"><b>${esc(PE.t("appTitle"))}</b><small dir="ltr">230/400 V · 50 Hz · TN-C-S · IEC 60364-4-41</small></span><span class="screw" aria-hidden="true"></span></a>
       <div class="tools">
         <a class="hv" href="https://academy.haviv.pro" rel="noopener" title="Haviv Academy"><span class="hv-mark" aria-hidden="true"></span><span class="hv-txt">Haviv Academy</span></a>
-        <button type="button" class="tool present-btn" aria-pressed="${document.body.classList.contains("present")}" title="${esc(PE.t("present"))}">▣ <span class="tool-l">${esc(PE.t("present"))}</span></button>
+        <button type="button" class="tool present-btn" aria-pressed="${document.body.classList.contains("present")}" title="${esc(PE.t("present"))}" aria-label="${esc(PE.t("present"))}">▣ <span class="tool-l">${esc(PE.t("present"))}</span></button>
         <button type="button" class="tool lang-btn" lang="${PE.lang === "he" ? "en" : "he"}" aria-label="${esc(PE.t("langSwitchLabel"))}">${esc(PE.t("langSwitch"))}</button>
         <button type="button" class="tool theme-btn" aria-label="${esc(PE.t("theme"))}: ${esc(PE.t("theme" + th[0].toUpperCase() + th.slice(1)))}" title="${esc(PE.t("theme"))}">${th === "dark" ? "☾" : th === "light" ? "☀" : "◐"} <span class="tool-l">${esc(PE.t("theme" + th[0].toUpperCase() + th.slice(1)))}</span></button>
       </div></div>
@@ -43,10 +43,14 @@
     h.querySelector(".menu-btn").addEventListener("click", e => {
       const open = document.body.classList.toggle("rail-open");
       e.currentTarget.setAttribute("aria-expanded", open);
+      if (open) { const a = document.querySelector('#rail a[aria-current="true"], #rail a'); if (a) a.focus(); }
     });
+    document.documentElement.style.setProperty("--hdr", h.getBoundingClientRect().height + "px");
   }
+  // Resolve "auto" to the OS preference so CSS has one set of dark tokens (data-mode)
+  PE.applyMode = () => { document.documentElement.dataset.mode = PE.isDark() ? "dark" : "light"; };
   function setTheme(t, persist) {
-    document.documentElement.dataset.theme = t;
+    document.documentElement.dataset.theme = t; PE.applyMode();
     if (persist) PE.store.set("theme", t);
     renderHeader();
     PE.emit("theme", t);
@@ -58,10 +62,15 @@
     document.body.classList.toggle("present", on);
     if (on) { themeBeforePresent = document.documentElement.dataset.theme; document.documentElement.dataset.theme = "light"; }
     else if (themeBeforePresent) document.documentElement.dataset.theme = themeBeforePresent;
+    PE.applyMode();
     renderHeader();
     if (current && !fromRoute) { const p = PE.parseHash(location.hash).params; if (on) p.present = "1"; else delete p.present; PE.replaceHash(current.code, p); show(current.code, { params: {} }); }
   }
   PE.setPresent = setPresent;
+  function closeRail(focusBtn) {
+    document.body.classList.remove("rail-open");
+    const b = document.querySelector(".menu-btn"); if (b) { b.setAttribute("aria-expanded", "false"); if (focusBtn) b.focus(); }
+  }
   PE.isDark = () => {
     const t = document.documentElement.dataset.theme;
     return t === "dark" || (t !== "light" && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
@@ -89,17 +98,17 @@
   function crumbHtml(l) {
     const n = l.m.lessons.length;
     return `<nav class="crumb" aria-label="${esc(PE.t("youAreHere"))}">
-      <span class="crumb-text"><a href="#0.1">${esc(PE.t("board"))}</a> › <a href="#${l.m.lessons[0].code}">${esc(PE.modLabel(l.m))} · ${T(l.m.title)}</a> › <span>${esc(PE.t("sheet"))} <bdi dir="ltr">${l.code}</bdi>${n > 1 ? ` (${esc(PE.t("lessonOf", { i: l.i + 1, n }))})` : ""}</span></span>
+      <span class="crumb-text"><a href="#0.1">${esc(PE.t("board"))}</a> <span aria-hidden="true">›</span> <a href="#${l.m.lessons[0].code}">${esc(PE.modLabel(l.m))} · ${T(l.m.title)}</a> <span aria-hidden="true">›</span> <span aria-current="page">${esc(PE.t("sheet"))} <bdi dir="ltr">${l.code}</bdi>${n > 1 ? ` (${esc(PE.t("lessonOf", { i: l.i + 1, n }))})` : ""}</span></span>
     </nav>${n > 1 ? `<div class="crumb-bar" aria-hidden="true"><i style="width:${(l.i + 1) / n * 100}%"></i></div>` : ""}`;
   }
   function titleBlock(l) {
     const n = l.m.lessons.length;
-    return `<table class="tblock" aria-label="${esc(PE.t("titleBlock"))}"><tr>
+    return `<div role="group" aria-label="${esc(PE.t("titleBlock"))}"><table class="tblock" role="presentation"><tr>
       <td class="tb-org" rowspan="2"><span class="hv-mark" aria-hidden="true"></span> Haviv Academy</td>
       <td class="tb-title" colspan="3"><small>${esc(PE.t("tbCourse"))}</small>${esc(PE.t("appTitle"))}</td></tr>
       <tr><td><small>${esc(PE.t("tbModule"))}</small>${esc(PE.modLabel(l.m))} · ${esc(PE.L(l.m.short || l.m.title))}</td>
       <td><small>${esc(PE.t("sheet"))}</small><bdi dir="ltr">${l.code}</bdi> (${esc(PE.t("lessonOf", { i: l.i + 1, n }))})</td>
-      <td><small>${esc(PE.t("tbRev"))}</small><bdi dir="ltr">${PE.version}</bdi></td></tr></table>`;
+      <td><small>${esc(PE.t("tbRev"))}</small><bdi dir="ltr">${PE.version}</bdi></td></tr></table></div>`;
   }
   function pagerHtml(l) {
     const k = flat.indexOf(l), prev = flat[k - 1], next = flat[k + 1];
@@ -152,7 +161,7 @@
   // ---------- boot ----------
   PE.boot = () => {
     build();
-    document.documentElement.dataset.theme = PE.store.get("theme") || "auto";
+    document.documentElement.dataset.theme = PE.store.get("theme") || "auto"; PE.applyMode();
     PE.setLang(PE.initialLang(), { silent: true });
     renderHeader();
     chrome();
@@ -163,8 +172,9 @@
     });
     PE.on("theme", () => { if (current) show(current.code, { params: {} }); });
     PE.on("lesson", () => current && renderRail(current));
-    if (window.matchMedia) window.matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", () => PE.emit("theme"));
+    if (window.matchMedia) window.matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", () => { PE.applyMode(); PE.emit("theme"); });
     document.addEventListener("click", e => {
+      if (document.body.classList.contains("rail-open") && !e.target.closest("#rail, .menu-btn")) closeRail(false);
       const a = e.target.closest('a[href^="#"]'); if (!a) return;
       const h = a.getAttribute("href"); if (h === "#main") return;
       e.preventDefault();
@@ -174,9 +184,11 @@
     });
     let lastRouted = null;
     const onNav = () => { if (location.hash === lastRouted) return; lastRouted = location.hash; route(location.hash, true); };
+    window.addEventListener("resize", () => { const h = document.getElementById("top"); document.documentElement.style.setProperty("--hdr", h.getBoundingClientRect().height + "px"); });
     window.addEventListener("popstate", onNav);
     window.addEventListener("hashchange", onNav);
     document.addEventListener("keydown", e => {
+      if (e.key === "Escape" && document.body.classList.contains("rail-open")) { closeRail(true); return; }
       if (e.key === "Escape" && document.body.classList.contains("present") && !e.target.closest("input, textarea, select")) setPresent(false);
       if (e.target.closest("input, select, textarea, [contenteditable]") || e.altKey || e.ctrlKey || e.metaKey) return;
       if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;

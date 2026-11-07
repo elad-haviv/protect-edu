@@ -25,7 +25,7 @@
         Lk.forEach((k, i) => { S.dot(g, 200 + i * 14, ys[k]); S.wire(g, [[200 + i * 14, ys[k]], [200 + i * 14, 220]], k, "w-thin"); });
         g.append("rect").attr("x", 160).attr("y", 220).attr("width", 120).attr("height", 80).attr("rx", 8).attr("class", "sym-fill");
         S.text(g, 220, 242, ctx.L({ he: "השגחה על בידוד", en: "Insulation monitor" }), "lbl-s").style("font-size", "13px");
-        S.math(g, 212, 268, S.locked ? "R_{iso} = \\,?" : `R_{iso} = ${r.Riso_k >= 1000 ? ">1000" : PE.fmt(r.Riso_k)}\\,\\mathrm{k\\Omega}`, { w: 110, h: 26 });
+        S.math(g, 212, 268, S.locked ? "R_{iso} = \\,?" : `R_{iso} = ${r.Riso_k >= 1000 ? ">1000" : PE.fmt(r.Riso_k)}\\,\\mathrm{k\\Omega}`, { w: 170, h: 26 });
         g.append("circle").attr("cx", 268).attr("cy", 288).attr("r", 8).attr("fill", alarm ? "var(--bad)" : "var(--ok)").attr("class", alarm ? "tripflash" : null);
         S.text(g, 220, 293, alarm ? ctx.L({ he: "התראה!", en: "ALARM" }) : ctx.L({ he: "תקין", en: "OK" }), "lbl-s").style("font-size", "12px").style("fill", alarm ? "var(--bad)" : "var(--ok)");
         S.wire(g, [[220, 300], [220, yPE]], "PE", "w-thin");

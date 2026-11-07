@@ -63,7 +63,7 @@
 
   PE.renderLesson = (lesson, host, params) => {
     const html = lesson.blocks.map((b, i) => `<div class="blk blk-${b.type}" data-i="${i}">${(R[b.type] || R.html)(b)}</div>`).join("");
-    host.innerHTML = `<h2 class="lesson-title"><span class="dwg-no"><small>${esc(PE.t("sheet"))}</small><bdi dir="ltr">${lesson.code}</bdi></span><span>${esc(PE.L(lesson.title))}${PE.lang === "he" ? "&rlm;" : ""}</span></h2>${html}`;
+    host.innerHTML = `<h2 class="lesson-title"><span class="dwg-no"><small>${esc(PE.t("sheet"))}</small><bdi dir="ltr">${lesson.code}</bdi></span><span>${PE.lang === "he" ? esc(PE.L(lesson.title)).replace(/\(([A-Za-z0-9 /\-–]+)\)\s*$/, '<bdi dir="ltr" class="nowrap-latin">($1)</bdi>') + "&rlm;" : esc(PE.L(lesson.title))}</span></h2>${html}`;
     const instances = [];
     lesson.blocks.forEach((b, i) => {
       const m = M[b.type]; if (!m) return;

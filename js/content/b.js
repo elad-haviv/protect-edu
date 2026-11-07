@@ -17,7 +17,7 @@ PE.content.B = {
           o: [{ he: "להוביל את זרם העבודה של המכשיר", en: "To carry the appliance's working current" }, { he: "לתת לזרם התקלה מסלול אל האדמה ולהקטין את מתח הגוף", en: "To give the fault current a path to earth and lower the case voltage" }, { he: "לבטל לגמרי את מתח המגע", en: "To remove the touch voltage completely" }], a: 1,
           why: { he: "ה-PE נושא זרם רק בזמן תקלה. הוא מוריד את מתח הגוף אך לא לאפס – המתח הוא $I_f \\cdot R_a$.", en: "The PE only carries current during a fault. It lowers the case voltage but not to zero – the voltage is $I_f \\cdot R_a$." },
           mis: { he: "\"אם יש הארקה – אין מתח על הגוף\".", en: "\"If it's earthed, the case has no voltage.\"" } },
-        { q: { he: "$R_a$ = 20 Ω, $R_b$ = 2 Ω, $U_0$ = 230 V. מה מתח המגע בקירוב?", en: "$R_a$ = 20 Ω, $R_b$ = 2 Ω, $U_0$ = 230 V. What is the touch voltage, approximately?" },
+        { q: { he: "$R_a = 20\\,\\Omega$, $R_b = 2\\,\\Omega$, $U_0 = 230\\,\\mathrm{V}$. מה מתח המגע בקירוב?", en: "$R_a = 20\\,\\Omega$, $R_b = 2\\,\\Omega$, $U_0 = 230\\,\\mathrm{V}$. What is the touch voltage, approximately?" },
           o: [{ he: "{{21 V}}", en: "{{21 V}}" }, { he: "{{115 V}}", en: "{{115 V}}" }, { he: "{{209 V}}", en: "{{209 V}}" }], a: 2,
           why: { he: "$I_f = 230/22 \\approx 10.5\\,\\mathrm{A}$; $U = 10.5 \\times 20 \\approx 209\\,\\mathrm{V}$. רוב המתח נופל על $R_a$ כי היא גדולה מ-$R_b$.", en: "$I_f = 230/22 \\approx 10.5\\,\\mathrm{A}$; $U = 10.5 \\times 20 \\approx 209\\,\\mathrm{V}$. Most of the voltage drops across $R_a$ because it is larger than $R_b$." } }
       ] }
