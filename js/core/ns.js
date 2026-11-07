@@ -2,7 +2,7 @@
 (function () {
   "use strict";
   const PE = window.PE = window.PE || {};
-  PE.version = "2.0.0";
+  PE.version = "2.1.0";
   PE.sims = PE.sims || {};
   PE.scenes = PE.scenes || {};
   PE.figures = PE.figures || {};

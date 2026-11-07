@@ -39,6 +39,10 @@ There is no build step. Open `index.html` directly (this also works from `file:/
 python3 -m http.server 8765
 ```
 
+## Releasing
+
+After changing any CSS or JS file, bump the `?v=` query on every asset in `index.html` (and `PE.version` in `js/core/ns.js`). Cloudflare caches assets for 4 hours by URL, so without a new version visitors keep receiving the old files.
+
 ## Tests
 
 ```bash
