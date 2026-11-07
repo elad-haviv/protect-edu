@@ -82,36 +82,38 @@
     }
   };
 
-  // A4 – earthing systems
+  // 0.4 – earthing systems, three-phase
   PE.sims["a4-systems"] = {
-    title: { he: "שיטות הארקה במערכת: TN-C-S, TT, IT", en: "System earthing: TN-C-S, TT, IT" },
+    title: { he: "שיטות הארקה במערכת תלת-פאזית: TN-C-S, TT, IT", en: "Three-phase system earthing: TN-C-S, TT, IT" },
     params: [
       { key: "sys", type: "enum", def: "TN", label: { he: "שיטת הארקה", en: "Earthing system" }, values: [{ v: "TN", label: "TN-C-S" }, { v: "TT", label: "TT" }, { v: "IT", label: "IT" }] },
-      { key: "fault", type: "bool", def: true, label: { he: "תקלה לגוף המכשיר", en: "Fault to the case" } }
+      { key: "fault", type: "bool", def: true, label: { he: "תקלה: L1 נוגע בגוף המנוע", en: "Fault: L1 touches the motor case" } }
     ],
     render(svg, s, ctx) {
-      const M = ctx.model, g = svg.append("g"); const floor = 450, yL = 110, yN = 180;
+      const M = ctx.model, g = svg.append("g"); const floor = 450, Lk = ["L1", "L2", "L3"];
       S.ground(g, 0, 960, floor, { h: 90 });
-      S.transformer(g, 90, 145, { r: 26 });
-      S.wire(g, [[118, 135], [140, yL], [700, yL]], "L");
-      const nKind = s.sys === "TN" ? "PEN" : "N";
-      if (s.sys !== "IT") { S.wire(g, [[118, 155], [140, yN], s.sys === "TN" ? [380, yN] : [700, yN]], nKind); S.wire(g, [[140, yN], [140, 330]], nKind, "w-thin"); S.resistor(g, 140, 330, { vertical: true, len: 34, label: "Rb" }); S.wire(g, [[140, 364], [140, floor]], "gen", "w-thin"); }
-      else { S.wire(g, [[118, 155], [140, yN], [700, yN]], "N"); g.append("path").attr("class", "sym").attr("d", `M140 ${yN} v60`).attr("stroke-dasharray", "4 5"); S.text(g, 150, yN + 80, ctx.L({ he: "לא מוארק (או דרך עכבה גבוהה)", en: "Not earthed (or via high impedance)" }), "lbl-s", "start"); }
-      if (s.sys === "TN") { S.dot(g, 380, yN); S.wire(g, [[380, yN], [700, yN]], "N"); S.wire(g, [[380, yN], [380, 250], [620, 250], [620, 280]], "PE"); S.text(g, 380, yN - 14, ctx.L({ he: "פיצול PEN", en: "PEN split" }), "lbl-s"); }
-      else { S.wire(g, [[620, 380], [620, 400]], "PE"); S.resistor(g, 620, 400, { vertical: true, len: 30, label: "Ra" }); S.wire(g, [[620, 430], [620, floor]], "gen", "w-thin"); }
-      S.wire(g, [[600, yL], [600, 280]], "L", "w-thin"); S.wire(g, [[650, yN], [650, 280]], "N", "w-thin");
-      S.appliance(g, 560, 280, 140, 100, { warm: s.fault, label: ctx.L({ he: "מכשיר", en: "Appliance" }) });
-      if (s.fault) C.bolt(g, 590, 300, .7);
-      S.text(g, 820, 80, s.sys === "TN" ? "TN-C-S" : s.sys, "lbl-b").style("font-size", "36px");
-      const desc = { TN: { he: "T: נקודת האפס מוארקת · N: הגופים מחוברים לאפס (דרך PE)", en: "T: star point earthed · N: cases connected to the neutral (via PE)" }, TT: { he: "T: נקודת האפס מוארקת · T: הגופים מוארקים באלקטרודה נפרדת", en: "T: star point earthed · T: cases earthed by a separate electrode" }, IT: { he: "I: נקודת האפס מבודדת · T: הגופים מוארקים", en: "I: star point isolated · T: cases earthed" } }[s.sys];
-      S.text(g, 820, 120, ctx.L(desc).split(" · ")[0], "lbl-s"); S.text(g, 820, 145, ctx.L(desc).split(" · ")[1], "lbl-s");
+      const sup = C.supply3(g, { sys: s.sys, earthY: s.sys === "IT" ? null : 300, x1: 380 }), ys = sup.ys, sx = sup.star[0];
+      if (s.sys !== "IT") S.wire(g, [[sx, 378], [sx, floor]], "gen", "w-thin");
+      if (s.sys === "TN") { S.dot(g, 380, ys.N); S.wire(g, [[380, ys.N], [760, ys.N]], "N"); S.wire(g, [[380, ys.N], [380, ys.PE], [760, ys.PE]], "PE"); S.text(g, 390, ys.PE + 24, ctx.L({ he: "פיצול PEN", en: "PEN split" }), "lbl-s", "start"); }
+      else if (s.sys === "TT") S.wire(g, [[380, ys.N], [760, ys.N]], "N");
+      Lk.forEach(k => S.wire(g, [[380, ys[k]], [760, ys[k]]], k));
+      Lk.forEach((k, i) => { S.dot(g, 560 + i * 24, ys[k]); S.wire(g, [[560 + i * 24, ys[k]], [560 + i * 24, 270]], k, "w-thin"); });
+      S.appliance(g, 500, 270, 160, 110, { warm: s.fault });
+      S.motor3(g, 590, 325, 28);
+      if (s.fault) C.bolt(g, 560, 295, .7);
+      const peX = 660;
+      if (s.sys === "TN") { S.dot(g, peX, ys.PE); S.wire(g, [[peX, ys.PE], [peX, 270]], "PE", "w-thin"); }
+      else { S.wire(g, [[peX, 380], [peX, 400]], "PE"); S.resistor(g, peX, 400, { vertical: true, len: 30 }); S.math(g, peX + 18, 415, "R_a", { anchor: "start", w: 40 }); S.wire(g, [[peX, 430], [peX, floor]], "gen", "w-thin"); }
+      S.text(g, 820, 230, s.sys === "TN" ? "TN-C-S" : s.sys, "lbl-b").style("font-size", "34px");
+      const desc = { TN: { he: "T: נקודת הכוכב מוארקת · N: הגופים מחוברים לאפס (דרך PE)", en: "T: star point earthed · N: cases connected to the neutral (via PE)" }, TT: { he: "T: נקודת הכוכב מוארקת · T: הגופים מוארקים באלקטרודה נפרדת", en: "T: star point earthed · T: cases earthed by a separate electrode" }, IT: { he: "I: נקודת הכוכב מבודדת · T: הגופים מוארקים", en: "I: star point isolated · T: cases earthed" } }[s.sys];
+      S.text(g, 820, 262, ctx.L(desc).split(" · ")[0], "lbl-s").style("font-size", "14px"); S.text(g, 820, 284, ctx.L(desc).split(" · ")[1], "lbl-s").style("font-size", "14px");
       let res, verdict, path;
-      if (s.sys === "TN") { res = M.tn({ fault: s.fault }); path = [[140, yL], [590, yL], [590, 300], [620, 300], [620, 250], [380, 250], [380, yN], [140, yN]]; verdict = { tone: "safe", text: { he: "מסלול התקלה כולו מתכתי (PE ← PEN): זרם גדול – המאמ\"ת מנתק.", en: "The fault loop is all metal (PE → PEN): a large current – the MCB trips." } }; }
-      else if (s.sys === "TT") { res = M.tt({ fault: s.fault, person: false }); path = [[140, yL], [590, yL], [590, 370], [620, 370], [620, floor + 40], [140, floor + 40], [140, 364]]; verdict = { tone: "warn", text: { he: "מסלול התקלה עובר באדמה (Ra + Rb): זרם קטן יחסית – נדרש מפסק פחת.", en: "The fault loop passes through the soil (Ra + Rb): a relatively small current – an RCD is needed." } }; }
-      else { res = { If: M.it({}).body.I_mA / 1000 }; path = [[600, 300], [620, 370], [620, floor + 30], [300, floor + 30]]; verdict = { tone: "safe", text: { he: "תקלה ראשונה: אין מסלול חזרה מלבד קיבול הרשת – זרם של מיליאמפרים. המערכת ממשיכה לעבוד, ונדרש ניטור בידוד ואיתור התקלה לפני תקלה שנייה.", en: "First fault: no return path except system capacitance – a few milliamps. The system keeps running; insulation monitoring must find the fault before a second one." } }; }
+      if (s.sys === "TN") { res = M.tn({ fault: s.fault }); path = [[sx + 20, ys.L1], [560, ys.L1], [560, 295], [peX, 295], [peX, ys.PE], [380, ys.PE], [380, ys.N], [sx, ys.N]]; verdict = { tone: "safe", text: { he: "מסלול התקלה כולו מתכתי (PE ← PEN): זרם גדול – המאמ\"ת מנתק.", en: "The fault loop is all metal (PE → PEN): a large current – the MCB trips." } }; }
+      else if (s.sys === "TT") { res = M.tt({ fault: s.fault, person: false }); path = [[sx + 20, ys.L1], [560, ys.L1], [560, 295], [peX, 295], [peX, floor + 40], [sx, floor + 40], [sx, 378]]; verdict = { tone: "warn", text: { he: "מסלול התקלה עובר באדמה ($R_a + R_b$): זרם קטן יחסית – נדרש מפסק פחת.", en: "The fault loop passes through the soil ($R_a + R_b$): a relatively small current – an RCD is needed." } }; }
+      else { const it = M.itSupply({ fault1: s.fault }); res = { If: it.If }; path = [[560, ys.L1], [560, 295], [peX, 380], [peX, floor + 30], [300, floor + 30]]; verdict = { tone: "safe", text: { he: `תקלה ראשונה: אין מסלול חזרה מלבד קיבול שתי הפאזות האחרות – {{${PE.fmt(it.Id_mA)} mA}}. אין ניתוק; נדרשת השגחה על הבידוד (מודול 7).`, en: `First fault: no return path except the other two phases' capacitance – {{${PE.fmt(it.Id_mA)} mA}}. No disconnection; insulation monitoring is required (module 7).` } }; }
       if (s.fault) S.flow(g, path, res.If);
       if (!s.fault) verdict = { tone: "safe", text: { he: "הפעילו תקלה כדי לראות את לולאת התקלה.", en: "Switch on a fault to see the fault loop." } };
-      return { meters: [{ label: { he: "זרם תקלה", en: "Fault current" }, value: s.fault ? res.If : 0, unit: "A" }], verdict };
+      return { meters: [{ label: { he: "זרם תקלה", en: "Fault current" }, value: s.fault ? (res.If >= 1 ? res.If : res.If * 1000) : 0, unit: s.fault && res.If < 1 ? "mA" : "A" }], verdict };
     }
   };
 
@@ -128,15 +130,17 @@
       const r = M.tn({ L: s.len, A_ph: s.area, A_pe: s.area, mcb: s.mcb, person: false });
       const Rph = 0.0225 * s.len / s.area;
       // loop diagram
-      S.source(g, 110, 250, { label: "U0 = 230 V" });
-      S.wire(g, [[110, 224], [110, 120], [260, 120]], "L"); S.resistor(g, 260, 120, { len: 60, label: "Zsrc 0.3 Ω" });
-      S.wire(g, [[320, 120], [400, 120]], "L"); S.mcb(g, 400, 120, { label: s.mcb });
-      S.wire(g, [[460, 120], [560, 120]], "L"); S.resistor(g, 560, 120, { len: 80, label: `R_L = ${PE.fmt(Rph)} Ω` });
-      S.wire(g, [[640, 120], [800, 120], [800, 380], [640, 380]], "L"); C.bolt(g, 800, 250, .9);
-      S.resistor(g, 560, 380, { len: 80, label: `R_PE = ${PE.fmt(r.Rpe)} Ω` });
+      S.source(g, 110, 250, {}); S.math(g, 110, 300, "U_0 = 230\\,\\mathrm{V}", { w: 150 });
+      S.text(g, 110, 60, ctx.L({ he: "לולאת התקלה של L1 במעגל תלת-פאזי (תרשים חד-קווי)", en: "Fault loop of L1 in a three-phase circuit (single-line)" }), "lbl-s", "start");
+      S.tri(g, 190, 120); S.text(g, 190, 146, "3/N/PE", "lbl-s").style("font-size", "13px");
+      S.wire(g, [[110, 224], [110, 120], [260, 120]], "L1"); S.resistor(g, 260, 120, { len: 60 }); S.math(g, 290, 96, "Z_{src} = 0.3\\,\\Omega", { w: 160 });
+      S.wire(g, [[320, 120], [400, 120]], "L1"); S.mcb(g, 400, 120, { label: s.mcb });
+      S.wire(g, [[460, 120], [560, 120]], "L1"); S.resistor(g, 560, 120, { len: 80 }); S.math(g, 600, 96, `R_{L1} = ${PE.fmt(Rph)}\\,\\Omega`, { w: 170 });
+      S.wire(g, [[640, 120], [800, 120], [800, 250]], "L1"); S.wire(g, [[800, 250], [800, 380], [640, 380]], "PE"); C.bolt(g, 800, 250, .9);
+      S.resistor(g, 560, 380, { len: 80 }); S.math(g, 600, 410, `R_{PE} = ${PE.fmt(r.Rpe)}\\,\\Omega`, { w: 170 });
       S.wire(g, [[560, 380], [110, 380], [110, 276]], "PE");
       S.flow(g, [[110, 224], [110, 120], [800, 120], [800, 380], [110, 380], [110, 276]], r.If);
-      S.text(g, 450, 470, `Zs = ${PE.fmt(r.Zs)} Ω   →   If = ${PE.fmt(r.If)} A   ·   Ia = ${PE.fmt(M.mcbInstant(s.mcb))} A`, "lbl-b");
+      S.math(g, 450, 470, `Z_s = ${PE.fmt(r.Zs)}\\,\\Omega \\;\\rightarrow\\; I_f = ${PE.fmt(r.If)}\\,\\mathrm{A} \\qquad I_a = ${PE.fmt(M.mcbInstant(s.mcb))}\\,\\mathrm{A}`, { w: 600, h: 40 });
       const inst = r.trip && r.trip.mode === "instant";
       return { meters: [{ label: { he: "Zs", en: "Zs" }, value: r.Zs, unit: "Ω" }, { label: { he: "זרם תקלה", en: "Fault current" }, value: r.If, unit: "A" }, { label: { he: "Zs·Ia", en: "Zs·Ia" }, value: r.cond.value, unit: "V", tone: r.cond.ok ? "ok" : "bad" }],
         verdict: inst ? { tone: "safe", trip: true, text: { he: `{{Zs·Ia = ${PE.fmt(r.cond.value)} V ≤ 230 V}}: ניתוק מיידי, בתוך {{0.4 s}}.`, en: `{{Zs·Ia = ${PE.fmt(r.cond.value)} V ≤ 230 V}}: instant trip, within {{0.4 s}}.` } }

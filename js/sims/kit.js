@@ -120,7 +120,7 @@
       let out = {};
       try { out = def.render(svg, s, ctx()) || {}; } catch (e) { console.error(e); }
       PE.sym.locked = false;
-      root.querySelector(".meters").innerHTML = (out.meters || []).map(m => `<div class="meter ${m.tone || ""}"><span>${esc(typeof m.label === "string" ? PE.t(m.label) : PE.L(m.label))}</span><b dir="ltr">${typeof m.value === "number" ? PE.fmt(m.value) : esc(m.value)}${m.unit ? `<small> ${esc(m.unit)}</small>` : ""}</b></div>`).join("");
+      root.querySelector(".meters").innerHTML = (out.meters || []).map(m => `<div class="meter ${m.tone || ""}"><span>${rich(typeof m.label === "string" ? PE.t(m.label) : PE.L(m.label))}</span><b dir="ltr">${typeof m.value === "number" ? PE.fmt(m.value) : esc(m.value)}${m.unit ? `<small> ${esc(m.unit)}</small>` : ""}</b></div>`).join("");
       const v = out.verdict || { tone: "safe", text: "" };
       const vEl = root.querySelector(".verdict");
       vEl.dataset.verdict = v.tone;

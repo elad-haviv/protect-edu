@@ -44,6 +44,9 @@
       S.text(g, 263, 50, ctx.L({ he: "צינור מים מתכתי", en: "Metal water pipe" }), "lbl-s");
       S.wire(g, [[250, 400], [140, 400], [140, 330]], "PE");
       // heater with PE to MET
+      // three-phase board (top) feeding the single-phase heater from L1
+      const sup = C.board1ph(g, { sys: "TN", x1: 560, xt: 520, x: 300, tagX: 420 });
+      S.wire(g, [sup.L, [sup.L[0], 14], [650, 14], [650, 80]], "L1"); S.wire(g, [sup.N, [sup.N[0], 22], [690, 22], [690, 80]], "N");
       S.appliance(g, 600, 80, 170, 230, { live: !S.locked && r.Ut > 50, warm: !S.locked && r.Ut > 0, label: ctx.L({ he: "דוד חשמלי", en: "Electric water heater" }) });
       PE.simc.bolt(g, 620, 110, .8);
       S.wire(g, [[770, 120], [900, 120], [900, 40], [60, 40], [60, 300]], "PE");

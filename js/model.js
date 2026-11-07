@@ -141,22 +141,50 @@
     return { Zs, If, Rpe, Vcase, cases, trip, required_ms, cond, ok: intime, body: b };
   }
 
+  // ---------- phasors (three-phase) ----------
+  const cx = (re, im = 0) => ({ re, im });
+  const pol = (m, deg) => cx(m * Math.cos(deg * Math.PI / 180), m * Math.sin(deg * Math.PI / 180));
+  const cadd = (a, b) => cx(a.re + b.re, a.im + b.im), csub = (a, b) => cx(a.re - b.re, a.im - b.im);
+  const cscale = (a, k) => cx(a.re * k, a.im * k), cabs = a => Math.hypot(a.re, a.im);
+  const PHASE_DEG = [0, -120, 120];
+  const phaseV = (U0 = U0_DEFAULT) => PHASE_DEG.map(d => pol(U0, d));
+  const ULL = U0 => Math.sqrt(3) * U0;
+
+  // Broken PEN on a three-phase supply: neutral-point displacement (Millman). Loads are resistive, given as currents at U0.
+  function brokenPEN3(o = {}) {
+    const p = Object.assign({ U0: U0_DEFAULT, I: [10, 2, 2], Ra: 10, Rb: 2, person: true, skin: "dry", path: "hf", Rfoot: 1000 }, o);
+    const V = phaseV(p.U0), Y = p.I.map(i => i / p.U0);              // admittance of each phase load
+    const Ye = p.Ra ? 1 / (p.Ra + p.Rb) : 0;
+    const Ysum = Y.reduce((a, b) => a + b, 0) + Ye;
+    const VN = Ysum > 0 ? cscale(V.reduce((acc, v, k) => cadd(acc, cscale(v, Y[k])), cx(0)), 1 / Ysum) : cx(0);
+    const loads = V.map(v => cabs(csub(v, VN)));
+    const vn = cabs(VN), Vcase = p.Ra ? vn * p.Ra / (p.Ra + p.Rb) : vn;
+    const b = p.person ? body(Vcase, p, 5000) : { I_mA: 0, t_ms: 0, zone: "AC-1" };
+    return { VN: vn, VNdeg: Math.atan2(VN.im, VN.re) * 180 / Math.PI, loads, Vcase, body: b, ok: Vcase <= 50 };
+  }
+
   // ---------- RCD scenarios ----------
   function rcdScenario(o = {}) {
     const p = Object.assign({ U0: U0_DEFAULT, scenario: "LE", IdN_mA: 30, leak_mA: 20, Iload: 8, Rb: 2, skin: "dry", path: "hf", Rfoot: 1000 }, o);
-    let I_L = p.Iload, I_N = p.Iload, residual_mA = 0, Ubody = 0, path = p.path, Rfoot = p.Rfoot;
-    if (p.scenario === "leak") { residual_mA = p.leak_mA; I_L += p.leak_mA / 1000; }
-    else if (p.scenario === "LE") {
-      const Z = bodyZ(p.U0, p.skin, p.path); const Ib = p.U0 / (Z + p.Rfoot + p.Rb);
-      residual_mA = Ib * 1000; I_L += Ib; Ubody = p.U0;
-    } else if (p.scenario === "LN") {
-      path = "hh"; Rfoot = 0; const Ib = p.U0 / bodyZ(p.U0, p.skin, "hh");
-      I_L += Ib; I_N += Ib; Ubody = p.U0;
-    } else if (p.scenario === "overload") { I_L = I_N = 25; }
+    // phasor currents (A): a single-phase appliance on L1 by default; IN = −(IL1+IL2+IL3) for current that returns in the circuit
+    let I = [pol(p.Iload, 0), cx(0), cx(0)], residual_mA = 0, Ubody = 0, path = p.path, Rfoot = p.Rfoot, Ib = 0;
+    const sc = p.scenario;
+    if (sc === "leak") { residual_mA = p.leak_mA; I[0] = cadd(I[0], pol(p.leak_mA / 1000, 0)); }
+    else if (sc === "LE") { const Z = bodyZ(p.U0, p.skin, p.path); Ib = p.U0 / (Z + p.Rfoot + p.Rb); residual_mA = Ib * 1000; I[0] = cadd(I[0], pol(Ib, 0)); Ubody = p.U0; }
+    else if (sc === "LN") { path = "hh"; Rfoot = 0; Ib = p.U0 / bodyZ(p.U0, p.skin, "hh"); I[0] = cadd(I[0], pol(Ib, 0)); Ubody = p.U0; }
+    else if (sc === "LL") { path = "hh"; Rfoot = 0; Ubody = ULL(p.U0); Ib = Ubody / bodyZ(Ubody, p.skin, "hh"); I[0] = cadd(I[0], pol(Ib, 30)); I[1] = pol(Ib, 210); }
+    else if (sc === "overload") I = [pol(25, 0), cx(0), cx(0)];
+    else if (sc === "unbalanced") I = [pol(16, 0), pol(6, -120), pol(2, 120)];
+    // neutral carries what the phases do not cancel; leakage / body-to-earth current does not come back
+    let sum = I.reduce(cadd, cx(0));
+    if (sc === "leak") sum = csub(sum, pol(p.leak_mA / 1000, 0));
+    if (sc === "LE") sum = csub(sum, pol(Ib, 0));
+    const IN = cabs(sum);
     const r = rcdTrip(residual_mA, p.IdN_mA);
     const trip = r.status === "yes" ? { by: "rcd", t_ms: r.t_ms, status: "yes" } : null;
     const b = Ubody ? body(Ubody, { skin: p.skin, path, Rfoot }, exposure(trip)) : { I_mA: 0, t_ms: 0, zone: "AC-1" };
-    return { I_L, I_N, residual_mA, rcd: r, trip, body: b };
+    const I3 = I.map(cabs);
+    return { I3, Iph: I, IN, INph: cscale(sum, -1), I_L: I3[0], I_N: IN, residual_mA, rcd: r, trip, body: b, Ubody };
   }
 
   // ---------- electrical separation ----------
@@ -236,36 +264,37 @@
   }
   function potentialAt(r, If, rho, a = 0.3) { return If * rho / (2 * Math.PI * Math.max(Math.abs(r), a)); }
 
-  // ---------- floating supply (זינה צפה, IT) with insulation monitoring ----------
+  // ---------- floating supply (זינה צפה, IT), three-phase, neutral not distributed ----------
   function itSupply(o = {}) {
-    const p = Object.assign({ U0: U0_DEFAULT, C_uF: 0.1, f: 50, Ra: 10, Rf_k: 0, fault1: false, fault2: false, imd: true, imd_k: 50, mcb: "C16", Zloop2: 0.84, Rpe: 0.27, touch: "case", skin: "dry", path: "hf", Rfoot: 1000, UL: 50 }, o);
-    const Xc = 1 / (2 * Math.PI * p.f * p.C_uF * 1e-6);
+    const p = Object.assign({ U0: U0_DEFAULT, C_uF: 0.1, f: 50, Ra: 10, Rf_k: 0, fault1: false, fault2: false, imd: true, imd_k: 50, mcb: "C16", Zloop2: 1.2, Rpe: 0.27, touch: "case", skin: "dry", path: "hf", Rfoot: 1000, UL: 50 }, o);
+    const Xc = 1 / (2 * Math.PI * p.f * p.C_uF * 1e-6), Xeq = Xc / 3;   // C per phase; first-fault current returns through the other phases' capacitance
+    const U = ULL(p.U0);
     const Riso_k = p.fault1 ? Math.max(0.01, p.Rf_k) : 1000;
     const alarm = !!(p.imd && Riso_k < p.imd_k);
     const none = { I_mA: 0, t_ms: 0, zone: "AC-1" };
-    if (p.fault1 && p.fault2) {                       // second fault on the other conductor: conductor-to-conductor short through the PE
-      const If = p.U0 / p.Zloop2, trip = mcbTrip(If, p.mcb), Vcase = If * p.Rpe;
-      const b = p.touch === "case" ? body(Vcase, p, exposure(trip)) : body(p.U0, p, exposure(trip));
-      return { Riso_k, alarm, Id_mA: If * 1000, If, Ut: Vcase, cond: { key: "RaId", value: 0, limit: p.UL, ok: true }, trip, body: b, stage: 2 };
+    if (p.fault1 && p.fault2) {                       // second fault on another phase: line-to-line short through the PE
+      const If = U / p.Zloop2, trip = mcbTrip(If, p.mcb), Vcase = If * p.Rpe;
+      const b = p.touch === "case" ? body(Vcase, p, exposure(trip)) : body(U, p, exposure(trip));
+      const Ia = mcbInstant(p.mcb);
+      return { Riso_k, alarm, Id_mA: If * 1000, If, Ut: Vcase, U, cond: { key: "2IaZs", value: Ia * p.Zloop2, limit: U, ok: Ia * p.Zloop2 <= U }, trip, body: b, stage: 2 };
     }
-    if (p.fault1) {                                   // first fault: only capacitive return through the healthy conductor
-      const Rf = Riso_k * 1000, Id = p.U0 / Math.hypot(Rf + p.Ra, Xc), Ut = Id * p.Ra;
-      const IdBolted = p.U0 / Math.hypot(p.Ra, Xc);          // §411.6.2: Id for a fault of negligible impedance
+    if (p.fault1) {
+      const Rf = Riso_k * 1000, Id = p.U0 / Math.hypot(Rf + p.Ra, Xeq), Ut = Id * p.Ra;
+      const IdBolted = p.U0 / Math.hypot(p.Ra, Xeq);                     // §411.6.2: Id ≈ 3ωC·U0 for a fault of negligible impedance
       let b = none;
       if (p.touch === "case") b = body(Ut, p, 5000);
-      else {                                                 // L2 returns to earth through Rf in parallel with its own capacitance
-        const XcL2 = Xc, ret = Math.hypot(Rf * XcL2 / Math.hypot(Rf, XcL2) + p.Ra, 0);
-        const Z = bodyZ(p.U0, p.skin, p.path), I = p.U0 / (Z + p.Rfoot + ret) * 1000; b = { I_mA: I, t_ms: 5000, zone: zone(I, 5000), Z };
+      else {                                         // touching another phase: the faulted phase sits near earth, so up to √3·U0 drives the body current
+        const k = Xeq / Math.hypot(Rf + p.Ra, Xeq), Ub = p.U0 + (U - p.U0) * k;
+        const Z = bodyZ(Ub, p.skin, p.path), I = Ub / (Z + p.Rfoot + p.Ra + Rf * (1 - k)) * 1000; b = { I_mA: I, t_ms: 5000, zone: zone(I, 5000), Z };
       }
-      return { Riso_k, alarm, Id_mA: Id * 1000, If: Id, Ut, cond: { key: "RaId", value: p.Ra * IdBolted, limit: p.UL, ok: p.Ra * IdBolted <= p.UL }, trip: null, body: b, stage: 1 };
+      return { Riso_k, alarm, Id_mA: Id * 1000, If: Id, Ut, U, cond: { key: "RaId", value: p.Ra * IdBolted, limit: p.UL, ok: p.Ra * IdBolted <= p.UL }, trip: null, body: b, stage: 1 };
     }
-    // healthy: touching a live conductor drives current only through the system capacitance
-    let b = none;
-    if (p.touch === "L1") { const Z = bodyZ(p.U0, p.skin, p.path), I = p.U0 / Math.hypot(Z + p.Rfoot, Xc) * 1000; b = { I_mA: I, t_ms: 5000, zone: zone(I, 5000), Z }; }
-    return { Riso_k, alarm, Id_mA: 0, If: 0, Ut: 0, cond: { key: "RaId", value: 0, limit: p.UL, ok: true }, trip: null, body: b, stage: 0 };
+    let b = none;                                    // healthy: touching a phase drives current through the system capacitance
+    if (p.touch === "phase") { const Z = bodyZ(p.U0, p.skin, p.path), I = p.U0 / Math.hypot(Z + p.Rfoot, Xeq) * 1000; b = { I_mA: I, t_ms: 5000, zone: zone(I, 5000), Z }; }
+    return { Riso_k, alarm, Id_mA: 0, If: 0, Ut: 0, U, cond: { key: "RaId", value: 0, limit: p.UL, ok: true }, trip: null, body: b, stage: 0 };
   }
 
-  const Model = { U0: U0_DEFAULT, bodyZ, zone, ZONE_LEVEL, zoneCurves, curveB, curveC1, MCB_BAND, parseMcb, mcbInstant, mcbTrip, rcdTrip, tt, tn, rcdScenario, separation, classProtection, ELV_LIMITS, elv, bonding, nonConducting, it, body, electrodeTT, potentialAt, itSupply };
+  const Model = { U0: U0_DEFAULT, bodyZ, zone, ZONE_LEVEL, zoneCurves, curveB, curveC1, MCB_BAND, parseMcb, mcbInstant, mcbTrip, rcdTrip, tt, tn, rcdScenario, separation, classProtection, ELV_LIMITS, elv, bonding, nonConducting, it, body, electrodeTT, potentialAt, itSupply, brokenPEN3, phaseV, pol, cabs, cadd, ULL, PHASE_DEG };
   if (typeof module !== "undefined" && module.exports) module.exports = Model;
   else { root.PE = root.PE || {}; root.PE.model = Model; }
 })(typeof window !== "undefined" ? window : this);

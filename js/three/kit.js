@@ -99,7 +99,7 @@
       labelsEl.innerHTML = labels.map(l => {
         v.set(...l.pos).project(camera);
         if (v.z > 1) return "";
-        return `<span class="lbl3d ${l.tone || ""}" style="left:${((v.x + 1) / 2 * w).toFixed(1)}px;top:${((1 - v.y) / 2 * h).toFixed(1)}px"><bdi>${rich(PE.L(l.text))}</bdi></span>`;
+        return `<span class="lbl3d ${l.tone || ""}" style="left:${((v.x + 1) / 2 * w).toFixed(1)}px;top:${((1 - v.y) / 2 * h).toFixed(1)}px"><bdi>${rich(typeof l.text === "string" ? l.text : PE.L(l.text))}</bdi></span>`;
       }).join("");
     }
     let liveT = null;

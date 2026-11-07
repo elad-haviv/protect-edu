@@ -36,6 +36,48 @@
       .style("stroke-width", opts.body ? 4 : 2 + lv * 4)
       .attr("marker-end", PE.reducedMotion() ? "url(#arr)" : null);
   };
+  // ---- three-phase pieces ----
+  // 3-pole breaker on three horizontal conductors (wire enters at x, leaves at x+60), poles linked mechanically
+  S.mcb3 = (g, x, ys, opts = {}) => {
+    const b = g.append("g");
+    ys.forEach((y, i) => S.mcb(b, x, y, Object.assign({}, opts, { label: i === ys.length - 1 ? opts.label : null })));
+    b.append("path").attr("class", "sym").attr("stroke-dasharray", "4 4").attr("d", `M${x + 30} ${ys[0] - 14} V${ys[ys.length - 1] + 6}`);
+    return b;
+  };
+  // 4-pole RCD: L1, L2, L3 and N through one toroid
+  S.rcd4 = (g, x, ys, opts = {}) => {
+    if (S.locked) opts = Object.assign({}, opts, { open: false, flash: false });
+    const b = g.append("g").attr("class", "sym-rcd" + (opts.flash ? " tripflash" : ""));
+    const ang = opts.open ? -30 : 0, y0 = ys[0], y1 = ys[ys.length - 1], ym = (y0 + y1) / 2;
+    ys.forEach(y => {
+      b.append("path").attr("class", "sym").attr("d", `M${x} ${y} h56 M${x + 90} ${y} h20`);
+      b.append("path").attr("class", "sym").attr("d", `M${x + 56} ${y} l34 0`).attr("transform", `rotate(${ang} ${x + 56} ${y})`);
+      b.append("circle").attr("cx", x + 56).attr("cy", y).attr("r", 3).attr("fill", "var(--stage-line)");
+    });
+    b.append("ellipse").attr("class", "sym").attr("cx", x + 24).attr("cy", ym).attr("rx", 9).attr("ry", (y1 - y0) / 2 + 12);
+    b.append("path").attr("class", "sym").attr("d", `M${x + 33} ${ym} h22`);
+    b.append("rect").attr("class", "sym-fill").attr("x", x + 55).attr("y", ym - 8).attr("width", 16).attr("height", 16);
+    b.append("path").attr("class", "sym").attr("stroke-dasharray", "4 4").attr("d", `M${x + 73} ${y0 - 16} V${y1 + 16}`);
+    if (opts.label) S.text(b, x + 56, y0 - 26, opts.label, "lbl-s");
+    return b;
+  };
+  // three-phase motor (IEC 60617 06-04-01 family): circle with "M 3~"
+  S.motor3 = (g, cx, cy, r = 30) => {
+    const m = g.append("g");
+    m.append("circle").attr("class", "sym-fill").attr("cx", cx).attr("cy", cy).attr("r", r);
+    S.text(m, cx, cy + 2, "M", "sym-txt").style("font-size", "20px");
+    S.text(m, cx, cy + 20, "3~", "sym-txt").style("font-size", "13px");
+    return m;
+  };
+  // single-line notation: three short slashes = three conductors
+  S.tri = (g, x, y) => g.append("path").attr("class", "sym").attr("d", `M${x - 9} ${y + 7} l8 -14 M${x - 2} ${y + 7} l8 -14 M${x + 5} ${y + 7} l8 -14`);
+  // inline LaTeX inside the (LTR) diagram via foreignObject
+  S.math = (g, x, y, tex, opts = {}) => {
+    const w = opts.w || 240, h = opts.h || 34;
+    const fo = g.append("foreignObject").attr("x", x - (opts.anchor === "start" ? 0 : w / 2)).attr("y", y - h / 2).attr("width", w).attr("height", h).attr("class", opts.cls || "");
+    fo.append("xhtml:div").attr("class", "svg-mx" + (opts.box ? " box " + (opts.tone || "") : "")).style("text-align", opts.anchor === "start" ? "left" : "center").html(PE.math(tex));
+    return fo;
+  };
   S.dot = (g, x, y) => g.append("circle").attr("cx", x).attr("cy", y).attr("r", 4.5).attr("fill", "var(--stage-line)");
   // Hebrew text inside the (always-LTR) diagram: render RTL but keep the geometric anchor
   const HEB = /[\u0590-\u05FF]/;

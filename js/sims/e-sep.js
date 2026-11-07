@@ -18,11 +18,11 @@
       const r = M.separation({ isolated: s.isolated, touch: s.dual ? "one" : s.touch, firstFault: s.firstFault, len: s.len, dual: s.isolated && s.dual, bond: s.bond, skin: s.skin });
       const g = svg.append("g"); const floor = 450, y1 = 120, y2 = 200;
       S.ground(g, 0, 960, floor, { h: 90 });
-      const sup = C.supply(g, 60, y1, y2, { earthY: 300 });
-      S.wire(g, [[112, 378], [112, floor]], "gen", "w-thin");
+      const sup = C.board1ph(g, { sys: "TN", earthY: 300 }), sx = sup.star[0];
+      S.wire(g, [[sx, 378], [sx, floor]], "gen", "w-thin");
       const lvl = C.lvl(r.body.zone);
       if (s.isolated) {
-        S.wire(g, [sup.L, [250, y1]], "L"); S.wire(g, [sup.N, [250, y2]], "N");
+        S.wire(g, [sup.L, [sup.L[0], y1], [250, y1]], "L1"); S.wire(g, [sup.N, [sup.N[0], y2], [250, y2]], "N");
         g.append("rect").attr("x", 250).attr("y", 90).attr("width", 130).attr("height", 140).attr("rx", 10).attr("class", "sym-fill");
         S.transformer(g, 315, 160, { r: 26, safety: false });
         S.text(g, 315, 82, ctx.L({ he: "שנאי הפרדה 1:1", en: "Isolating transformer 1:1" }), "lbl-s");
@@ -30,7 +30,7 @@
         S.text(g, 470, y1 - 14, "a", "lbl-b"); S.text(g, 470, y2 + 30, "b", "lbl-b");
         S.text(g, 470, 262, ctx.L({ he: "מעגל משני – לא מוארק", en: "Secondary – not earthed" }), "lbl-s");
       } else {
-        S.wire(g, [sup.L, [560, y1]], "L"); S.wire(g, [sup.N, [560, y2]], "N");
+        S.wire(g, [sup.L, [sup.L[0], y1], [560, y1]], "L1"); S.wire(g, [sup.N, [sup.N[0], y2], [560, y2]], "N");
         S.wireTag(g, 470, y1 - 22, "L"); S.wireTag(g, 470, y2 + 22, "N");
       }
       if (s.isolated && s.dual) {
@@ -55,7 +55,7 @@
         S.person(g, 690, floor, { s: 1.1, state: lvl, hand: [tapA[0] + 4, tapA[1] + 2], hand2: s.touch === "two" ? [tapB[0] + 2, tapB[1] + 4] : undefined });
         if (r.body.I_mA > 1) {
           if (s.touch === "two") S.flow(g, [tapA, [690, 340], tapB], r.body.I_mA / 1000, { body: true });
-          else S.flow(g, [tapA, [690, 340], [690, floor + 30], [s.isolated ? 420 : 112, floor + 30], [s.isolated ? 420 : 112, s.isolated ? floor : 378]], r.body.I_mA / 1000, { body: true });
+          else S.flow(g, [tapA, [690, 340], [690, floor + 30], [s.isolated ? 420 : sx, floor + 30], [s.isolated ? 420 : sx, s.isolated ? floor : 378]], r.body.I_mA / 1000, { body: true });
         } else if (s.isolated) S.badge(g, 560, floor - 30, ctx.L({ he: "אין מסלול חזרה", en: "No return path" }), "ok", "res");
       }
       const meters = [PE.kit.bodyMeter(r.body), { label: { he: "מתח מגע", en: "Touch voltage" }, value: r.Ut, unit: "V", tone: r.Ut > 50 ? "bad" : "ok" }];

@@ -52,11 +52,25 @@ module.exports = {
   },
   "floating supply (IT): first fault alarms, no trip, low touch voltage"() {
     const r = M.itSupply({ fault1: true });
-    assert.ok(r.Id_mA < 10 && r.Ut < 50 && r.cond.ok, JSON.stringify(r)); assert.strictEqual(r.trip, null); assert.ok(r.alarm);
+    assert.ok(r.Id_mA < 50 && r.Ut < 50 && r.cond.ok, JSON.stringify(r)); assert.strictEqual(r.trip, null); assert.ok(r.alarm);
     assert.strictEqual(M.itSupply({ fault1: true, imd: false }).alarm, false);
     assert.ok(!M.itSupply({ fault1: true, Rf_k: 200 }).alarm);
   },
-  "floating supply: touching the other conductor after a first fault is dangerous"() { assert.ok(["AC-3", "AC-4"].includes(M.itSupply({ fault1: true, touch: "L1" }).body.zone)); assert.ok(["AC-1", "AC-2"].includes(M.itSupply({ touch: "L1" }).body.zone)); },
+  "floating supply (3-phase): touching another phase after a first fault means 400 V"() {
+    const r = M.itSupply({ fault1: true, touch: "phase" }); assert.strictEqual(r.body.zone, "AC-4"); near(r.U, 398.4, 0.2);
+    const h = M.itSupply({ touch: "phase" }); assert.ok(h.body.I_mA > 5 && h.body.I_mA < 30, "healthy IT touch " + h.body.I_mA);
+  },
+  "floating supply (3-phase): first-fault current ≈ 3ωC·U0"() { const r = M.itSupply({ fault1: true, Ra: 0.001 }); near(r.Id_mA, 3 * 2 * Math.PI * 50 * 0.1e-6 * 230 * 1000, 0.1); },
+  "broken PEN, three-phase: balanced load gives no shift; one-phase load shifts the neutral"() {
+    near(M.brokenPEN3({ I: [10, 10, 10] }).VN, 0, 1e-6);
+    const one = M.brokenPEN3({ I: [10, 0, 0] }); near(one.Vcase, 65.7, 0.5);
+    const fl = M.brokenPEN3({ I: [10, 2, 2], Ra: null }); assert.ok(fl.Vcase > 50 && Math.max(...fl.loads) > 300, JSON.stringify(fl));
+  },
+  "RCD: person between two phases (400 V) is not detected; unbalanced 3-phase load does not trip"() {
+    const ll = M.rcdScenario({ scenario: "LL" }); assert.strictEqual(ll.trip, null); assert.strictEqual(ll.body.zone, "AC-4"); near(ll.Ubody, 398.4, 0.2); near(ll.IN, 8, 1e-6);
+    const ub = M.rcdScenario({ scenario: "unbalanced" }); assert.strictEqual(ub.trip, null); assert.ok(ub.IN > 5);
+    near(M.rcdScenario({ scenario: "LE" }).IN, 8, 1e-6);
+  },
   "floating supply: second fault trips the MCB"() { const r = M.itSupply({ fault1: true, fault2: true }); assert.strictEqual(r.trip.mode, "instant"); },
   "non-conducting location and IT"() { assert.ok(M.nonConducting({}).ok); assert.ok(!M.nonConducting({ Rfloor_k: 10 }).ok); assert.strictEqual(M.it({}).body.zone, "AC-2"); }
 };

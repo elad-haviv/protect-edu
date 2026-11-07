@@ -31,7 +31,7 @@ PE.content.H = {
     { code: "7.3", id: "h-scene", kind: "scene", title: { he: "תלת-ממד: חדר ניתוח", en: "3D: an operating theatre" }, blocks: [
       { type: "p", he: "סובבו את החדר ובחרו חלקים. הפעילו תקלה ראשונה ותקלה שנייה וראו את לוח ההשגחה.", en: "Rotate the room and select parts. Switch on a first and a second fault and watch the monitoring panel." },
       { type: "scene", id: "h-or", title: { he: "זינה צפה בחדר ניתוח", en: "A floating supply in an operating theatre" }, parts: [
-        { name: { he: "שנאי מבדל", en: "Isolating transformer" }, desc: { he: "מזין את הרשת הצפה; המשני שלו אינו מוארק.", en: "Feeds the floating network; its secondary is not earthed." } },
+        { name: { he: "שנאי מבדל", en: "Isolating transformer" }, desc: { he: "מוזן מהרשת התלת-פאזית ומזין את הרשת הצפה; המשני שלו אינו מוארק. בחדרים רפואיים המשני חד-פאזי לפי IEC 60364-7-710.", en: "Fed from the three-phase network, it supplies the floating network; its secondary is not earthed. In medical locations the secondary is single-phase per IEC 60364-7-710." } },
         { name: { he: "מכשיר השגחה על הבידוד", en: "Insulation monitoring device" }, desc: { he: "מודד את התנגדות הבידוד ומתריע (אור וקול) בתקלה ראשונה.", en: "Measures insulation resistance and alarms (light and sound) at a first fault." } },
         { name: { he: "לוח התראה", en: "Alarm panel" }, desc: { he: "מציג לצוות שיש תקלה ראשונה – העבודה ממשיכה, ומזמינים חשמלאי.", en: "Shows staff that there is a first fault – work continues, and an electrician is called." } },
         { name: { he: "ציוד רפואי", en: "Medical equipment" }, desc: { he: "גופי המתכת מחוברים ל-PE ולפס השוואה מקומי.", en: "Metal cases are on the PE and a local bonding bar." } }] }

@@ -16,50 +16,47 @@
       const r = M.tt({ Ra: s.ra, earthed: s.earthed, rcd_mA: s.rcd || null, mcb: s.mcb, person: s.person, skin: s.skin, fault: s.fault });
       const tripped = !!(r.trip && r.trip.status === "yes");
       const g = svg.append("g");
-      const yL = 110, yN = 165, floor = 440;
+      const floor = 450;
       S.ground(g, 0, 960, floor, { h: 100 });
       S.text(g, 950, floor + 90, ctx.L({ he: "אדמה", en: "Soil" }), "lbl-s", "end");
-      const sup = C.supply(g, 70, yL, yN, { earthY: 300 });
-      S.wire(g, [[122, 300 + 78], [122, floor]], "gen", "w-thin");
-      // MCB on L, optional RCD on L+N
-      S.wire(g, [sup.L, [190, yL]], "L"); S.wire(g, [sup.N, [190, yN]], "N");
-      S.mcb(g, 190, yL, { open: tripped && r.trip.by === "mcb", flash: tripped && r.trip.by === "mcb", label: s.mcb });
-      S.wire(g, [[190, yN], [250, yN]], "N");
-      if (s.rcd) { S.rcd(g, 280, yL, yN, { open: tripped && r.trip.by === "rcd", flash: tripped && r.trip.by === "rcd", label: `RCD ${s.rcd} mA` }); S.wire(g, [[250, yL], [280, yL]], "L"); S.wire(g, [[250, yN], [280, yN]], "N"); }
-      S.wire(g, [[s.rcd ? 390 : 250, yL], [560, yL]], "L"); S.wire(g, [[s.rcd ? 390 : 250, yN], [560, yN]], "N");
-      S.wireTag(g, 470, yL - 22, "L"); S.wireTag(g, 470, yN + 22, "N");
-      // appliance
-      const ax = 560, ay = 70, aw = 170, ah = 230;
+      const sup = C.supply3(g, { sys: "TT", earthY: 300, x1: 200 }), ys = sup.ys, Lk = ["L1", "L2", "L3"];
+      S.wire(g, [[sup.star[0], 378], [sup.star[0], floor]], "gen", "w-thin");
+      // 3-pole MCB, optional 4-pole RCD
+      S.mcb3(g, 200, Lk.map(k => ys[k]), { open: tripped && r.trip.by === "mcb", flash: tripped && r.trip.by === "mcb", label: s.mcb });
+      S.wire(g, [[200, ys.N], [260, ys.N]], "N");
+      let xa = 260;
+      if (s.rcd) {
+        Lk.forEach(k => S.wire(g, [[260, ys[k]], [290, ys[k]]], k)); S.wire(g, [[260, ys.N], [290, ys.N]], "N");
+        S.rcd4(g, 290, [ys.L1, ys.L2, ys.L3, ys.N], { open: tripped && r.trip.by === "rcd", flash: tripped && r.trip.by === "rcd", label: `RCD ${s.rcd} mA` });
+        xa = 400;
+      }
+      Lk.forEach(k => S.wire(g, [[xa, ys[k]], [600, ys[k]]], k)); S.wire(g, [[xa, ys.N], [600, ys.N]], "N");
+      // three-phase pump: case with motor symbol
+      const ax = 560, ay = 200, aw = 190, ah = 150;
       const live = s.fault && !tripped && r.Vcase > 50, warm = s.fault && !tripped && r.Vcase > 0;
-      S.appliance(g, ax, ay, aw, ah, { live, warm, label: ctx.L({ he: "מכונת כביסה", en: "Washing machine" }) });
-      g.append("circle").attr("cx", ax + aw / 2).attr("cy", ay + 100).attr("r", 44).attr("class", "sym-fill");
-      g.append("circle").attr("cx", ax + aw / 2).attr("cy", ay + 100).attr("r", 30).attr("class", "sym");
-      S.wire(g, [[560, yL], [ax + 30, yL]], "L", "w-thin"); S.wire(g, [[560, yN], [ax + 30, yN]], "N", "w-thin");
-      g.append("rect").attr("x", ax + 22).attr("y", yL - 12).attr("width", 34).attr("height", yN - yL + 24).attr("rx", 4).attr("class", "sym-fill");
-      S.text(g, ax + 39, (yL + yN) / 2 + 5, "M", "sym-txt");
-      if (s.fault) { C.bolt(g, ax + 10, yL + 2, .8); }
+      Lk.forEach((k, i) => S.wire(g, [[600 + i * 30, ys[k]], [600 + i * 30, ay + 30]], k, "w-thin"));
+      Lk.forEach((k, i) => S.dot(g, 600 + i * 30, ys[k]));
+      S.appliance(g, ax, ay, aw, ah, { live, warm, label: ctx.L({ he: "משאבה תלת-פאזית", en: "Three-phase pump" }) });
+      S.motor3(g, ax + 70, ay + 65, 30);
+      if (s.fault) C.bolt(g, ax + 145, ay + 40, .8);
       // PE and earth electrode
-      const peX = ax + 60;
+      const peX = ax + 160;
       if (s.earthed) {
         S.wire(g, [[peX, ay + ah], [peX, 380]], "PE");
-        S.wireTag(g, peX + 32, 335, "PE");
-        S.resistor(g, peX, 380, { vertical: true, len: 40, label: `Ra = ${s.ra} Ω` });
+        S.wireTag(g, peX + 32, 368, "PE");
+        S.resistor(g, peX, 380, { vertical: true, len: 40 });
+        S.math(g, peX + 22, 400, `R_a = ${s.ra}\\,\\Omega`, { anchor: "start", w: 160 });
         S.wire(g, [[peX, 420], [peX, floor]], "gen", "w-thin");
-        g.append("path").attr("d", `M${peX - 5} ${floor} v70 l5 12 l5 -12 v-70`).attr("fill", "#7d858c");   // earth rod
-      } else {
-        S.badge(g, peX, ay + ah + 40, ctx.L({ he: "אין הארקה", en: "No earth" }), "danger");
-      }
-      // person touching the case
+        g.append("path").attr("d", `M${peX - 5} ${floor} v70 l5 12 l5 -12 v-70`).attr("fill", "#7d858c");
+      } else S.badge(g, peX, ay + ah + 40, ctx.L({ he: "אין הארקה", en: "No earth" }), "danger");
       const lvl = s.person && s.fault ? C.lvl(r.body.zone) : 0;
-      if (s.person) S.person(g, 840, floor, { s: 1.15, state: lvl, neutral: !s.fault, hand: [ax + aw + 2, 200] });
-      // flows (current path while the fault persists)
+      if (s.person) S.person(g, 880, floor, { s: 1.15, state: lvl, neutral: !s.fault, hand: [ax + aw + 2, 280] });
       if (s.fault && !tripped) {
-        if (s.earthed) S.flow(g, [[122, yL], [190, yL], [ax + 10, yL], [ax + 10, ay + ah - 10], [peX, ay + ah - 10], [peX, floor + 60], [122, floor + 60], [122, 378]], r.If);
-        if (s.person && r.body.I_mA > 0) S.flow(g, [[ax + aw + 2, 200], [830, 230], [840, floor - 4], [840, floor + 30], [130, floor + 30]], r.body.I_mA / 1000, { body: true });
+        if (s.earthed) S.flow(g, [[sup.star[0] + 20, ys.L1], [600, ys.L1], [600, ay + 40], [peX, ay + 40], [peX, floor + 60], [sup.star[0], floor + 60], [sup.star[0], 378]], r.If);
+        if (s.person && r.body.I_mA > 0) S.flow(g, [[ax + aw + 2, 280], [870, 300], [880, floor - 4], [880, floor + 30], [sup.star[0] + 10, floor + 30]], r.body.I_mA / 1000, { body: true });
       }
-      // badges
-      if (s.fault) S.badge(g, ax + aw / 2, ay - 26, `U = ${PE.fmt(tripped ? 0 : r.Vcase)} V`, r.Vcase > 50 && !tripped ? "danger" : "ok", "res");
-      if (tripped) S.badge(g, r.trip.by === "rcd" ? 335 : 220, 52, ctx.L({ he: "נותק!", en: "TRIPPED" }), "ok", "res");
+      if (s.fault && !S.locked) S.math(g, 450, ay + 60, `U_t = ${PE.fmt(tripped ? 0 : r.Vcase)}\\,\\mathrm{V}`, { box: true, tone: r.Vcase > 50 && !tripped ? "danger" : "ok", w: 200, h: 36, cls: "res" });
+      if (tripped) S.badge(g, r.trip.by === "rcd" ? 345 : 230, 30, ctx.L({ he: "נותק!", en: "TRIPPED" }), "ok", "res");
 
       const meters = [
         { label: { he: "זרם תקלה", en: "Fault current" }, value: s.fault ? r.If : 0, unit: "A" },

@@ -1,7 +1,7 @@
 /* F2 – Insulation classes: class 0, I and II, with damage to each layer. */
 (function () {
   "use strict";
-  const S = PE.sym;
+  const S = PE.sym, C = PE.simc;
   PE.sims["f-class"] = {
     title: { he: "סימולטור מחלקות הגנה", en: "Protection class simulator" },
     params: [
@@ -41,7 +41,8 @@
         S.wireTag(g, cx - 165, cy + 200, "PE");
       }
       // supply cord
-      S.wire(g, [[cx - 260, cy + 10], [40, cy + 10]], "L"); S.wire(g, [[cx - 260, cy + 30], [40, cy + 30]], "N");
+      const sup = C.board1ph(g, { sys: "TN", x1: 124, xt: 70, x: 6, tagX: 118 });
+      S.wire(g, [sup.L, [sup.L[0], cy + 10], [cx - 260, cy + 10]], "L1"); S.wire(g, [sup.N, [sup.N[0], cy + 30], [cx - 260, cy + 30]], "N");
       if (s.cls === 2) S.classII(g, cx + 190, cy + 110, 40);
       if (s.cls === 1) S.earth(g, cx + 210, cy + 110, { pe: true });
       const lvl = r.live ? 3 : 0;

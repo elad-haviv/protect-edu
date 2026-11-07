@@ -17,12 +17,13 @@
       if (s.loc === "pool0") { g.append("rect").attr("x", 430).attr("y", 300).attr("width", 380).attr("height", 160).attr("fill", "#6fb7e9").attr("opacity", .55); S.text(g, 620, 445, ctx.L({ he: "בריכה – אזור 0", en: "Pool – zone 0" }), "lbl-s"); }
       S.ground(g, 0, 960, floor, { h: 80 });
       // mains → transformer → ELV circuit
-      S.wire(g, [[30, 140], [170, 140]], "L"); S.wire(g, [[30, 200], [170, 200]], "N");
+      const sup = C.board1ph(g, { sys: "TN", x1: 150, xt: 120 });
+      S.wire(g, [sup.L, [sup.L[0], 140], [170, 140]], "L1"); S.wire(g, [sup.N, [sup.N[0], 200], [170, 200]], "N");
       g.append("rect").attr("x", 170).attr("y", 105).attr("width", 130).attr("height", 130).attr("rx", 10).attr("class", "sym-fill");
       S.transformer(g, 235, 170, { r: 24, safety: s.src === "safety" });
       S.text(g, 235, 92, ctx.L(s.src === "safety" ? { he: "שנאי בטיחות", en: "Safety transformer" } : { he: "ספק לא מבודד", en: "Non-isolated adapter" }), "lbl-s");
       if (s.src === "adapterFault") PE.simc.bolt(g, 235, 210, .7);
-      S.text(g, 30, 120, "230 V", "lbl-s", "start");
+      S.text(g, 60, 170, "230 V", "lbl-s", "start");
       const wireK = s.src === "safety" ? "gen" : "L";
       S.wire(g, [[300, 140], [520, 140], [520, 330]], wireK); S.wire(g, [[300, 200], [470, 200], [470, 330]], "gen");
       S.text(g, 400, 128, `${PE.fmt(r.Ueff)} V ${s.ac ? "AC" : "DC"}`, "lbl-b");
