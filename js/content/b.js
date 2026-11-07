@@ -1,10 +1,10 @@
 /* Module B – Protective earthing (TT). Hebrew is the master text. {{…}} marks LTR runs (numbers, units, formulas). */
 PE.content.B = {
-  code: "B", icon: "⏚",
+  code: "1", icon: "⏚",
   title: { he: "הארקת הגנה", en: "Protective earthing" },
   short: { he: "הארקת הגנה", en: "Earthing (TT)" },
   lessons: [
-    { code: "B1", id: "b-intro", kind: "intro", title: { he: "העיקרון: לתת לזרם התקלה דרך אחרת", en: "The principle: give the fault current another path" }, blocks: [
+    { code: "1.1", id: "b-intro", kind: "intro", title: { he: "העיקרון: לתת לזרם התקלה דרך אחרת", en: "The principle: give the fault current another path" }, blocks: [
       { type: "callout", tone: "hook", he: "שני שכנים, אותה תקלה במכונת הכביסה. אחד חטף מכה חשמלית ממושכת, השני הרגיש עקצוץ קצר והחשמל בבית נפל. מה ההבדל בין הבתים?", en: "Two neighbours, the same fault in a washing machine. One got a long electric shock; the other felt a short tingle and the power in the house went off. What was different between the two homes?" },
       { type: "p", label: "principle", he: "במכשיר מ<b>מחלקה I</b> (גוף מתכת) נמצאים מוליכי פאזה בתוך הגוף. אם הבידוד נפגם והפאזה נוגעת בגוף, הגוף מקבל מתח – זהו <b>מגע עקיף</b>. מי שנוגע בגוף ועומד על הרצפה סוגר מעגל דרך גופו אל האדמה.", en: "A <b>class I</b> appliance (metal case) has line conductors inside the case. If the insulation fails and the line touches the case, the case becomes live – this is <b>indirect contact</b>. Anyone touching the case while standing on the floor closes a circuit through their body to earth." },
       { type: "p", label: "principle", he: "בהארקת הגנה מחברים את גוף המכשיר ב<b>מוליך הגנה (PE)</b> אל <b>אלקטרודת הארקה</b> באדמה (הארקת יסוד, יתד או פס). בזמן תקלה זרם התקלה זורם דרך מוליך ההגנה, האדמה וההארקה של נקודת האפס בשנאי – ולא רק דרך האדם.", en: "Protective earthing connects the case through a <b>protective conductor (PE)</b> to an <b>earth electrode</b> (foundation earth, rod or tape). During a fault the fault current flows through the PE, the soil and the earthing of the transformer star point – not only through the person." },
@@ -22,8 +22,8 @@ PE.content.B = {
           why: { he: "{{If = 230/22 ≈ 10.5 A}}; {{U = 10.5 × 20 ≈ 209 V}}. רוב המתח נופל על Ra כי היא גדולה מ-Rb.", en: "{{If = 230/22 ≈ 10.5 A}}; {{U = 10.5 × 20 ≈ 209 V}}. Most of the voltage drops across Ra because it is larger than Rb." } }
       ] }
     ] },
-    { code: "B2", id: "b-sim", kind: "sim", title: { he: "סימולטור: תקלה במכונת כביסה", en: "Simulator: a fault in a washing machine" }, blocks: [
-      { type: "p", he: "הפאזה נגעה בגוף המכונה. שנו את ההארקה, את מפסק הפחת ואת סוג המאמ\"ת, וראו מה קורה למתח המגע, לזרם בגוף ולזמן הניתוק. המודל מחשב את עכבת הגוף לפי המתח (ראו A1) ואת אזור ההשפעה לפי הזרם והזמן (A2).", en: "The line has touched the machine's case. Change the earthing, the RCD and the MCB type, and watch the touch voltage, the body current and the disconnection time. The model takes body impedance from the voltage (see A1) and the effect zone from current and time (A2)." },
+    { code: "1.2", id: "b-sim", kind: "sim", title: { he: "סימולטור: תקלה במכונת כביסה", en: "Simulator: a fault in a washing machine" }, blocks: [
+      { type: "p", he: "הפאזה נגעה בגוף המכונה. שנו את ההארקה, את מפסק הפחת ואת סוג המאמ\"ת, וראו מה קורה למתח המגע, לזרם בגוף ולזמן הניתוק. המודל מחשב את עכבת הגוף לפי המתח (ראו 0.1) ואת אזור ההשפעה לפי הזרם והזמן (0.2).", en: "The line has touched the machine's case. Change the earthing, the RCD and the MCB type, and watch the touch voltage, the body current and the disconnection time. The model takes body impedance from the voltage (see 0.1) and the effect zone from current and time (0.2)." },
       { type: "sim", id: "b-tt", predict: {
         state: { earthed: false, rcd: 30, fault: true, person: true },
         q: { he: "המכונה <b>אינה מוארקת</b>, אבל מותקן פחת {{30 mA}}. אדם נוגע בגוף החי. מה יקרה?", en: "The machine is <b>not earthed</b>, but a {{30 mA}} RCD is installed. A person touches the live case. What happens?" },
@@ -34,7 +34,7 @@ PE.content.B = {
         { he: "הגדילו את Ra ל-{{200 Ω}} עם פחת {{30 mA}}: האם התנאי {{Ra·IΔn ≤ 50 V}} עדיין מתקיים?", en: "Raise Ra to {{200 Ω}} with a {{30 mA}} RCD: does the condition {{Ra·IΔn ≤ 50 V}} still hold?" },
         { he: "החליפו לפחת {{300 mA}} ו-Ra של {{200 Ω}}: מה השתנה?", en: "Switch to a {{300 mA}} RCD and Ra of {{200 Ω}}: what changed?" }] }
     ] },
-    { code: "B3", id: "b-scene", kind: "scene", title: { he: "תלת-ממד: משפך הפוטנציאל סביב האלקטרודה", en: "3D: the potential funnel around the electrode" }, blocks: [
+    { code: "1.3", id: "b-scene", kind: "scene", title: { he: "תלת-ממד: משפך הפוטנציאל סביב האלקטרודה", en: "3D: the potential funnel around the electrode" }, blocks: [
       { type: "p", label: "principle", he: "כשזרם תקלה נכנס לאדמה דרך אלקטרודה, הפוטנציאל של פני הקרקע יורד ככל שמתרחקים ממנה – בקירוב {{V(r) ≈ If·ρ / (2πr)}} לאלקטרודה חצי-כדורית. אדם שנוגע בגוף מוארק ועומד במרחק מה נחשף ל<b>מתח מגע</b>; אדם שהולך ליד האלקטרודה נחשף ל<b>מתח צעד</b> בין רגליו.", en: "When fault current enters the soil through an electrode, the surface potential falls with distance – roughly {{V(r) ≈ If·ρ / (2πr)}} for a hemispherical electrode. A person touching an earthed case while standing some distance away sees a <b>touch voltage</b>; someone walking near the electrode sees a <b>step voltage</b> between their feet." },
       { type: "scene", id: "b-earth", title: { he: "אלקטרודה ומשפך פוטנציאל", en: "Electrode and potential funnel" }, parts: [
         { name: { he: "אלקטרודת הארקה", en: "Earth electrode" }, desc: { he: "יתד, פס או הארקת יסוד; דרכה זרם התקלה נכנס לאדמה.", en: "Rod, tape or foundation earth; the fault current enters the soil through it." } },
@@ -42,7 +42,7 @@ PE.content.B = {
         { name: { he: "מתח מגע", en: "Touch voltage" }, desc: { he: "ההפרש בין היד (על הגוף המוארק) לרגליים (על הקרקע).", en: "The difference between the hand (on the earthed case) and the feet (on the soil)." } },
         { name: { he: "מתח צעד", en: "Step voltage" }, desc: { he: "ההפרש בין שתי הרגליים, בערך צעד אחד זו מזו.", en: "The difference between the two feet, about one step apart." } }] }
     ] },
-    { code: "B4", id: "b-practice", kind: "practice", title: { he: "בפועל ובתקנות", en: "In practice and in the regulations" }, blocks: [
+    { code: "1.4", id: "b-practice", kind: "practice", title: { he: "בפועל ובתקנות", en: "In practice and in the regulations" }, blocks: [
       { type: "list", items: [
         { label: "regulation", source: "IEC 60364-4-41 §411.5", he: "במערכת TT עם פחת: {{Ra · IΔn ≤ 50 V}}. עם פחת {{30 mA}} מספיקה התנגדות של עד כ-{{1666 Ω}} – אבל בפועל שואפים להתנגדות נמוכה בהרבה.", en: "In a TT system with an RCD: {{Ra · IΔn ≤ 50 V}}. With a {{30 mA}} RCD a resistance up to about {{1666 Ω}} is enough – in practice one aims much lower." },
         { label: "regulation", source: "IEC 60364-4-41", he: "זמן ניתוק מרבי במעגל סופי ב-TT: {{0.2 s}} ({{230 V}}); במעגל חלוקה: {{1 s}}. יש לאמת מול התקנות הישראליות.", en: "Maximum disconnection time in a TT final circuit: {{0.2 s}} ({{230 V}}); distribution circuit: {{1 s}}. Verify against the Israeli regulations." },
@@ -59,7 +59,7 @@ PE.content.B = {
           steps: [{ he: "{{IΔn ≤ UL / Ra}}", en: "{{IΔn ≤ UL / Ra}}" }, { he: "{{IΔn ≤ 50 / 120 = 0.417 A ≈ 417 mA}}", en: "{{IΔn ≤ 50 / 120 = 0.417 A ≈ 417 mA}}" }] }
       ] }
     ] },
-    { code: "B5", id: "b-check", kind: "check", title: { he: "בדקו את עצמכם", en: "Check yourself" }, blocks: [
+    { code: "1.5", id: "b-check", kind: "check", title: { he: "בדקו את עצמכם", en: "Check yourself" }, blocks: [
       { type: "quiz", items: [
         { q: { he: "במתקן TT ללא פחת, {{Ra = 10 Ω}}, מאמ\"ת {{C16}}. בזמן תקלה לגוף:", en: "TT installation without an RCD, {{Ra = 10 Ω}}, {{C16}} MCB. During a fault to the case:" },
           o: [{ he: "המאמ\"ת מנתק תוך {{10 ms}}", en: "The MCB trips within {{10 ms}}" }, { he: "זרם של כ-{{19 A}} זורם, המאמ\"ת לא מנתק מיידית והגוף נשאר בכ-{{190 V}}", en: "About {{19 A}} flows, the MCB does not trip instantly and the case stays at about {{190 V}}" }, { he: "הגוף נשאר ב-{{0 V}} כי הוא מוארק", en: "The case stays at {{0 V}} because it is earthed" }], a: 1,

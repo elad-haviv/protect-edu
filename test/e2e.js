@@ -54,6 +54,9 @@ const check = (cond, msg) => { if (!cond) fails.push(msg); };
   await page.goto(BASE + "#B4"); await page.waitForTimeout(150);
   await page.fill('.prac[data-i="0"] input', "184"); await page.click('.prac[data-i="0"] .chk');
   check((await page.textContent('.prac[data-i="0"] .prac-res')).includes("184"), "practice check");
+  // legacy letter codes route to numbered sheets
+  await page.goto(BASE + "#B2?lang=en"); await page.waitForTimeout(250);
+  check(await page.evaluate(() => document.querySelector("#lesson").dataset.code) === "1.2", "legacy #B2 → 1.2");
   // 3D scenes render a canvas (swiftshader)
   for (const c of ["B3", "D3", "H3", "J5"]) {
     await page.goto(BASE + "#" + c); await page.waitForTimeout(1800);
@@ -89,9 +92,9 @@ const check = (cond, msg) => { if (!cond) fails.push(msg); };
   check((await page.$$(".card-t tbody tr")).length === 8, "comparison card rows");
   // v1 stubs
   await page.goto(BASE + "modules/m3-rcd.html"); await page.waitForTimeout(400);
-  check(page.url().endsWith("#D1"), "v1 stub redirect: " + page.url());
+  check(page.url().endsWith("#3.1"), "v1 stub redirect: " + page.url());
   await page.goto(BASE + "modules/m7-equipotential.html"); await page.waitForTimeout(400);
-  check(page.url().endsWith("#J4"), "v1 stub m7 redirect: " + page.url());
+  check(page.url().endsWith("#8.4"), "v1 stub m7 redirect: " + page.url());
   if (OUT) for (const [hash, w, h, scheme, name] of [["#B2?lang=he", 1366, 900, "light", "b2-he-desktop"], ["#C2?lang=en", 1366, 900, "dark", "c2-en-dark"], ["#D2?lang=he", 390, 844, "light", "d2-he-phone"], ["#A2?lang=he", 1366, 900, "dark", "a2-he-dark"]]) {
     const p = await browser.newPage({ viewport: { width: w, height: h }, colorScheme: scheme }); await p.goto(BASE + hash); await p.waitForTimeout(400);
     await p.screenshot({ path: `${OUT}/${name}.png`, fullPage: true }); await p.close();

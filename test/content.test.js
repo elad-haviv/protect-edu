@@ -5,7 +5,8 @@ const PE = ctx.PE;
 const plain = x => JSON.parse(JSON.stringify(x));
 const LABELS = ["principle", "practice", "illustrative", "regulation"];
 const KINDS = ["intro", "sim", "scene", "practice", "check", "location", "card", "ref"];
-const CODES = { A: ["A1", "A2", "A3", "A4", "A5"], B: ["B1", "B2", "B3", "B4", "B5"], C: ["C1", "C2", "C3", "C4"], D: ["D1", "D2", "D3", "D4", "D5", "D6"], E: ["E1", "E2", "E3", "E4"], F: ["F1", "F2", "F3"], G: ["G1", "G2", "G3", "G4", "G5"], H: ["H1", "H2", "H3", "H4", "H5"], J: ["J1", "J2", "J3", "J4", "J5"], K: ["K1"], L: ["L1"], M: ["M1"] };
+const CODES = { 0: [1, 2, 3, 4, 5], 1: [1, 2, 3, 4, 5], 2: [1, 2, 3, 4], 3: [1, 2, 3, 4, 5, 6], 4: [1, 2, 3, 4], 5: [1, 2, 3], 6: [1, 2, 3, 4, 5], 7: [1, 2, 3, 4, 5], 8: [1, 2, 3, 4, 5], 9: [1], 10: [1], 11: [1] };
+for (const k in CODES) CODES[k] = CODES[k].map(n => k + "." + n);
 const strip = s => String(s).replace(/<[^>]+>/g, "").replace(/\{\{|\}\}/g, "").replace(/\b3D\b/g, "");
 const digits = s => (strip(s).match(/\d+(?:[.,]\d+)*/g) || []).map(x => x.replace(/,/g, "")).sort().join(" ");
 // Walk every {he, en} pair in the content
@@ -17,7 +18,7 @@ function pairs(o, at, out) {
   return out;
 }
 module.exports = {
-  "course has modules A–M in order"() { assert.deepStrictEqual(plain(PE.course.map(m => m.code)), ["A", "B", "C", "D", "E", "F", "G", "H", "J", "K", "L", "M"]); },
+  "course has modules 0–11 in order"() { assert.deepStrictEqual(plain(PE.course.map(m => m.code)), ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"]); },
   "lesson codes match design R-2 and ids are unique"() {
     const ids = new Set();
     PE.course.forEach(m => {
@@ -49,7 +50,7 @@ module.exports = {
   },
   "practice answers are consistent with stated steps (spot checks)"() {
     const f = code => PE.course.flatMap(m => m.lessons).find(l => l.code === code);
-    const prac = f("C3").blocks.find(b => b.type === "practice").items[2];
+    const prac = f("2.3").blocks.find(b => b.type === "practice").items[2];
     assert.ok(Math.abs(prac.answer - (230 / 160 - 0.3) / (2 * 0.0225 / 2.5)) < 0.1);
   }
 };
@@ -60,9 +61,19 @@ module.exports["final-check pool: size, tags, answers, lesson links"] = () => {
   pool.forEach((it, i) => { assert.ok([1, 2, 3].includes(it.goal) && ["basic", "advanced"].includes(it.level), "tags " + i); assert.ok(codes.has(it.lesson), "lesson " + it.lesson); assert.ok(it.a >= 0 && it.a < it.o.length, "answer " + i); });
   const basic = pool.filter(it => it.level === "basic"), adv = pool.filter(it => it.level === "advanced");
   assert.ok(basic.length >= 12, "basic band has " + basic.length); assert.ok(adv.length >= 6, "advanced items " + adv.length);
-  ["A", "B", "C", "D", "E", "F", "G", "H"].forEach(m => assert.ok(pool.some(it => it.method === m), "no item for " + m));
+  ["0", "1", "2", "3", "4", "5", "6", "7"].forEach(m => assert.ok(pool.some(it => it.method === m), "no item for " + m));
 };
 module.exports["glossary entries complete and linked"] = () => {
   const codes = new Set(PE.course.flatMap(m => m.lessons.map(l => l.code)));
   PE.content.glossary.forEach(g => { assert.ok(g.he && g.en && g.def.he && g.def.en, g.en); assert.ok(codes.has(g.code), g.code); });
+};
+
+module.exports["every cross-reference points to an existing lesson"] = () => {
+  const codes = new Set(PE.course.flatMap(m => m.lessons.map(l => l.code))), bad = [];
+  const scan = (o, at) => { if (!o || typeof o !== "object") return; for (const k in o) { const v = o[k];
+    if ((k === "from" || k === "lesson" || (k === "code" && at.includes("gloss"))) && typeof v === "string" && !codes.has(v)) bad.push(at + "." + k + "=" + v);
+    if (typeof v === "string") (v.match(/href=\\?"#([^"?\\]+)/g) || []).forEach(h => { const c = h.replace(/href=\\?"#/, ""); if (!codes.has(c)) bad.push(at + " link #" + c); });
+    else scan(v, at + "." + k); } };
+  scan(PE.course, "course"); scan(PE.content.kpool, "kpool"); scan(PE.content.glossary, "gloss");
+  assert.deepStrictEqual(bad, []);
 };

@@ -27,8 +27,16 @@
   };
   // Value with unit, isolated as LTR inside RTL text
   PE.u = (x, unit) => `<bdi dir="ltr" class="m">${PE.fmt(x)}${unit ? " " + unit : ""}</bdi>`;
-  // Content markup: {{…}} → LTR isolate
-  PE.rich = s => String(s == null ? "" : s).replace(/\{\{([\s\S]+?)\}\}/g, '<bdi dir="ltr" class="m">$1</bdi>');
+  // LaTeX via vendored KaTeX (falls back to the raw TeX source when KaTeX is unavailable, e.g. in Node tests)
+  PE.math = (tex, display) => {
+    const k = typeof window !== "undefined" && window.katex;
+    const html = k ? k.renderToString(tex, { throwOnError: false, displayMode: !!display, output: "html", strict: false }) : PE.esc(tex);
+    return display ? `<div class="mx-d" dir="ltr">${html}</div>` : `<bdi dir="ltr" class="mx">${html}</bdi>`;
+  };
+  // Content markup: $…$ → LaTeX; {{…}} → plain LTR isolate (values and units)
+  PE.rich = s => String(s == null ? "" : s)
+    .replace(/\$([^$]+)\$/g, (m, t) => PE.math(t))
+    .replace(/\{\{([\s\S]+?)\}\}/g, '<bdi dir="ltr" class="m">$1</bdi>');
   PE.reducedMotion = () => window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   PE.hooks = { lang: [], theme: [], lesson: [] };
   PE.on = (ev, fn) => PE.hooks[ev].push(fn);

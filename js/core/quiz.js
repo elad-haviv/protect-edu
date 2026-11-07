@@ -88,7 +88,7 @@
   };
 
   // ---------- location exercise ----------
-  const METHODS = ["B", "C", "D", "E", "F", "G", "H"];
+  const METHODS = ["1", "2", "3", "4", "5", "6", "7"];
   PE.location = (host, block, key) => {
     const st = PE.cache[key] || (PE.cache[key] = { sel: {}, checked: {} });
     const set = (PE.content.locations || []).filter(l => block.set.includes(l.set));
@@ -120,17 +120,17 @@
 
   // ---------- J1 comparison card ----------
   const CARD = [
-    ["B", { he: "מגע עקיף", en: "Indirect contact" }, { he: "מסלול לזרם התקלה דרך האדמה + פחת", en: "Fault path through the soil + RCD" }, { he: "Ra גבוה, PE מנותק, אין פחת", en: "High Ra, PE disconnected, no RCD" }, { he: "מתקנים בלי PEN אמין (TT)", en: "Installations without a reliable PEN (TT)" }],
-    ["C", { he: "מגע עקיף", en: "Indirect contact" }, { he: "התקלה הופכת לקצר; המאמ\"ת מנתק", en: "The fault becomes a short; the MCB trips" }, { he: "PEN קטוע; Zs גבוהה מדי", en: "Broken PEN; Zs too high" }, { he: "רוב המבנים ברשת TN-C-S", en: "Most buildings on a TN-C-S network" }],
-    ["D", { he: "מגע עקיף + הגנה נוספת במגע ישיר", en: "Indirect + additional direct-contact protection" }, { he: "ניתוק כשזרם \"בורח\" לאדמה", en: "Disconnects when current \"escapes\" to earth" }, { he: "מגע בין פאזה לאפס; מנגנון תקול", en: "Line–neutral touch; faulty mechanism" }, { he: "שקעים, חדרי רחצה, אתרי בנייה", en: "Sockets, bathrooms, construction sites" }],
-    ["E", { he: "מגע עקיף (וגם ישיר בקוטב אחד)", en: "Indirect (and one-pole direct) contact" }, { he: "אין מסלול חזרה דרך האדמה", en: "No return path through earth" }, { he: "תקלה ראשונה לאדמה; כבל ארוך; נגיעה בשני קטבים", en: "First fault to earth; long cable; touching both poles" }, { he: "מכונות גילוח, כלים במקומות מוליכים מוגבלים", en: "Shaver sockets, tools in confined conductive spaces" }],
-    ["F", { he: "מגע עקיף", en: "Indirect contact" }, { he: "שתי שכבות בידוד בלתי תלויות", en: "Two independent insulation layers" }, { he: "מעטפת סדוקה או רטובה", en: "Cracked or wet enclosure" }, { he: "כלים ומכשירים ביתיים", en: "Hand tools and household appliances" }],
-    ["G", { he: "מגע ישיר ועקיף", en: "Direct and indirect contact" }, { he: "המתח נמוך מכדי להזרים זרם מסוכן", en: "The voltage is too low to drive a dangerous current" }, { he: "מקור לא מופרד; מתח מעל הגבול", en: "Non-separated source; voltage above the limit" }, { he: "בריכות, צעצועים, תאורה, פיקוד", en: "Pools, toys, lighting, control circuits" }],
-    ["H", { he: "מגע עקיף", en: "Indirect contact" }, { he: "מקור לא מוארק: תקלה ראשונה קטנה, השגחה על הבידוד מתריעה", en: "Unearthed source: a first fault is small, insulation monitoring alarms" }, { he: "תקלה ראשונה שלא אותרה ואחריה תקלה שנייה; רשת ארוכה מדי", en: "An unlocated first fault followed by a second; a network that is too large" }, { he: "חדרי ניתוח, טיפול נמרץ, תעשייה רציפה", en: "Operating theatres, intensive care, continuous industry" }]];
+    ["1", { he: "מגע עקיף", en: "Indirect contact" }, { he: "מסלול לזרם התקלה דרך האדמה + פחת", en: "Fault path through the soil + RCD" }, { he: "Ra גבוה, PE מנותק, אין פחת", en: "High Ra, PE disconnected, no RCD" }, { he: "מתקנים בלי PEN אמין (TT)", en: "Installations without a reliable PEN (TT)" }],
+    ["2", { he: "מגע עקיף", en: "Indirect contact" }, { he: "התקלה הופכת לקצר; המאמ\"ת מנתק", en: "The fault becomes a short; the MCB trips" }, { he: "PEN קטוע; Zs גבוהה מדי", en: "Broken PEN; Zs too high" }, { he: "רוב המבנים ברשת TN-C-S", en: "Most buildings on a TN-C-S network" }],
+    ["3", { he: "מגע עקיף + הגנה נוספת במגע ישיר", en: "Indirect + additional direct-contact protection" }, { he: "ניתוק כשזרם \"בורח\" לאדמה", en: "Disconnects when current \"escapes\" to earth" }, { he: "מגע בין פאזה לאפס; מנגנון תקול", en: "Line–neutral touch; faulty mechanism" }, { he: "שקעים, חדרי רחצה, אתרי בנייה", en: "Sockets, bathrooms, construction sites" }],
+    ["4", { he: "מגע עקיף (וגם ישיר בקוטב אחד)", en: "Indirect (and one-pole direct) contact" }, { he: "אין מסלול חזרה דרך האדמה", en: "No return path through earth" }, { he: "תקלה ראשונה לאדמה; כבל ארוך; נגיעה בשני קטבים", en: "First fault to earth; long cable; touching both poles" }, { he: "מכונות גילוח, כלים במקומות מוליכים מוגבלים", en: "Shaver sockets, tools in confined conductive spaces" }],
+    ["5", { he: "מגע עקיף", en: "Indirect contact" }, { he: "שתי שכבות בידוד בלתי תלויות", en: "Two independent insulation layers" }, { he: "מעטפת סדוקה או רטובה", en: "Cracked or wet enclosure" }, { he: "כלים ומכשירים ביתיים", en: "Hand tools and household appliances" }],
+    ["6", { he: "מגע ישיר ועקיף", en: "Direct and indirect contact" }, { he: "המתח נמוך מכדי להזרים זרם מסוכן", en: "The voltage is too low to drive a dangerous current" }, { he: "מקור לא מופרד; מתח מעל הגבול", en: "Non-separated source; voltage above the limit" }, { he: "בריכות, צעצועים, תאורה, פיקוד", en: "Pools, toys, lighting, control circuits" }],
+    ["7", { he: "מגע עקיף", en: "Indirect contact" }, { he: "מקור לא מוארק: תקלה ראשונה קטנה, השגחה על הבידוד מתריעה", en: "Unearthed source: a first fault is small, insulation monitoring alarms" }, { he: "תקלה ראשונה שלא אותרה ואחריה תקלה שנייה; רשת ארוכה מדי", en: "An unlocated first fault followed by a second; a network that is too large" }, { he: "חדרי ניתוח, טיפול נמרץ, תעשייה רציפה", en: "Operating theatres, intensive care, continuous industry" }]];
   PE.card = (host) => {
     host.innerHTML = `<div class="tablewrap"><table class="t card-t"><thead><tr>${[{ he: "שיטה", en: "Method" }, { he: "מגן מפני", en: "Protects against" }, { he: "איך", en: "How" }, { he: "מתי היא נכשלת", en: "When it fails" }, { he: "שימוש אופייני", en: "Typical use" }].map(h => `<th scope="col">${esc(PE.L(h))}</th>`).join("")}</tr></thead><tbody>${CARD.map(([c, ...cols]) => {
       const m = PE.course.find(x => x.code === c), done = PE.moduleDone(c);
-      return `<tr class="${done ? "done" : ""}"><th scope="row"><a href="#${c}1" class="sign">${c}</a> ${esc(PE.L(m.title))} ${done ? `<span class="done-mark" aria-hidden="true">✓</span><span class="sr">${esc(PE.t("completed"))}</span>` : ""}</th>${cols.map(x => `<td>${txt(x)}</td>`).join("")}</tr>`; }).join("")}<tr class="note"><th scope="row">${esc(PE.L({ he: "אמצעי משלים", en: "Complementary" }))}</th><td colspan="4">${txt({ he: "השוואת פוטנציאלים ומקום מבודד אינם אחת משבע השיטות; הם מקטינים מתח מגע בין חלקים (<a href=\"#J4\">J4</a>).", en: "Equipotential bonding and non-conducting locations are not among the seven methods; they reduce touch voltage between parts (<a href=\"#J4\">J4</a>)." })}</td></tr></tbody></table></div>`;
+      return `<tr class="${done ? "done" : ""}"><th scope="row"><a href="#${c}.1" class="qref">Q${c}</a> ${esc(PE.L(m.title))} ${done ? `<span class="done-mark" aria-hidden="true">✓</span><span class="sr">${esc(PE.t("completed"))}</span>` : ""}</th>${cols.map(x => `<td>${txt(x)}</td>`).join("")}</tr>`; }).join("")}<tr class="note"><th scope="row">${esc(PE.L({ he: "אמצעי משלים", en: "Complementary" }))}</th><td colspan="4">${txt({ he: "השוואת פוטנציאלים ומקום מבודד אינם אחת משבע השיטות; הם מקטינים מתח מגע בין חלקים (<a href=\"#8.4\">8.4</a>).", en: "Equipotential bonding and non-conducting locations are not among the seven methods; they reduce touch voltage between parts (<a href=\"#8.4\">8.4</a>)." })}</td></tr></tbody></table></div>`;
     return null;
   };
 
@@ -160,7 +160,7 @@
           let cls = "opt"; if (done && j === it.a) cls += " right"; if (done && j === pick && j !== it.a) cls += " wrong";
           return `<button type="button" class="${cls}" data-j="${j}" aria-pressed="${done && j === pick}"${done ? " disabled" : ""}>${txt(o)}</button>`; }).join("")}</div>
           ${done ? `<p class="sr fb" tabindex="-1">${esc(PE.t(pick === it.a ? "correct" : "incorrect"))}</p>` : ""}
-          ${done && pick !== it.a ? `<p class="why">${esc(PE.t("reviewLesson"))} <a href="#${it.lesson}" class="sign">${it.lesson}</a></p>` : ""}</li>`; }).join("")}</ol><div class="final-res" aria-live="polite"></div>`;
+          ${done && pick !== it.a ? `<p class="why">${esc(PE.t("reviewLesson"))} <a href="#${it.lesson}" class="qref" dir="ltr">${it.lesson}</a></p>` : ""}</li>`; }).join("")}</ol><div class="final-res" aria-live="polite"></div>`;
       host.querySelectorAll(".q .opt").forEach(b => b.addEventListener("click", () => { const i = +b.closest(".q").dataset.i; st.picks[i] = +b.dataset.j; st.focus = i; draw(); }));
       if (st.focus != null) { const nxt = host.querySelector(`.q[data-i="${st.focus + 1}"] .opt`) || host.querySelector(".final-res"); const fb = host.querySelector(`.q[data-i="${st.focus}"] .fb`); (nxt || fb).focus && (nxt || fb).focus(); }
       if (Object.keys(st.picks).length === items.length) {
@@ -200,7 +200,7 @@
       const norm = s => String(s).toLowerCase().replace(/["״׳']/g, "");
       const q = norm(st.q.trim());
       const rows = PE.content.glossary.filter(g => !q || norm([g.he, g.en, g.abbr, g.def.he, g.def.en].join(" ")).includes(q));
-      tb.innerHTML = rows.map(g => `<tr><th scope="row" lang="he" dir="rtl">${esc(g.he)}</th><td lang="en" dir="ltr">${esc(g.en)}</td><td dir="ltr">${esc(g.abbr)}</td><td>${txt(g.def)} <a href="#${g.code}" class="sign small">${g.code}</a></td></tr>`).join("");
+      tb.innerHTML = rows.map(g => `<tr><th scope="row" lang="he" dir="rtl">${esc(g.he)}</th><td lang="en" dir="ltr">${esc(g.en)}</td><td dir="ltr">${esc(g.abbr)}</td><td>${txt(g.def)} <a href="#${g.code}" class="qref" dir="ltr">${g.code}</a></td></tr>`).join("");
       host.querySelector(".gloss-count").textContent = PE.t("glossCount", { n: rows.length });
     }
     inp.addEventListener("input", () => { st.q = inp.value; fill(); });

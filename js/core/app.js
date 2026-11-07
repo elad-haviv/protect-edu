@@ -1,5 +1,6 @@
 /* App shell: course outline, rail, breadcrumb, pager, theme, language, deep links.
-   Navigation logic ported from agl-edu js/app.js (sign codes, rail sub-lessons, pager, visited/last). */
+   Navigation logic adapted from agl-edu js/app.js (rail sub-lessons, pager, visited/last).
+   Visual language: the course menu is a distribution board, each lesson a drawing sheet (design R-13). */
 (function () {
   "use strict";
   const { esc } = PE;
@@ -10,6 +11,10 @@
     flat = modules.flatMap(m => m.lessons.map((l, i) => Object.assign(l, { m, i })));
   }
   const byCode = code => flat.find(l => l.code === code);
+  // Q0…Q9 are the board's breakers; modules 10–11 are appendices
+  // Title text: escaped, with a right-to-left mark in Hebrew so a trailing "(SELV / PELV)" keeps its place
+  const T = o => esc(PE.L(o)) + (PE.lang === "he" ? "&rlm;" : "");
+  PE.modLabel = m => (+m.code >= 10 ? PE.t(m.code === "10" ? "appendixA" : "appendixB") : "Q" + m.code);
   function resolve(code) {
     if (!code) return byCode(PE.store.get("last")) || flat[0];
     return byCode(code) || (modules.find(m => m.code === code) || {}).lessons?.[0] || flat[0];
@@ -21,13 +26,14 @@
     const th = document.documentElement.dataset.theme || "auto";
     h.innerHTML = `<div class="bar">
       <button type="button" class="icon-btn menu-btn" aria-controls="rail" aria-expanded="false" aria-label="${esc(PE.t("menu"))}">☰</button>
-      <a class="brand" href="#A1"><span class="brand-ic" aria-hidden="true">⚡</span><span class="brand-text"><b>${esc(PE.t("appTitle"))}</b><small>${esc(PE.t("appSub"))}</small></span></a>
+      <a class="plate" href="#0.1"><span class="screw" aria-hidden="true"></span><span class="plate-text"><b>${esc(PE.t("appTitle"))}</b><small dir="ltr">230/400 V · 50 Hz · TN-C-S · IEC 60364-4-41</small></span><span class="screw" aria-hidden="true"></span></a>
       <div class="tools">
         <a class="hv" href="https://academy.haviv.pro" rel="noopener" title="Haviv Academy"><span class="hv-mark" aria-hidden="true"></span><span class="hv-txt">Haviv Academy</span></a>
         <button type="button" class="tool present-btn" aria-pressed="${document.body.classList.contains("present")}" title="${esc(PE.t("present"))}">▣ <span class="tool-l">${esc(PE.t("present"))}</span></button>
         <button type="button" class="tool lang-btn" lang="${PE.lang === "he" ? "en" : "he"}" aria-label="${esc(PE.t("langSwitchLabel"))}">${esc(PE.t("langSwitch"))}</button>
-        <button type="button" class="tool theme-btn" aria-label="${esc(PE.t("theme"))}: ${esc(PE.t("theme" + th[0].toUpperCase() + th.slice(1)))}" title="${esc(PE.t("theme"))}">${th === "dark" ? "☾" : th === "light" ? "☀" : "🌓"} <span class="tool-l">${esc(PE.t("theme" + th[0].toUpperCase() + th.slice(1)))}</span></button>
-      </div></div>`;
+        <button type="button" class="tool theme-btn" aria-label="${esc(PE.t("theme"))}: ${esc(PE.t("theme" + th[0].toUpperCase() + th.slice(1)))}" title="${esc(PE.t("theme"))}">${th === "dark" ? "☾" : th === "light" ? "☀" : "◐"} <span class="tool-l">${esc(PE.t("theme" + th[0].toUpperCase() + th.slice(1)))}</span></button>
+      </div></div>
+      <div class="phase-stripe" aria-hidden="true"><i class="l1"></i><i class="l2"></i><i class="l3"></i><i class="n"></i><i class="pe"></i></div>`;
     h.querySelector(".lang-btn").addEventListener("click", () => { PE.setLang(PE.lang === "he" ? "en" : "he"); });
     h.querySelector(".present-btn").addEventListener("click", () => setPresent(!document.body.classList.contains("present")));
     h.querySelector(".theme-btn").addEventListener("click", () => {
@@ -63,7 +69,7 @@
 
   // ---------- rail ----------
   function moduleDone(m) {
-    if (m.code === "K") return !!PE.store.get("final");
+    if (m.code === "9") return !!PE.store.get("final");
     const chk = m.lessons.find(l => l.kind === "check");
     if (!chk) return m.lessons.every(l => PE.store.visited(l.id));
     const r = PE.store.quizResult(chk.id); return !!(r && r.score / r.of >= 0.7);
@@ -71,26 +77,35 @@
   PE.moduleDone = code => { const m = (modules || PE.course).find(x => x.code === code); return !!m && moduleDone(m); };
   function renderRail(l) {
     const rail = document.getElementById("rail");
-    rail.innerHTML = `<h2 class="sr">${esc(PE.t("course"))}</h2><ol class="mods">${modules.map(m => {
-      const cur = m === l.m;
-      return `<li class="${cur ? "cur" : ""}"><a href="#${m.lessons[0].code}" class="mod"${cur ? ' aria-current="true"' : ""}>
-        <span class="sign">${m.code}</span><span class="label">${esc(PE.L(m.title))}</span>${moduleDone(m) ? '<span class="done" aria-label="✓">✓</span>' : ""}</a>
-        ${cur && m.lessons.length > 1 ? `<ol class="subs">${m.lessons.map(x => `<li><a href="#${x.code}" class="${PE.store.visited(x.id) ? "seen" : ""}"${x === l ? ' aria-current="page"' : ""}><span class="subchip">${x.code}</span><span>${esc(PE.L(x.title))}</span></a></li>`).join("")}</ol>` : ""}
-      </li>`; }).join("")}</ol>`;
+    rail.innerHTML = `<div class="board"><h2 class="board-title">${esc(PE.t("board"))}</h2><ol class="mods">${modules.map(m => {
+      const cur = m === l.m, on = moduleDone(m), app = +m.code >= 10;
+      return `<li class="${cur ? "cur" : ""}${app ? " app" : ""}"><a href="#${m.lessons[0].code}" class="mod"${cur ? ' aria-current="true"' : ""}>
+        ${app ? `<span class="tab">${esc(PE.modLabel(m))}</span>` : `<span class="brk${on ? " on" : ""}" aria-hidden="true"><span class="lever"></span></span><span class="qn">${esc(PE.modLabel(m))}</span>`}
+        <span class="label">${T(m.title)}</span>${app ? "" : `<span class="sr">, ${esc(PE.t(on ? "brkOn" : "brkOff"))}</span>`}${cur ? '<span class="led" aria-hidden="true"></span>' : ""}</a>
+        ${cur && m.lessons.length > 1 ? `<ol class="subs">${m.lessons.map(x => `<li><a href="#${x.code}" class="${PE.store.visited(x.id) ? "seen" : ""}"${x === l ? ' aria-current="page"' : ""}><span class="subchip" dir="ltr">${x.code}</span><span>${T(x.title)}</span></a></li>`).join("")}</ol>` : ""}
+      </li>`; }).join("")}</ol></div>`;
   }
 
   function crumbHtml(l) {
     const n = l.m.lessons.length;
     return `<nav class="crumb" aria-label="${esc(PE.t("youAreHere"))}">
-      <a class="sign big" href="#${l.m.lessons[0].code}">${l.m.code}</a>
-      <span class="crumb-text"><span class="crumb-module">${esc(PE.L(l.m.title))}</span>${n > 1 ? `<span class="crumb-count">${esc(PE.t("lessonOf", { i: l.i + 1, n }))}</span>` : ""}</span>
+      <span class="crumb-text"><a href="#0.1">${esc(PE.t("board"))}</a> › <a href="#${l.m.lessons[0].code}">${esc(PE.modLabel(l.m))} · ${T(l.m.title)}</a> › <span>${esc(PE.t("sheet"))} <bdi dir="ltr">${l.code}</bdi>${n > 1 ? ` (${esc(PE.t("lessonOf", { i: l.i + 1, n }))})` : ""}</span></span>
     </nav>${n > 1 ? `<div class="crumb-bar" aria-hidden="true"><i style="width:${(l.i + 1) / n * 100}%"></i></div>` : ""}`;
+  }
+  function titleBlock(l) {
+    const n = l.m.lessons.length;
+    return `<table class="tblock" aria-label="${esc(PE.t("titleBlock"))}"><tr>
+      <td class="tb-org" rowspan="2"><span class="hv-mark" aria-hidden="true"></span> Haviv Academy</td>
+      <td class="tb-title" colspan="3"><small>${esc(PE.t("tbCourse"))}</small>${esc(PE.t("appTitle"))}</td></tr>
+      <tr><td><small>${esc(PE.t("tbModule"))}</small>${esc(PE.modLabel(l.m))} · ${esc(PE.L(l.m.short || l.m.title))}</td>
+      <td><small>${esc(PE.t("sheet"))}</small><bdi dir="ltr">${l.code}</bdi> (${esc(PE.t("lessonOf", { i: l.i + 1, n }))})</td>
+      <td><small>${esc(PE.t("tbRev"))}</small><bdi dir="ltr">${PE.version}</bdi></td></tr></table>`;
   }
   function pagerHtml(l) {
     const k = flat.indexOf(l), prev = flat[k - 1], next = flat[k + 1];
     const link = (x, cls, label) => x ? `<a class="pg ${cls}" href="#${x.code}" rel="${cls}">
-      <span class="arr" aria-hidden="true"></span><span class="pg-text"><span class="pg-label">${esc(label)}</span><span class="pg-title"><b>${x.code}</b> ${esc(PE.L(x.title))}</span></span></a>` : "<span></span>";
-    return `<nav class="pager" aria-label="${esc(PE.t("lessons"))}">${link(prev, "prev", PE.t("prev"))}${link(next, "next", PE.t("next"))}</nav>`;
+      <span class="arr" aria-hidden="true"></span><span class="pg-text"><span class="pg-label">${esc(label)}</span><span class="pg-title"><b dir="ltr">${x.code}</b> ${T(x.title)}</span></span></a>` : "<span></span>";
+    return `<nav class="pager" aria-label="${esc(PE.t("lessons"))}">${link(prev, "prev", PE.t("prevSheet"))}${link(next, "next", PE.t("nextSheet"))}</nav>`;
   }
 
   // ---------- show a lesson ----------
@@ -99,7 +114,7 @@
     if (cleanup) { try { cleanup(); } catch (e) { console.error(e); } cleanup = null; }
     current = l;
     const main = document.getElementById("main");
-    main.innerHTML = crumbHtml(l) + `<article class="lesson" id="lesson" data-code="${l.code}" data-kind="${l.kind}"></article>` + pagerHtml(l);
+    main.innerHTML = crumbHtml(l) + `<article class="lesson sheet" id="lesson" data-code="${l.code}" data-kind="${l.kind}"></article>` + titleBlock(l) + pagerHtml(l);
     cleanup = PE.renderLesson(l, main.querySelector("#lesson"), opts.params || {});
     if (["check", "practice", "location"].includes(l.kind) && l.id !== "k-final") {
       const b = PE.el("button", { type: "button", class: "btn sec print-btn" }, "🖨 " + esc(PE.t("print")));

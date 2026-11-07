@@ -1,15 +1,15 @@
 /* Module H – Floating supply (זינה צפה, IT system). */
 PE.content.H = {
-  code: "H", icon: "⏛",
+  code: "7", icon: "⏛",
   title: { he: "זינה צפה", en: "Floating supply (IT)" },
   short: { he: "זינה צפה", en: "Floating supply" },
   lessons: [
-    { code: "H1", id: "h-intro", kind: "intro", title: { he: "העיקרון: תקלה ראשונה לא מנתקת", en: "The principle: a first fault does not disconnect" }, blocks: [
+    { code: "7.1", id: "h-intro", kind: "intro", title: { he: "העיקרון: תקלה ראשונה לא מנתקת", en: "The principle: a first fault does not disconnect" }, blocks: [
       { type: "callout", tone: "hook", he: "באמצע ניתוח, כבל של מכשיר החייאה נפגע ונוגע בגוף המתכתי שלו. בבית רגיל המפסק היה מנתק – ובחדר הניתוח הכול היה כבה. אבל החשמל נשאר, ורק נורה אדומה נדלקה על הקיר. איך?", en: "In the middle of an operation, a life-support device's cable is damaged and touches its metal case. In an ordinary home the breaker would trip – and in the theatre everything would go dark. But the power stays on, and only a red lamp lights on the wall. How?" },
       { type: "p", label: "principle", he: "ב<b>זינה צפה</b> המקור (בדרך כלל שנאי מבדל) <b>אינו מחובר לאדמה</b>, אבל גופי המכשירים כן מוארקים. כשמוליך אחד נוגע בגוף (\"תקלה ראשונה\"), לזרם אין מסלול חזרה טוב – רק דרך הקיבול הקטן של הרשת לאדמה. הזרם הוא מיליאמפרים בודדים, מתח המגע זניח, ו<b>אין צורך לנתק</b>.", en: "In a <b>floating supply</b> the source (usually an isolating transformer) is <b>not connected to earth</b>, while appliance cases are earthed. When one conductor touches a case (a \"first fault\"), the current has no good return path – only the small capacitance of the system to earth. The current is a few milliamps, the touch voltage is negligible, and <b>no disconnection is needed</b>." },
       { type: "p", label: "principle", he: "אבל אחרי התקלה הראשונה המערכת כבר \"מוארקת\" דרך נקודת התקלה. לכן <b>מכשיר השגחה על הבידוד</b> מודד ברציפות את התנגדות הבידוד לאדמה ומתריע מיד – כדי לאתר ולתקן את התקלה לפני ש<b>תקלה שנייה</b> בקוטב השני תיצור קצר מסוכן.", en: "But after the first fault the system is already \"earthed\" through the fault point. So an <b>insulation monitoring device</b> continuously measures insulation resistance to earth and alarms at once – so the fault can be found and fixed before a <b>second fault</b> on the other conductor creates a dangerous short." },
       { type: "formula", tex: "R<sub>a</sub> · I<sub>d</sub> ≤ 50 V", he: "התנאי לתקלה ראשונה: Id – זרם התקלה הראשונה (דרך הקיבול), Ra – התנגדות הארקת הגופים.", en: "The first-fault condition: Id – the first-fault current (through the capacitance), Ra – resistance of the exposed-parts earth." },
-      { type: "table", head: [{ he: "", en: "" }, { he: "זינה צפה (H)", en: "Floating supply (H)" }, { he: "הפרד מגן (E)", en: "Protective separation (E)" }], rows: [
+      { type: "table", head: [{ he: "", en: "" }, { he: "זינה צפה (7)", en: "Floating supply (7)" }, { he: "הפרד מגן (4)", en: "Protective separation (4)" }], rows: [
         [{ he: "גופי המכשירים", en: "Appliance cases" }, { he: "מוארקים", en: "Earthed" }, { he: "לא מוארקים", en: "Not earthed" }],
         [{ he: "מספר צרכנים", en: "Number of loads" }, { he: "רשת שלמה (חדר, מחלקה, מפעל)", en: "A whole network (room, ward, plant)" }, { he: "בדרך כלל מכשיר אחד", en: "Usually one appliance" }],
         [{ he: "מה קורה בתקלה ראשונה", en: "At a first fault" }, { he: "התראה, ממשיכים לעבוד", en: "Alarm, operation continues" }, { he: "אין ניטור; התקלה לא מורגשת, והבטיחות תלויה בכך שלא תהיה תקלה שנייה", en: "No monitoring; the fault goes unnoticed, and safety now depends on there being no second fault" }]] },
@@ -19,7 +19,7 @@ PE.content.H = {
         { q: { he: "למה צריך השגחה על הבידוד?", en: "Why is insulation monitoring needed?" }, o: [{ he: "כדי לגלות את התקלה הראשונה לפני שמגיעה שנייה", en: "To detect the first fault before a second one arrives" }, { he: "כדי לנתק כל תקלה", en: "To disconnect every fault" }], a: 0, why: { he: "בלי השגחה התקלה הראשונה \"שקטה\" – והשנייה מסוכנת.", en: "Without monitoring the first fault is \"silent\" – and the second is dangerous." } }
       ] }
     ] },
-    { code: "H2", id: "h-sim", kind: "sim", title: { he: "סימולטור: תקלה ראשונה ותקלה שנייה", en: "Simulator: first fault and second fault" }, blocks: [
+    { code: "7.2", id: "h-sim", kind: "sim", title: { he: "סימולטור: תקלה ראשונה ותקלה שנייה", en: "Simulator: first fault and second fault" }, blocks: [
       { type: "sim", id: "h-it", predict: { state: { fault1: true }, q: { he: "מוליך L2 נגע בגוף מכשיר 1 (תקלה ראשונה). האם הזינה מתנתקת?", en: "Conductor L2 has touched the case of appliance 1 (a first fault). Does the supply disconnect?" }, options: [{ he: "כן – המאמ\"ת מנתק", en: "Yes – the MCB trips" }, { he: "לא – זורמים רק מיליאמפרים, ומכשיר ההשגחה מתריע", en: "No – only milliamps flow, and the monitor alarms" }, { he: "לא – וגם אין שום התראה", en: "No – and there is no alarm either" }], answer: 1,
         explain: { he: "המקור לא מוארק, ולכן הזרם חוזר רק דרך קיבול הרשת – כ-{{7 mA}}. מתח המגע על הגופים זניח. הזינה ממשיכה, והנורה האדומה מבקשת לאתר את התקלה.", en: "The source is unearthed, so current returns only through the system capacitance – about {{7 mA}}. The touch voltage on the cases is negligible. Supply continues, and the red lamp asks for the fault to be found." } } },
       { type: "list", items: [
@@ -28,7 +28,7 @@ PE.content.H = {
         { he: "הוסיפו תקלה שנייה: מה קורה עכשיו, ולמה?", en: "Add a second fault: what happens now, and why?" },
         { he: "כבו את מכשיר ההשגחה עם תקלה ראשונה: מה הסכנה?", en: "Turn off the monitor with a first fault present: what is the risk?" }] }
     ] },
-    { code: "H3", id: "h-scene", kind: "scene", title: { he: "תלת-ממד: חדר ניתוח", en: "3D: an operating theatre" }, blocks: [
+    { code: "7.3", id: "h-scene", kind: "scene", title: { he: "תלת-ממד: חדר ניתוח", en: "3D: an operating theatre" }, blocks: [
       { type: "p", he: "סובבו את החדר ובחרו חלקים. הפעילו תקלה ראשונה ותקלה שנייה וראו את לוח ההשגחה.", en: "Rotate the room and select parts. Switch on a first and a second fault and watch the monitoring panel." },
       { type: "scene", id: "h-or", title: { he: "זינה צפה בחדר ניתוח", en: "A floating supply in an operating theatre" }, parts: [
         { name: { he: "שנאי מבדל", en: "Isolating transformer" }, desc: { he: "מזין את הרשת הצפה; המשני שלו אינו מוארק.", en: "Feeds the floating network; its secondary is not earthed." } },
@@ -36,7 +36,7 @@ PE.content.H = {
         { name: { he: "לוח התראה", en: "Alarm panel" }, desc: { he: "מציג לצוות שיש תקלה ראשונה – העבודה ממשיכה, ומזמינים חשמלאי.", en: "Shows staff that there is a first fault – work continues, and an electrician is called." } },
         { name: { he: "ציוד רפואי", en: "Medical equipment" }, desc: { he: "גופי המתכת מחוברים ל-PE ולפס השוואה מקומי.", en: "Metal cases are on the PE and a local bonding bar." } }] }
     ] },
-    { code: "H4", id: "h-practice", kind: "practice", title: { he: "בפועל ובתקנות", en: "In practice and in the regulations" }, blocks: [
+    { code: "7.4", id: "h-practice", kind: "practice", title: { he: "בפועל ובתקנות", en: "In practice and in the regulations" }, blocks: [
       { type: "list", items: [
         { label: "regulation", source: "IEC 60364-4-41 §411.6", he: "בזינה צפה: {{Ra · Id ≤ 50 V}} לתקלה ראשונה; נדרש מכשיר השגחה על הבידוד שמתריע; את התקלה הראשונה יש לאתר ולתקן בהקדם. יש לאמת מול התקנות הישראליות.", en: "In a floating supply: {{Ra · Id ≤ 50 V}} for a first fault; an insulation monitoring device that raises an alarm is required; the first fault must be located and fixed promptly. Verify against the Israeli regulations." },
         { label: "regulation", source: "IEC 60364-4-41 §411.6.4", he: "בתקלה שנייה המצב דומה לאיפוס או להארקת הגנה, והמעגל חייב להתנתק בזמן הנדרש.", en: "At a second fault the situation resembles TN or TT, and the circuit must disconnect within the required time." },
@@ -46,7 +46,7 @@ PE.content.H = {
         { label: "regulation", source: "IEC 60364-7-710 / IEC 61557-8", he: "בחדרים רפואיים: מכשיר ההשגחה מתריע (אור וקול) כשהבידוד יורד מתחת ל-{{50 kΩ}} לפחות, אסור שיהיה ניתן לנתק אותו, עכבתו הפנימית {{≥ 100 kΩ}} ומתח הבדיקה {{≤ 25 V}} DC. במתקנים אחרים את הסף קובע המתכנן. המכשיר רק מתריע – הוא לא מנתק ולא מאתר את מקום התקלה (לשם כך יש מערכת איתור, IEC 61557-9).", en: "In medical locations: the monitor alarms (light and sound) when insulation falls below at least {{50 kΩ}}, it must not be possible to switch it off, its internal impedance is {{≥ 100 kΩ}} and its test voltage {{≤ 25 V}} DC. In other installations the designer sets the threshold. The device only alarms – it does not disconnect or locate the fault (that needs a fault-location system, IEC 61557-9)." }] },
       { type: "h", he: "תרגול", en: "Practice" },
       { type: "practice", items: [
-        { given: { he: "{{U = 230 V}}, קיבול המוליך התקין (L1) לאדמה {{0.1 µF}}, {{50 Hz}}, תקלה ראשונה ב-L2 בעכבה זניחה", en: "{{U = 230 V}}, capacitance of the healthy conductor (L1) to earth {{0.1 µF}}, {{50 Hz}}, a negligible-impedance first fault on L2" }, ask: { he: "מהו זרם התקלה הראשונה בקירוב (mA)?", en: "What is the first-fault current, approximately (mA)?" }, answer: 7.23, tol: 0.03, unit: "mA",
+        { given: { he: "{{U = 230 V}}, קיבול המוליך התקין (10.1) לאדמה {{0.1 µF}}, {{50 Hz}}, תקלה ראשונה ב-L2 בעכבה זניחה", en: "{{U = 230 V}}, capacitance of the healthy conductor (10.1) to earth {{0.1 µF}}, {{50 Hz}}, a negligible-impedance first fault on L2" }, ask: { he: "מהו זרם התקלה הראשונה בקירוב (mA)?", en: "What is the first-fault current, approximately (mA)?" }, answer: 7.23, tol: 0.03, unit: "mA",
           steps: [{ he: "{{Xc = 1 / (2π · 50 · 0.1 × 10⁻⁶) ≈ 31.8 kΩ}}", en: "{{Xc = 1 / (2π · 50 · 0.1 × 10⁻⁶) ≈ 31.8 kΩ}}" }, { he: "{{Id ≈ 230 / 31800 ≈ 7.2 mA}}", en: "{{Id ≈ 230 / 31800 ≈ 7.2 mA}}" }] },
         { given: { he: "{{Id = 7.2 mA}}, {{Ra = 10 Ω}}", en: "{{Id = 7.2 mA}}, {{Ra = 10 Ω}}" }, ask: { he: "מהו מתח המגע על הגופים (V)?", en: "What is the touch voltage on the cases (V)?" }, answer: 0.072, tol: 0.03, unit: "V",
           steps: [{ he: "{{Ut = Ra · Id}}", en: "{{Ut = Ra · Id}}" }, { he: "{{10 × 0.0072 = 0.072 V}} – רחוק מאוד מ-{{50 V}}", en: "{{10 × 0.0072 = 0.072 V}} – far below {{50 V}}" }] },
@@ -54,14 +54,14 @@ PE.content.H = {
           steps: [{ he: "{{Ra ≤ 50 / 0.5}}", en: "{{Ra ≤ 50 / 0.5}}" }, { he: "{{= 100 Ω}}", en: "{{= 100 Ω}}" }] }
       ] }
     ] },
-    { code: "H5", id: "h-check", kind: "check", title: { he: "בדקו את עצמכם", en: "Check yourself" }, blocks: [
+    { code: "7.5", id: "h-check", kind: "check", title: { he: "בדקו את עצמכם", en: "Check yourself" }, blocks: [
       { type: "quiz", items: [
         { q: { he: "מה מאפיין זינה צפה?", en: "What characterises a floating supply?" }, o: [{ he: "מקור לא מוארק, גופים מוארקים, השגחה על הבידוד", en: "An unearthed source, earthed cases, insulation monitoring" }, { he: "מקור מוארק וגופים מחוברים לאפס", en: "An earthed source and cases on the neutral" }, { he: "מתח נמוך מאוד", en: "Extra-low voltage" }], a: 0, why: { he: "אות ראשונה I (מבודד), אות שנייה T (גופים מוארקים).", en: "First letter I (isolated), second letter T (earthed cases)." } },
         { q: { he: "בזינה צפה, תקלה ראשונה לגוף:", en: "In a floating supply, a first fault to a case:" }, o: [{ he: "מנותקת מיד", en: "Is disconnected at once" }, { he: "גורמת להתראה בלבד; הזינה נמשכת", en: "Only triggers an alarm; supply continues" }], a: 1, why: { he: "הזרם קטן ומתח המגע זניח.", en: "The current is small and the touch voltage negligible." }, mis: { he: "\"אם אין ניתוק – אין הגנה\".", en: "\"No disconnection means no protection.\"" } },
         { q: { he: "אחרי תקלה ראשונה שלא תוקנה, מה קורה בתקלה שנייה בקוטב השני?", en: "After an unrepaired first fault, what happens at a second fault on the other conductor?" }, o: [{ he: "שום דבר", en: "Nothing" }, { he: "קצר בין המוליכים דרך ה-PE – חייב להתנתק", en: "A short between conductors through the PE – it must disconnect" }], a: 1, why: { he: "לכן מאתרים את התקלה הראשונה מהר.", en: "That is why the first fault is located quickly." } },
         { q: { he: "אחרי תקלה ראשונה ב-L2, אדם נוגע ב-L1. מה המצב?", en: "After a first fault on L2, a person touches L1. What is the situation?" }, o: [{ he: "בטוח – זו זינה צפה", en: "Safe – it is a floating supply" }, { he: "מסוכן – L2 כבר מחובר לאדמה דרך התקלה", en: "Dangerous – L2 is already connected to earth through the fault" }], a: 1, why: { he: "התקלה הראשונה \"הארקה\" את המערכת.", en: "The first fault has \"earthed\" the system." } },
-        { q: { he: "מה ההבדל בין זינה צפה להפרד מגן?", en: "What is the difference between a floating supply and protective separation?" }, from: "E1", o: [{ he: "בזינה צפה הגופים מוארקים ויש השגחה על הבידוד", en: "In a floating supply the cases are earthed and insulation is monitored" }, { he: "אין הבדל", en: "There is no difference" }], a: 0, why: { he: "בהפרד מגן הגופים לא מוארקים ובדרך כלל מוזן מכשיר אחד.", en: "In protective separation the cases are not earthed and usually one appliance is fed." } },
-        { q: { he: "חזרה מ-G: מה מבטיח שמתח נמוך מאוד יישאר נמוך בתקלה?", en: "Review from G: what keeps extra-low voltage low during a fault?" }, from: "G2", o: [{ he: "מקור מופרד בטיחותית", en: "A safely separated source" }, { he: "פחת", en: "An RCD" }], a: 0, why: { he: "שנאי בטיחות או סוללה.", en: "A safety transformer or a battery." } }
+        { q: { he: "מה ההבדל בין זינה צפה להפרד מגן?", en: "What is the difference between a floating supply and protective separation?" }, from: "4.1", o: [{ he: "בזינה צפה הגופים מוארקים ויש השגחה על הבידוד", en: "In a floating supply the cases are earthed and insulation is monitored" }, { he: "אין הבדל", en: "There is no difference" }], a: 0, why: { he: "בהפרד מגן הגופים לא מוארקים ובדרך כלל מוזן מכשיר אחד.", en: "In protective separation the cases are not earthed and usually one appliance is fed." } },
+        { q: { he: "חזרה ממודול 6: מה מבטיח שמתח נמוך מאוד יישאר נמוך בתקלה?", en: "Review from module 6: what keeps extra-low voltage low during a fault?" }, from: "6.2", o: [{ he: "מקור מופרד בטיחותית", en: "A safely separated source" }, { he: "פחת", en: "An RCD" }], a: 0, why: { he: "שנאי בטיחות או סוללה.", en: "A safety transformer or a battery." } }
       ] }
     ] }
   ]

@@ -1,6 +1,6 @@
 /* Module M – References. */
-PE.content.M = { code: "M", icon: "§", title: { he: "מקורות", en: "References" }, short: { he: "מקורות", en: "References" },
-  lessons: [{ code: "M1", id: "m-refs", kind: "ref", title: { he: "חוקים, תקנות ותקנים", en: "Laws, regulations and standards" }, blocks: [
+PE.content.M = { code: "11", icon: "§", title: { he: "מקורות", en: "References" }, short: { he: "מקורות", en: "References" },
+  lessons: [{ code: "11.1", id: "m-refs", kind: "ref", title: { he: "חוקים, תקנות ותקנים", en: "Laws, regulations and standards" }, blocks: [
     { type: "callout", tone: "warn", he: "הקורס הוא חומר לימודי. כל עבודה חשמלית נעשית לפי הנוסח העדכני של החוק, התקנות והתקנים, ובידי חשמלאי בעל רישיון מתאים.", en: "This course is learning material. All electrical work follows the current text of the law, the regulations and the standards, and is done by a suitably licensed electrician." },
     { type: "h", he: "חקיקה בישראל", en: "Israeli legislation" },
     { type: "list", items: [

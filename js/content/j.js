@@ -1,21 +1,21 @@
 /* Module J – Compare and choose. */
 PE.content.J = {
-  code: "J", icon: "⚖",
+  code: "8", icon: "⚖",
   title: { he: "השוואה ובחירה", en: "Compare and choose" },
   short: { he: "השוואה", en: "Compare" },
   lessons: [
-    { code: "J1", id: "j-card", kind: "card", title: { he: "כרטיס השוואה: שבע השיטות", en: "Comparison card: the seven methods" }, blocks: [
+    { code: "8.1", id: "j-card", kind: "card", title: { he: "כרטיס השוואה: שבע השיטות", en: "Comparison card: the seven methods" }, blocks: [
       { type: "p", he: "הטבלה מסכמת את שבע השיטות. סימן ✓ מופיע ליד כל שיטה שעברתם את הבדיקה שלה.", en: "The table sums up the seven methods. A ✓ appears next to each method whose check you have passed." },
       { type: "card" },
-      { type: "callout", tone: "info", label: "principle", he: "שלוש קבוצות: <b>ניתוק אוטומטי</b> (B, C, D) – ההגנה תלויה במפסק ובמוליך ההגנה; <b>מניעת מתח מסוכן</b> (F, G) – ההגנה בתוך המכשיר או במקור; <b>מניעת מסלול או מניעת ניתוק מיותר</b> (E, H) – אין דרך לזרם לחזור דרך האדמה.", en: "Three groups: <b>automatic disconnection</b> (B, C, D) – depends on a device and the protective conductor; <b>no dangerous voltage</b> (F, G) – protection is in the appliance or the source; <b>no return path</b> (E, H) – no way for current to return through earth." }
+      { type: "callout", tone: "info", label: "principle", he: "שלוש קבוצות: <b>ניתוק אוטומטי</b> (1, 2, 3) – ההגנה תלויה במפסק ובמוליך ההגנה; <b>מניעת מתח מסוכן</b> (5, 6) – ההגנה בתוך המכשיר או במקור; <b>מניעת מסלול או מניעת ניתוק מיותר</b> (4, 7) – אין דרך לזרם לחזור דרך האדמה.", en: "Three groups: <b>automatic disconnection</b> (1, 2, 3) – depends on a device and the protective conductor; <b>no dangerous voltage</b> (5, 6) – protection is in the appliance or the source; <b>no return path</b> (4, 7) – no way for current to return through earth." }
     ] },
-    { code: "J2", id: "j-loc", kind: "location", title: { he: "איזו הגנה מתאימה כאן? (3/3)", en: "Which protection fits here? (3/3)" }, blocks: [
+    { code: "8.2", id: "j-loc", kind: "location", title: { he: "איזו הגנה מתאימה כאן? (3/3)", en: "Which protection fits here? (3/3)" }, blocks: [
       { type: "p", he: "התרגיל האחרון, עם כל שבע השיטות.", en: "The last exercise, with all seven methods." },
       { type: "location", set: [3] }
     ] },
-    { code: "J3", id: "j-layers", kind: "intro", title: { he: "הגנה בשכבות", en: "Layered protection" }, blocks: [
+    { code: "8.3", id: "j-layers", kind: "intro", title: { he: "הגנה בשכבות", en: "Layered protection" }, blocks: [
       { type: "callout", tone: "hook", he: "אם כל שיטה מגינה לבד – למה בחדר רחצה בדירה משתמשים בשלוש?", en: "If each method protects on its own – why does a home bathroom use three?" },
-      { type: "p", label: "principle", he: "לכל שיטה יש נקודת כשל: ה-PEN יכול להיקטע (C), ה-PE יכול להתנתק (B, C), הפחת לא רואה מגע בין פאזה לאפס (D). שילוב שיטות שכשליהן <b>שונים</b> משאיר הגנה גם כששכבה אחת נכשלת.", en: "Every method has a failure point: the PEN can break (C), the PE can come loose (B, C), the RCD cannot see a line–neutral touch (D). Combining methods with <b>different</b> failure points leaves protection when one layer fails." },
+      { type: "p", label: "principle", he: "לכל שיטה יש נקודת כשל: ה-PEN יכול להיקטע (2), ה-PE יכול להתנתק (1, 2), הפחת לא רואה מגע בין פאזה לאפס (3). שילוב שיטות שכשליהן <b>שונים</b> משאיר הגנה גם כששכבה אחת נכשלת.", en: "Every method has a failure point: the PEN can break (2), the PE can come loose (1, 2), the RCD cannot see a line–neutral touch (3). Combining methods with <b>different</b> failure points leaves protection when one layer fails." },
       { type: "table", head: [{ he: "כשל", en: "Failure" }, { he: "מה עדיין מגן בחדר הרחצה", en: "What still protects in the bathroom" }], rows: [
         [{ he: "PE מנותק בדוד", en: "Heater PE disconnected" }, { he: "פחת {{30 mA}} – הזרם דרך האדם הוא דליפה", en: "The {{30 mA}} RCD – current through the person is leakage" }],
         [{ he: "PEN קטוע ברשת", en: "Supply PEN broken" }, { he: "השוואת פוטנציאלים (אמצעי משלים, J4) מקטינה את ההפרש בין החלקים; פחת במגע לאדמה", en: "Bonding (a complementary measure, J4) keeps the difference between parts small; the RCD for contact to earth" }],
@@ -24,7 +24,7 @@ PE.content.J = {
       { type: "h", he: "נסו: דוד עם השוואה ובלעדיה", en: "Try it: a heater with and without bonding" },
       { type: "sim", id: "h-bond", defaults: { bond: true } }
     ] },
-    { code: "J4", id: "j-bond", kind: "sim", title: { he: "אמצעים משלימים: השוואת פוטנציאלים ומקום מבודד", en: "Complementary measures: equipotential bonding and non-conducting location" }, blocks: [
+    { code: "8.4", id: "j-bond", kind: "sim", title: { he: "אמצעים משלימים: השוואת פוטנציאלים ומקום מבודד", en: "Complementary measures: equipotential bonding and non-conducting location" }, blocks: [
       { type: "callout", tone: "info", label: "practice", he: "השוואת פוטנציאלים ומקום מבודד אינם אחת משבע שיטות ההגנה שבתקנות. השוואת פוטנציאלים היא <b>אמצעי משלים</b> שמקטין את מתח המגע בין חלקים (חדרי רחצה, בריכות); מקום מבודד הוא <b>אמצעי מיוחד נפרד</b>, רק בפיקוח אנשי מקצוע.", en: "Equipotential bonding and non-conducting locations are not among the seven protection methods in the regulations. Bonding is a <b>complementary measure</b> that reduces the touch voltage between parts (bathrooms, pools); a non-conducting location is a <b>separate special measure</b>, only under skilled supervision." },
       { type: "callout", tone: "hook", he: "ציפור יושבת על קו מתח גבוה ולא קורה לה כלום. אדם רטוב באמבטיה נוגע בברז ובדוד – ומקבל מכה, אף שהמאמ\"ת ירד אחרי חלקיק שנייה. מה ההבדל?", en: "A bird sits on a high-voltage line and nothing happens to it. A wet person in a bath touches the tap and the water heater – and gets a shock, even though the breaker tripped within a fraction of a second. What is the difference?" },
       { type: "p", label: "principle", he: "זרם עובר בגוף רק כשיש <b>הפרש מתח</b> בין שתי נקודות שהגוף נוגע בהן. בהשוואת פוטנציאלים מחברים את כל החלקים המוליכים שאפשר לגעת בהם יחד – צנרת מתכתית, מבנה, גופי מכשירים – במוליכים בעלי התנגדות נמוכה. כשהפוטנציאל של אחד עולה בתקלה, כולם עולים יחד, וההפרש ביניהם קטן.", en: "Current flows in the body only when there is a <b>voltage difference</b> between two points it touches. Equipotential bonding connects all touchable conductive parts – metal pipes, structure, appliance cases – with low-resistance conductors. When one part's potential rises in a fault, they all rise together, and the difference between them stays small." },
@@ -55,7 +55,7 @@ PE.content.J = {
           steps: [{ he: "{{I = 230 / (1000 + 50000)}}", en: "{{I = 230 / (1000 + 50000)}}" }, { he: "{{≈ 4.5 mA}} – אזור AC-2", en: "{{≈ 4.5 mA}} – zone AC-2" }] }
       ] }
     ] },
-    { code: "J5", id: "j-bath", kind: "scene", title: { he: "תלת-ממד: חדר רחצה", en: "3D: a bathroom" }, blocks: [
+    { code: "8.5", id: "j-bath", kind: "scene", title: { he: "תלת-ממד: חדר רחצה", en: "3D: a bathroom" }, blocks: [
       { type: "p", he: "סובבו את החדר ובחרו שני חלקים כדי לראות את המתח ביניהם, עם השוואה משלימה ובלעדיה.", en: "Rotate the room and pick two parts to see the voltage between them, with and without supplementary bonding." },
       { type: "scene", id: "h-bath", title: { he: "השוואת פוטנציאלים בחדר רחצה", en: "Bonding in a bathroom" }, parts: [
         { name: { he: "פס השוואת פוטנציאלים", en: "Bonding bar" }, desc: { he: "נקודת חיבור משותפת לכל מוליכי ההשוואה.", en: "A common connection point for all bonding conductors." } },

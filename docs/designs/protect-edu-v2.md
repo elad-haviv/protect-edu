@@ -1145,3 +1145,55 @@ Other updates:
 - The glossary adds floating supply, IMD, and first/second fault.
 - The comparison card gains a "complementary" note row.
 - The v1 stub `m7-equipotential.html` now redirects to `#J4`.
+
+### R-13. v3: own identity, numbered modules, three-phase, LaTeX (owner request, 2026-11-07)
+
+**Why.** v2 copied agl-edu's visual language without its reason. agl-edu imitates airfield signs: black/yellow location signs, and the letter I skipped as in aviation lettering. None of that relates to protection against electric shock. The owner chose:
+- an identity based on an **electrical distribution board and an engineering drawing sheet**;
+- **numbered modules**;
+- **three-phase** drawings and simulations (Israeli LV is 230/400 V TN-C-S);
+- **LaTeX** for every mathematical expression.
+
+**Numbering.**
+
+| Code | Module |
+|---|---|
+| 0 | Basics |
+| 1–7 | The seven methods: 1 protective earthing, 2 neutralization (TN), 3 RCD, 4 protective separation, 5 class II insulation, 6 extra-low voltage, 7 floating supply |
+| 8 | Compare & complementary measures |
+| 9 | Final check |
+| 10 | Appendix א׳: glossary |
+| 11 | Appendix ב׳: references |
+
+- Lessons are `m.n`, for example 3.2.
+- Lesson ids are unchanged, so stored progress survives.
+- The router maps legacy letter codes (A→0 … H→7, J→8, K→9, L→10, M→11, same lesson index) and replaces the hash.
+
+**Identity.**
+- **Header:** a panel-door bar with a rating-plate nameplate, followed by a conductor-colour stripe (L1 brown, L2 black, L3 grey, N blue, PE green-yellow).
+- **Rail:** a distribution board on a DIN rail. Each module is a breaker labelled Q0…Q9; its handle is ON once the module's check is passed. The current module's lessons appear as outgoing circuits.
+- **Lessons:** each is a drawing sheet with a grid background, a frame and a title block (course, module, sheet, revision, Haviv Academy).
+- **Pager:** "previous/next sheet".
+- **Removed:** sign chips and the yellow/black taxiway styling.
+
+**Three-phase.** Every simulator draws a three-phase supply (Dyn11 transformer, L1–L3 + N/PEN) and board, using IEC 60617 symbols: 3-pole MCB, 4-pole RCD, M 3~ motor. Model additions:
+
+- **Phasor helpers.**
+- **`brokenPEN3({U0, Z: [Z1, Z2, Z3], Ra, Rb})`**: Millman neutral displacement.
+  - Returns the neutral-point voltage, each load's voltage, and the case voltage to earth: `VN·Ra/(Ra+Rb)`.
+- **`rcdScenario`**:
+  - new scenarios `LL` (person between two phases, 400 V; not detected) and `unbalanced` (3-phase load with neutral current; no trip);
+  - the residual current is the vector sum of IL1, IL2, IL3 and IN.
+- **`itSupply`, now three-phase IT**:
+  - first-fault current `Id = 3ωC·U0`;
+  - touching another phase after a first fault puts √3·U0 = 400 V across the body;
+  - a second fault on another phase is a line-to-line short, checked with `2·Ia·Zs ≤ √3·U0`.
+- **`tt`, `tn`, `separation`:** electrically unchanged, since their fault loops are phase-to-earth.
+- **Separation (4) and ELV (6):** the supply is three-phase, the secondary single-phase.
+
+**LaTeX.** KaTeX 0.16.11 is vendored and works offline.
+- Inline math is written `$…$`. `formula.tex` holds pure LaTeX, rendered in display mode.
+- `{{…}}` is kept only for plain values and units.
+- `PE.rich` renders math inside `<bdi dir="ltr">`.
+- SVG formula labels use `<foreignObject>` with KaTeX HTML.
+- Tests render every expression with `throwOnError`, and check that Hebrew and English contain the same set of math segments.

@@ -16,7 +16,7 @@
     p: b => `<p>${tag(b.label, b.source)}${txt(b)}</p>`,
     h: b => `<h3>${txt(b)}</h3>`,
     list: b => { const t = b.ordered ? "ol" : "ul"; return `${b.label ? `<p class="list-tag">${tag(b.label, b.source)}</p>` : ""}<${t} class="list">${b.items.map(i => `<li>${tag(i.label, i.source)}${txt(i)}</li>`).join("")}</${t}>`; },
-    formula: b => `<div class="formula" dir="ltr">${b.tex}</div>${b.he || b.en ? `<p class="formula-note">${txt(b)}</p>` : ""}`,
+    formula: b => `<div class="formula">${PE.math(b.tex, true)}</div>${b.he || b.en ? `<p class="formula-note">${txt(b)}</p>` : ""}`,
     callout: b => `<div class="callout ${b.tone || "info"}">${b.tone === "hook" ? '<span class="hook-ic" aria-hidden="true">?</span>' : ""}<div>${tag(b.label, b.source)}${txt(b)}</div></div>`,
     table: b => `<div class="tablewrap"><table class="t">${b.caption ? `<caption>${txt(b.caption)}</caption>` : ""}<thead><tr>${b.head.map(h => `<th scope="col">${txt(h)}</th>`).join("")}</tr></thead><tbody>${b.rows.map(r => `<tr>${r.map((c, i) => i ? `<td>${txt(c)}</td>` : `<th scope="row">${txt(c)}</th>`).join("")}</tr>`).join("")}</tbody></table></div>`,
     figure: () => `<figure class="fig"><svg class="fig-svg" role="img"></svg><figcaption></figcaption></figure>`,
@@ -63,7 +63,7 @@
 
   PE.renderLesson = (lesson, host, params) => {
     const html = lesson.blocks.map((b, i) => `<div class="blk blk-${b.type}" data-i="${i}">${(R[b.type] || R.html)(b)}</div>`).join("");
-    host.innerHTML = `<h2 class="lesson-title"><span class="sign-code" aria-hidden="true">${lesson.code}</span>${esc(PE.L(lesson.title))}</h2>${html}`;
+    host.innerHTML = `<h2 class="lesson-title"><span class="dwg-no"><small>${esc(PE.t("sheet"))}</small><bdi dir="ltr">${lesson.code}</bdi></span><span>${esc(PE.L(lesson.title))}${PE.lang === "he" ? "&rlm;" : ""}</span></h2>${html}`;
     const instances = [];
     lesson.blocks.forEach((b, i) => {
       const m = M[b.type]; if (!m) return;
