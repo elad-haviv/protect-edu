@@ -146,6 +146,8 @@
   const pol = (m, deg) => cx(m * Math.cos(deg * Math.PI / 180), m * Math.sin(deg * Math.PI / 180));
   const cadd = (a, b) => cx(a.re + b.re, a.im + b.im), csub = (a, b) => cx(a.re - b.re, a.im - b.im);
   const cscale = (a, k) => cx(a.re * k, a.im * k), cabs = a => Math.hypot(a.re, a.im);
+  const cmul = (a, b) => cx(a.re * b.re - a.im * b.im, a.re * b.im + a.im * b.re);
+  const cdiv = (a, b) => { const d = b.re * b.re + b.im * b.im; return cx((a.re * b.re + a.im * b.im) / d, (a.im * b.re - a.re * b.im) / d); };
   const PHASE_DEG = [0, -120, 120];
   const phaseV = (U0 = U0_DEFAULT) => PHASE_DEG.map(d => pol(U0, d));
   const ULL = U0 => Math.sqrt(3) * U0;
@@ -264,6 +266,19 @@
   }
   function potentialAt(r, If, rho, a = 0.3) { return If * rho / (2 * Math.PI * Math.max(Math.abs(r), a)); }
 
+  // Person touching L3 on a three-phase IT network: solve the earth node (Millman) with each phase's capacitance,
+  // the first fault (L1, through Rf + Ra) and the body (L3, through Zb + Rfoot). Zb is iterated on the body voltage.
+  function itTouch(p, Xc, Rfault) {
+    const V = phaseV(p.U0), yC = cx(0, 1 / Xc);
+    let Zb = bodyZ(p.U0, p.skin, p.path), I = 0, Ub = p.U0;
+    for (let n = 0; n < 6; n++) {
+      const Y = [cadd(yC, cx(Number.isFinite(Rfault) ? 1 / Rfault : 0)), yC, cadd(yC, cx(1 / (Zb + p.Rfoot)))];
+      const UE = cdiv(Y.reduce((a, y, k) => cadd(a, cmul(y, V[k])), cx(0)), Y.reduce(cadd, cx(0)));
+      I = cabs(csub(V[2], UE)) / (Zb + p.Rfoot); Ub = I * Zb; Zb = bodyZ(Math.max(Ub, 10), p.skin, p.path);
+    }
+    return { I_mA: I * 1000, t_ms: 5000, zone: zone(I * 1000, 5000), Z: Zb, U: Ub };
+  }
+
   // ---------- floating supply (זינה צפה, IT), three-phase, neutral not distributed ----------
   function itSupply(o = {}) {
     const p = Object.assign({ U0: U0_DEFAULT, C_uF: 0.1, f: 50, Ra: 10, Rf_k: 0, fault1: false, fault2: false, imd: true, imd_k: 50, mcb: "C16", Zloop2: 1.2, Rpe: 0.27, touch: "case", skin: "dry", path: "hf", Rfoot: 1000, UL: 50 }, o);
@@ -274,7 +289,7 @@
     const none = { I_mA: 0, t_ms: 0, zone: "AC-1" };
     if (p.fault1 && p.fault2) {                       // second fault on another phase: line-to-line short through the PE
       const If = U / p.Zloop2, trip = mcbTrip(If, p.mcb), Vcase = If * p.Rpe;
-      const b = p.touch === "case" ? body(Vcase, p, exposure(trip)) : body(U, p, exposure(trip));
+      const b = p.touch === "case" ? body(Vcase, p, exposure(trip)) : body(1.5 * p.U0, p, exposure(trip));   // L1, L2 at earth: L3 sits ≈ 1.5·U0 above it
       const Ia = mcbInstant(p.mcb);
       return { Riso_k, alarm, Id_mA: If * 1000, If, Ut: Vcase, U, cond: { key: "2IaZs", value: Ia * p.Zloop2, limit: U, ok: Ia * p.Zloop2 <= U }, trip, body: b, stage: 2 };
     }
@@ -282,15 +297,11 @@
       const Rf = Riso_k * 1000, Id = p.U0 / Math.hypot(Rf + p.Ra, Xeq), Ut = Id * p.Ra;
       const IdBolted = p.U0 / Math.hypot(p.Ra, Xeq);                     // §411.6.2: Id ≈ 3ωC·U0 for a fault of negligible impedance
       let b = none;
-      if (p.touch === "case") b = body(Ut, p, 5000);
-      else {                                         // touching another phase: the faulted phase sits near earth, so up to √3·U0 drives the body current
-        const k = Xeq / Math.hypot(Rf + p.Ra, Xeq), Ub = p.U0 + (U - p.U0) * k;
-        const Z = bodyZ(Ub, p.skin, p.path), I = Ub / (Z + p.Rfoot + p.Ra + Rf * (1 - k)) * 1000; b = { I_mA: I, t_ms: 5000, zone: zone(I, 5000), Z };
-      }
+      b = p.touch === "case" ? body(Ut, p, 5000) : itTouch(p, Xc, Rf + p.Ra);
       return { Riso_k, alarm, Id_mA: Id * 1000, If: Id, Ut, U, cond: { key: "RaId", value: p.Ra * IdBolted, limit: p.UL, ok: p.Ra * IdBolted <= p.UL }, trip: null, body: b, stage: 1 };
     }
     let b = none;                                    // healthy: touching a phase drives current through the system capacitance
-    if (p.touch === "phase") { const Z = bodyZ(p.U0, p.skin, p.path), I = p.U0 / Math.hypot(Z + p.Rfoot, Xeq) * 1000; b = { I_mA: I, t_ms: 5000, zone: zone(I, 5000), Z }; }
+    if (p.touch === "phase") b = itTouch(p, Xc, Infinity);
     return { Riso_k, alarm, Id_mA: 0, If: 0, Ut: 0, U, cond: { key: "RaId", value: 0, limit: p.UL, ok: true }, trip: null, body: b, stage: 0 };
   }
 

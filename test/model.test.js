@@ -59,6 +59,8 @@ module.exports = {
   "floating supply (3-phase): touching another phase after a first fault means 400 V"() {
     const r = M.itSupply({ fault1: true, touch: "phase" }); assert.strictEqual(r.body.zone, "AC-4"); near(r.U, 398.4, 0.2);
     const h = M.itSupply({ touch: "phase" }); assert.ok(h.body.I_mA > 5 && h.body.I_mA < 30, "healthy IT touch " + h.body.I_mA);
+    // with a resistive first fault the capacitive return path still carries current (exact Millman solution)
+    const r50 = M.itSupply({ fault1: true, Rf_k: 50, C_uF: 1, touch: "phase" }); assert.ok(r50.body.I_mA > 60, "Rf 50k, 1 µF: " + r50.body.I_mA);
   },
   "floating supply (3-phase): first-fault current ≈ 3ωC·U0"() { const r = M.itSupply({ fault1: true, Ra: 0.001 }); near(r.Id_mA, 3 * 2 * Math.PI * 50 * 0.1e-6 * 230 * 1000, 0.1); },
   "broken PEN, three-phase: balanced load gives no shift; one-phase load shifts the neutral"() {

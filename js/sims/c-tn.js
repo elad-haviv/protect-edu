@@ -6,7 +6,7 @@
   PE.sims["c-tn"] = {
     title: { he: "סימולטור איפוס (TN-C-S) תלת-פאזי", en: "Three-phase TN-C-S simulator" },
     params: [
-      { key: "fault", type: "bool", def: true, label: { he: "תקלה: L1 נוגע בגוף מכשיר 1", en: "Fault: L1 touches the case of appliance 1" } },
+      { key: "fault", type: "bool", def: true, label: { he: "תקלה: L1 נוגע בגוף מכשיר 1", en: "Fault: L1 touches the case of appliance 1" }, show: s => s.pen === "ok" },
       { key: "pen", type: "enum", def: "ok", label: { he: "מוליך ה-PEN ברשת", en: "Supply PEN conductor" }, values: [{ v: "ok", label: { he: "תקין", en: "Intact" } }, { v: "broken", label: { he: "קטוע", en: "Broken" } }] },
       Object.assign(LOAD("i1"), { def: 10, label: { he: "עומס על L1 (מכשיר 1)", en: "Load on L1 (appliance 1)" } }),
       Object.assign(LOAD("i2"), { def: 2, label: { he: "עומס על L2 (מכשיר 2)", en: "Load on L2 (appliance 2)" } }),
@@ -66,8 +66,8 @@
           { label: { he: "מתח על מכשירים 1 / 2 / 3", en: "Voltage on appliances 1 / 2 / 3" }, value: r.loads.map(v => PE.fmt(v)).join(" / "), unit: "V", tone: Math.max(...r.loads) > 253 ? "bad" : "" },
           PE.kit.bodyMeter(r.body)];
         verdict = { tone: r.Vcase > 50 || Math.max(...r.loads) > 253 ? "danger" : "warn", trip: false, zone: r.body.zone,
-          text: { he: `PEN קטוע ברשת תלת-פאזית: נקודת האפס של העומסים זזה ב-{{${PE.fmt(r.VN)} V}}. כל גופי מחלקה I (מחוברים ל-PE שהוא בעצם האפס) עולים ל-{{${PE.fmt(r.Vcase)} V}}, ומכשירים על הפאזה העמוסה פחות מקבלים עד {{${PE.fmt(Math.max(...r.loads))} V}} – סכנת חשמול ונזק לציוד. אף מפסק לא רואה זאת.`,
-            en: `Broken PEN on a three-phase supply: the loads' neutral point shifts by {{${PE.fmt(r.VN)} V}}. Every class I case (on the PE, which is now the shifted neutral) rises to {{${PE.fmt(r.Vcase)} V}}, and appliances on the lightly loaded phases see up to {{${PE.fmt(Math.max(...r.loads))} V}} – shock risk and equipment damage. No device sees it.` },
+          text: { he: `PEN קטוע ברשת תלת-פאזית: נקודת האפס של העומסים זזה ב-{{${PE.fmt(r.VN)} V}}. כל גופי מחלקה I (מחוברים ל-PE שהוא בעצם האפס) עולים ביחס לאדמה המקומית ל-{{${PE.fmt(r.Vcase)} V}} ($U_N R_a/(R_a+R_b)$ כשיש הארקת יסוד), ומכשירים על הפאזה העמוסה פחות מקבלים עד {{${PE.fmt(Math.max(...r.loads))} V}} – סכנת חשמול ונזק לציוד. אף מפסק לא רואה זאת.`,
+            en: `Broken PEN on a three-phase supply: the loads' neutral point shifts by {{${PE.fmt(r.VN)} V}}. Every class I case (on the PE, which is now the shifted neutral) rises, relative to local earth, to {{${PE.fmt(r.Vcase)} V}} ($U_N R_a/(R_a+R_b)$ with a foundation earth), and appliances on the lightly loaded phases see up to {{${PE.fmt(Math.max(...r.loads))} V}} – shock risk and equipment damage. No device sees it.` },
           sub: { he: "השוו עומסים שווים על שלוש הפאזות (אין הזזה) לעומס על פאזה אחת.", en: "Compare equal loads on all three phases (no shift) with a load on one phase only." } };
       } else {
         meters = [{ label: "$Z_s$", value: r.Zs, unit: "Ω" }, { label: { he: "זרם תקלה", en: "Fault current" }, value: s.fault ? r.If : 0, unit: "A" },
